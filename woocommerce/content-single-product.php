@@ -99,6 +99,7 @@ $variations_json = !empty($variation_options)
 				</div>
 
 				<div class="catalog-single__content catalog-single__panel">
+					<?php computex_cond_render_single_product_brand_link($product); ?>
 					<h1 class="catalog-single__title"><?php the_title(); ?></h1>
 					<?php if (!empty($default_option['display_name'])) : ?>
 						<p class="catalog-single__variation-name" data-single-variation-name>

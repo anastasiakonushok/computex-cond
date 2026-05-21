@@ -2503,6 +2503,197 @@ function computex_cond_render_product_card_specs_list($properties)
 }
 
 /**
+ * Список брендов (категории WooCommerce + ACF).
+ *
+ * @return array<string, string>
+ */
+function computex_cond_get_brand_option_map()
+{
+	return array(
+		'LG' => 'lg_opisanie',
+		'AlpicAir' => 'alpicair_opisanie',
+		'Gree' => 'gree_opisanie',
+		'Ultima' => 'ultima_opisanie',
+		'General' => 'general_opisanie',
+		'TLC' => 'tlc_opisanie',
+	);
+}
+
+/**
+ * Категория-бренд товара (product_cat).
+ */
+function computex_cond_get_product_brand_term($product)
+{
+	if (!$product instanceof WC_Product) {
+		return null;
+	}
+
+	$terms = wp_get_post_terms(
+		$product->get_id(),
+		'product_cat',
+		array(
+			'orderby' => 'term_id',
+		)
+	);
+
+	if (is_wp_error($terms) || empty($terms)) {
+		return null;
+	}
+
+	$brand_names = array_keys(computex_cond_get_brand_option_map());
+
+	foreach ($terms as $term) {
+		if (!$term instanceof WP_Term) {
+			continue;
+		}
+
+		if (in_array(trim($term->name), $brand_names, true)) {
+			return $term;
+		}
+	}
+
+	return null;
+}
+
+/**
+ * URL каталога бренда: архив категории или магазин с фильтром.
+ */
+function computex_cond_get_brand_category_url($brand_term)
+{
+	if (!$brand_term instanceof WP_Term) {
+		return '';
+	}
+
+	$term_link = get_term_link($brand_term);
+
+	if (!is_wp_error($term_link)) {
+		return $term_link;
+	}
+
+	if (function_exists('wc_get_page_permalink')) {
+		return add_query_arg(
+			array(
+				'filter_category' => array($brand_term->slug),
+			),
+			wc_get_page_permalink('shop')
+		);
+	}
+
+	return '';
+}
+
+/**
+ * Логотип бренда: ACF «logo_brenda» или миниатюра категории.
+ *
+ * @return array{url: string, alt: string}|null
+ */
+function computex_cond_get_brand_logo_image($brand_name, $brand_term = null)
+{
+	$brand_name = trim((string) $brand_name);
+
+	if ($brand_name === '') {
+		return null;
+	}
+
+	if (function_exists('have_rows') && have_rows('logo_brenda', 'option')) {
+		$match_fields = array('nazvanie', 'brend', 'brand', 'name', 'zagolovok');
+
+		while (have_rows('logo_brenda', 'option')) {
+			the_row();
+			$logo = get_sub_field('foto');
+
+			if (empty($logo['url'])) {
+				continue;
+			}
+
+			foreach ($match_fields as $field_name) {
+				$field_value = trim((string) get_sub_field($field_name));
+
+				if ($field_value !== '' && strcasecmp($field_value, $brand_name) === 0) {
+					return array(
+						'url' => $logo['url'],
+						'alt' => !empty($logo['alt']) ? $logo['alt'] : $brand_name,
+					);
+				}
+			}
+
+			if (!empty($logo['alt']) && stripos($logo['alt'], $brand_name) !== false) {
+				return array(
+					'url' => $logo['url'],
+					'alt' => $logo['alt'],
+				);
+			}
+		}
+	}
+
+	if ($brand_term instanceof WP_Term) {
+		$thumbnail_id = (int) get_term_meta($brand_term->term_id, 'thumbnail_id', true);
+
+		if ($thumbnail_id) {
+			$image_url = wp_get_attachment_image_url($thumbnail_id, 'medium');
+
+			if ($image_url) {
+				return array(
+					'url' => $image_url,
+					'alt' => $brand_name,
+				);
+			}
+		}
+	}
+
+	return null;
+}
+
+/**
+ * Данные ссылки на категорию бренда для карточки товара.
+ *
+ * @return array{name: string, url: string, logo: array{url: string, alt: string}}|null
+ */
+function computex_cond_get_product_brand_link_data($product)
+{
+	$brand_term = computex_cond_get_product_brand_term($product);
+
+	if (!$brand_term instanceof WP_Term) {
+		return null;
+	}
+
+	$url = computex_cond_get_brand_category_url($brand_term);
+
+	if ($url === '') {
+		return null;
+	}
+
+	$logo = computex_cond_get_brand_logo_image($brand_term->name, $brand_term);
+
+	return array(
+		'name' => $brand_term->name,
+		'url' => $url,
+		'logo' => $logo,
+	);
+}
+
+/**
+ * Компактная ссылка на категорию бренда (лого + название).
+ */
+function computex_cond_render_single_product_brand_link($product)
+{
+	$brand = computex_cond_get_product_brand_link_data($product);
+
+	if (empty($brand)) {
+		return;
+	}
+
+	echo '<a class="catalog-single__brand-link" href="' . esc_url($brand['url']) . '">';
+
+	if (!empty($brand['logo']['url'])) {
+		echo '<img class="catalog-single__brand-logo" src="' . esc_url($brand['logo']['url']) . '" alt="' . esc_attr($brand['logo']['alt']) . '" width="72" height="28" loading="lazy" decoding="async">';
+	}
+
+	echo '<span class="catalog-single__brand-name">' . esc_html($brand['name']) . '</span>';
+	echo '</a>';
+}
+
+/**
  * Описание бренда по категории товара WooCommerce.
  */
 function computex_cond_get_product_brand_description($product)
@@ -2511,34 +2702,16 @@ function computex_cond_get_product_brand_description($product)
 		return '';
 	}
 
-	$terms = wp_get_post_terms($product->get_id(), 'product_cat', array('fields' => 'names'));
+	$brand_map = computex_cond_get_brand_option_map();
+	$brand_term = computex_cond_get_product_brand_term($product);
 
-	if (is_wp_error($terms) || empty($terms)) {
+	if (!$brand_term instanceof WP_Term || !isset($brand_map[$brand_term->name]) || !function_exists('get_field')) {
 		return '';
 	}
 
-	$brand_map = array(
-		'LG' => 'lg_opisanie',
-		'AlpicAir' => 'alpicair_opisanie',
-		'Gree' => 'gree_opisanie',
-		'Ultima' => 'ultima_opisanie',
-		'General' => 'general_opisanie',
-		'TLC' => 'tlc_opisanie',
-	);
+	$description = get_field($brand_map[$brand_term->name], 'option');
 
-	foreach ($terms as $term_name) {
-		$term_name = trim((string) $term_name);
-
-		if (isset($brand_map[$term_name]) && function_exists('get_field')) {
-			$description = get_field($brand_map[$term_name], 'option');
-
-			if ($description) {
-				return $description;
-			}
-		}
-	}
-
-	return '';
+	return $description ? $description : '';
 }
 
 /**

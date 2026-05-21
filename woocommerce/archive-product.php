@@ -33,7 +33,6 @@ get_header();
 			if (function_exists('yoast_breadcrumb')) {
 
 				yoast_breadcrumb('<p id="breadcrumbs">', '</p>');
-
 			}
 
 			?>
@@ -109,4 +108,3 @@ get_header();
 <?php
 
 get_footer();
-
