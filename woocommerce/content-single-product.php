@@ -96,6 +96,9 @@ $variations_json = !empty($variation_options)
 					>
 						<?php echo $image_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 					</a>
+					<div class="catalog-single__media-benefits catalog-single__media-benefits--desktop">
+						<?php computex_cond_render_single_product_services($product_id, 'catalog-single__benefits--media'); ?>
+					</div>
 				</div>
 
 				<div class="catalog-single__content catalog-single__panel">
@@ -153,6 +156,10 @@ $variations_json = !empty($variation_options)
 						</div>
 					<?php endif; ?>
 
+					<div class="catalog-single__panel-benefits catalog-single__panel-benefits--mobile">
+						<?php computex_cond_render_single_product_services($product_id, 'catalog-single__benefits--media'); ?>
+					</div>
+
 					<?php if ($product->is_type('variable')) : ?>
 						<div class="catalog-single__variations-form-hidden" hidden aria-hidden="true">
 							<?php
@@ -171,8 +178,8 @@ $variations_json = !empty($variation_options)
 				</div>
 			</div>
 
-			<div class="catalog-single__block flex" id="info">
-				<div class="catalog-single__description">
+			<div class="catalog-single__block catalog-single__block--tabs" id="info">
+				<div class="catalog-single__description catalog-single__description--full">
 					<ul class="tab-links flex">
 						<li class="active"><a href="#tab1">Характеристики</a></li>
 						<?php if ($description) : ?>
@@ -209,10 +216,6 @@ $variations_json = !empty($variation_options)
 							</div>
 						<?php endif; ?>
 					</div>
-				</div>
-
-				<div class="catalog-single__info guarantee">
-					<?php computex_cond_render_single_product_services($product_id, 'catalog-single__benefits--sidebar'); ?>
 				</div>
 			</div>
 		</div>

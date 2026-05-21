@@ -1272,6 +1272,18 @@ p#breadcrumbs a {
 .catalog-single--wc .catalog-single__media {
   width: 42%;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.catalog-single--wc .catalog-single__media-benefits {
+  margin-top: 20px;
+}
+
+.catalog-single--wc .catalog-single__panel-benefits--mobile {
+  display: none;
+  margin: 0 0 20px;
 }
 
 .catalog-single--wc .catalog-single__badges {
@@ -1562,16 +1574,13 @@ p#breadcrumbs a {
   margin-bottom: 0;
 }
 
-.catalog-single--wc .catalog-single__block {
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 40px;
+.catalog-single--wc .catalog-single__block--tabs {
   padding-top: 48px;
 }
 
-.catalog-single--wc .catalog-single__description {
-  width: 65%;
-  flex: 0 0 65%;
+.catalog-single--wc .catalog-single__description--full {
+  width: 100%;
+  flex: 1 1 100%;
   min-width: 0;
   background: #fff;
   border-radius: 20px;
@@ -1580,36 +1589,46 @@ p#breadcrumbs a {
   padding: 24px 28px 32px;
 }
 
-.catalog-single--wc .catalog-single__info.guarantee {
-  width: calc(35% - 40px);
-  flex-shrink: 0;
-}
-
-.catalog-single__benefits--sidebar {
+.catalog-single__benefits--media {
   margin: 0;
 }
 
-.catalog-single__benefits--sidebar .catalog-single__benefits-grid {
+.catalog-single__benefits--media .catalog-single__benefits-grid {
   grid-template-columns: 1fr;
-  gap: 14px;
+  gap: 12px;
 }
 
-.catalog-single__benefits--sidebar .catalog-single__benefit {
-  padding: 18px 16px 16px;
+.catalog-single__benefits--media .catalog-single__benefit {
+  padding: 16px 14px 14px;
+  border-radius: 18px;
 }
 
-.catalog-single__benefits--sidebar .catalog-single__benefit-row {
-  margin-bottom: 10px;
+.catalog-single__benefits--media .catalog-single__benefit-row {
+  margin-bottom: 8px;
 }
 
-.catalog-single__benefits--sidebar .catalog-single__benefit-meta {
-  padding: 10px 12px;
-  font-size: 0.8rem;
+.catalog-single__benefits--media .catalog-single__benefit-icon svg {
+  width: 44px;
+  height: 44px;
 }
 
-.catalog-single__benefits--sidebar .catalog-single__benefit-chips span {
-  font-size: 11px;
-  padding: 6px 10px;
+.catalog-single__benefits--media .catalog-single__benefit-body h4 {
+  font-size: 0.95rem;
+}
+
+.catalog-single__benefits--media .catalog-single__benefit-body p {
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.catalog-single__benefits--media .catalog-single__benefit-meta {
+  padding: 8px 10px;
+  font-size: 0.78rem;
+}
+
+.catalog-single__benefits--media .catalog-single__benefit-chips span {
+  font-size: 10px;
+  padding: 5px 9px;
 }
 
 .catalog-single--wc .catalog-single__description .tab-links {
@@ -1939,6 +1958,21 @@ p#breadcrumbs a {
   margin: 0;
 }
 
+.catalog-single--wc [data-single-price-wrap] .product-card__price-current {
+  font-size: clamp(1.625rem, 2.5vw, 2rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.catalog-single--wc [data-single-price-wrap] .product-card__price--sale .product-card__price-current {
+  font-size: clamp(1.625rem, 2.5vw, 2rem);
+}
+
+.catalog-single--wc [data-single-price-wrap] .product-card__price-old {
+  font-size: 1rem;
+}
+
 .catalog-single__variants {
   margin-bottom: 16px;
 }
@@ -1988,6 +2022,14 @@ p#breadcrumbs a {
     flex-direction: column;
   }
 
+  .catalog-single--wc .catalog-single__media-benefits--desktop {
+    display: none;
+  }
+
+  .catalog-single--wc .catalog-single__panel-benefits--mobile {
+    display: block;
+  }
+
   .catalog-single--wc .catalog-single__block {
     flex-direction: column;
   }
@@ -1996,8 +2038,7 @@ p#breadcrumbs a {
     grid-template-columns: 1fr;
   }
 
-  .catalog-single--wc .catalog-single__description,
-  .catalog-single--wc .catalog-single__info.guarantee {
+  .catalog-single--wc .catalog-single__description--full {
     width: 100%;
     flex: 1 1 100%;
   }
@@ -2998,9 +3039,9 @@ p#breadcrumbs a {
 }
 
 .product-card__badge--sale {
-  background: var(--main-yellow);
-  color: #1a1a1a;
-  border: 1px solid #e5b840;
+  background: #dc2626;
+  color: #fff;
+  border: 1px solid #b91c1c;
 }
 
 .product-card__badge--featured {
@@ -3059,7 +3100,7 @@ p#breadcrumbs a {
   display: flex;
   align-items: stretch;
   width: 100%;
-  border: 1px solid #e5b840;
+  border: 1px solid #f5b4b4;
   border-radius: 4px;
   overflow: hidden;
   font-size: 11px;
@@ -3076,8 +3117,8 @@ p#breadcrumbs a {
   display: inline-flex;
   align-items: center;
   padding: 3px 6px;
-  background: var(--main-yellow);
-  color: #1a1a1a;
+  background: #dc2626;
+  color: #fff;
   font-weight: 700;
   white-space: nowrap;
 }
@@ -3093,7 +3134,7 @@ p#breadcrumbs a {
   align-items: center;
   justify-content: center;
   padding: 3px 8px;
-  background: #fff9e1;
+  background: #fef2f2;
   color: var(--dark-color);
   font-weight: 500;
   white-space: nowrap;
