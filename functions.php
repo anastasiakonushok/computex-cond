@@ -179,6 +179,16 @@ function computex_cond_widgets_init()
 add_action('widgets_init', 'computex_cond_widgets_init');
 
 /**
+ * Версия файла темы по дате изменения (автосброс кэша CSS/JS).
+ */
+function computex_cond_get_asset_version($relative_path)
+{
+	$file_path = get_template_directory() . '/' . ltrim($relative_path, '/');
+
+	return file_exists($file_path) ? (string) filemtime($file_path) : _S_VERSION;
+}
+
+/**
  * Enqueue scripts and styles.
  */
 function computex_cond_scripts()
@@ -187,9 +197,18 @@ function computex_cond_scripts()
 	wp_style_add_data('computex-cond-style', 'rtl', 'replace');
 	wp_enqueue_style('computex-cond-swiper',  get_template_directory_uri() . '/assets/swiper/swiper-bundle.min.css');
 	wp_enqueue_style('computex-cond-fancybox',  get_template_directory_uri() . '/assets/fancybox/fancybox.css');
-	wp_enqueue_style('computex-cond-main', get_template_directory_uri() . '/assets/css/main.css');
-	$heating_style_path = get_template_directory() . '/assets/css/page-heating.css';
-	wp_enqueue_style('computex-cond-heating', get_template_directory_uri() . '/assets/css/page-heating.css', array(), filemtime($heating_style_path));
+	wp_enqueue_style(
+		'computex-cond-main',
+		get_template_directory_uri() . '/assets/css/main.css',
+		array(),
+		computex_cond_get_asset_version('assets/css/main.css')
+	);
+	wp_enqueue_style(
+		'computex-cond-heating',
+		get_template_directory_uri() . '/assets/css/page-heating.css',
+		array(),
+		computex_cond_get_asset_version('assets/css/page-heating.css')
+	);
 
 	if (function_exists('WC') && computex_cond_should_enqueue_shop_cards_script()) {
 		$shop_script_path = get_template_directory() . '/assets/js/woocommerce-shop.js';
