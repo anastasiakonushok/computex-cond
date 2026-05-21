@@ -14,6 +14,16 @@ if (!defined('_S_VERSION')) {
 
 if (function_exists('acf_add_options_page')) {
 
+	add_filter('acf/settings/save_json', function ($path) {
+		return get_stylesheet_directory() . '/acf-json';
+	});
+
+	add_filter('acf/settings/load_json', function ($paths) {
+		$paths[] = get_stylesheet_directory() . '/acf-json';
+
+		return $paths;
+	});
+
 	acf_add_options_page(array(
 		'page_title' => 'Общие настройки',
 		'menu_title' => 'Настройка темы',
@@ -34,6 +44,7 @@ if (function_exists('acf_add_options_page')) {
 	acf_add_options_sub_page(array(
 		'page_title' => 'Настройки хитов продаж',
 		'menu_title' => 'Настройки хитов продаж',
+		'menu_slug' => 'hits-sales-settings',
 		'parent_slug' => 'theme-general-settings',
 	));
 	acf_add_options_sub_page(array(
@@ -246,6 +257,52 @@ function computex_cond_scripts()
 	}
 }
 add_action('wp_enqueue_scripts', 'computex_cond_scripts');
+
+/**
+ * ID страницы с гибким полем stranicza (главная / ACF location page 12).
+ */
+function computex_cond_get_front_page_stranicza_post_id()
+{
+	$candidates = array();
+
+	$page_on_front = (int) get_option('page_on_front');
+
+	if ($page_on_front > 0) {
+		$candidates[] = $page_on_front;
+	}
+
+	$candidates[] = 12;
+	$candidates = array_values(array_unique(array_filter($candidates)));
+
+	if (!function_exists('have_rows')) {
+		return $page_on_front > 0 ? $page_on_front : 12;
+	}
+
+	foreach ($candidates as $post_id) {
+		if (have_rows('stranicza', $post_id)) {
+			return $post_id;
+		}
+	}
+
+	return $page_on_front > 0 ? $page_on_front : 12;
+}
+
+/**
+ * Слайдер хитов на главной, если шаблон не вывел его (запасной хук перед новостями).
+ */
+function computex_cond_render_front_page_hits_slider_fallback()
+{
+	if (!is_front_page() || is_admin() || !empty($GLOBALS['computex_cond_hits_slider_rendered'])) {
+		return;
+	}
+
+	if (!function_exists('computex_cond_render_hits_slider')) {
+		return;
+	}
+
+	computex_cond_render_hits_slider(null, array('fallback_random_catalog' => true));
+}
+add_action('computex_cond_front_page_before_news', 'computex_cond_render_front_page_hits_slider_fallback', 10);
 
 /**
  * Implement the Custom Header feature.
@@ -2810,7 +2867,178 @@ function computex_cond_should_enqueue_shop_cards_script()
 }
 
 /**
- * Элементы слайдера «Хиты продаж» из ACF (WooCommerce + catalog CPT).
+ * ID записи из значения ACF (relationship / repeater / ID).
+ */
+function computex_cond_resolve_hits_post_id($item)
+{
+	if (is_numeric($item)) {
+		return absint($item);
+	}
+
+	if ($item instanceof WP_Post) {
+		return (int) $item->ID;
+	}
+
+	if (!is_array($item)) {
+		return 0;
+	}
+
+	foreach (array('tovar', 'product', 'товар', 'post', 'id', 'value') as $key) {
+		if (!empty($item[$key])) {
+			$resolved = computex_cond_resolve_hits_post_id($item[$key]);
+
+			if ($resolved) {
+				return $resolved;
+			}
+		}
+	}
+
+	return 0;
+}
+
+/**
+ * Добавить товар в список хитов (без дублей).
+ */
+function computex_cond_push_hits_slider_item(array &$items, array &$seen, $post_id)
+{
+	$post_id = absint($post_id);
+
+	if (!$post_id || get_post_status($post_id) !== 'publish') {
+		return;
+	}
+
+	$post_type = get_post_type($post_id);
+
+	if (!in_array($post_type, array('product', 'catalog'), true)) {
+		return;
+	}
+
+	if (isset($seen[$post_id])) {
+		return;
+	}
+
+	$seen[$post_id] = true;
+	$items[] = array(
+		'id' => $post_id,
+		'type' => $post_type,
+	);
+}
+
+/**
+ * ID страниц ACF Options (главная + подстраница «Хиты продаж»).
+ *
+ * @return string[]
+ */
+function computex_cond_get_hits_acf_option_post_ids()
+{
+	static $post_ids = null;
+
+	if ($post_ids !== null) {
+		return $post_ids;
+	}
+
+	$legacy_hits_slug = sanitize_title('Настройки хитов продаж');
+
+	$post_ids = array(
+		'option',
+		'options',
+		'options_hits-sales-settings',
+		'hits-sales-settings',
+		'computex_hits_settings',
+		'options_computex_hits_settings',
+		'theme-general-settings',
+		'options_theme-general-settings',
+		$legacy_hits_slug,
+		'options_' . $legacy_hits_slug,
+	);
+
+	if (function_exists('acf_get_options_pages')) {
+		$pages = acf_get_options_pages();
+
+		if (is_array($pages)) {
+			foreach ($pages as $page) {
+				if (empty($page['menu_slug'])) {
+					continue;
+				}
+
+				$slug = (string) $page['menu_slug'];
+				$post_ids[] = $slug;
+				$post_ids[] = 'options_' . $slug;
+
+				if (!empty($page['post_id'])) {
+					$post_ids[] = (string) $page['post_id'];
+				}
+			}
+		}
+	}
+
+	$post_ids = array_values(array_unique(array_filter($post_ids)));
+
+	return $post_ids;
+}
+
+/**
+ * @param mixed $value Значение ACF.
+ */
+function computex_cond_acf_value_is_filled($value)
+{
+	if ($value === null || $value === false || $value === '') {
+		return false;
+	}
+
+	return !(is_array($value) && empty($value));
+}
+
+/**
+ * Поле ACF с подстраниц настроек (хиты, заголовок, ссылка).
+ *
+ * @param string $field_name Имя поля.
+ * @return mixed
+ */
+function computex_cond_get_hits_acf_field_value($field_name)
+{
+	if (!function_exists('get_field')) {
+		return null;
+	}
+
+	foreach (computex_cond_get_hits_acf_option_post_ids() as $post_id) {
+		$value = get_field($field_name, $post_id);
+
+		if (computex_cond_acf_value_is_filled($value)) {
+			return $value;
+		}
+	}
+
+	return null;
+}
+
+/**
+ * @param mixed $raw Сырые данные ACF.
+ */
+function computex_cond_import_hits_items_from_raw($raw, array &$items, array &$seen)
+{
+	if (!computex_cond_acf_value_is_filled($raw)) {
+		return;
+	}
+
+	if (is_array($raw)) {
+		if (isset($raw['ID'])) {
+			computex_cond_push_hits_slider_item($items, $seen, computex_cond_resolve_hits_post_id($raw));
+			return;
+		}
+
+		foreach ($raw as $item) {
+			computex_cond_push_hits_slider_item($items, $seen, computex_cond_resolve_hits_post_id($item));
+		}
+
+		return;
+	}
+
+	computex_cond_push_hits_slider_item($items, $seen, computex_cond_resolve_hits_post_id($raw));
+}
+
+/**
+ * Элементы слайдера «Хиты продаж» из ACF Options (tovary).
  *
  * @return array<int, array{id: int, type: string}>
  */
@@ -2820,40 +3048,90 @@ function computex_cond_get_hits_slider_items_from_acf()
 		return array();
 	}
 
-	$products = get_field('tovary', 'option');
-
-	if (empty($products) || !is_array($products)) {
-		return array();
-	}
-
 	$items = array();
 	$seen = array();
+	$field_names = array('tovary', 'tovar', 'products', 'product');
 
-	foreach ($products as $item) {
-		$id = is_object($item) ? (int) $item->ID : absint($item);
+	foreach (computex_cond_get_hits_acf_option_post_ids() as $post_id) {
+		if (function_exists('have_rows')) {
+			foreach ($field_names as $field_name) {
+				if (!have_rows($field_name, $post_id)) {
+					continue;
+				}
 
-		if (!$id || get_post_status($id) !== 'publish') {
-			continue;
+				while (have_rows($field_name, $post_id)) {
+					the_row();
+					$row_item = get_sub_field('tovar');
+
+					if (!computex_cond_acf_value_is_filled($row_item)) {
+						$row_item = get_sub_field('product');
+					}
+
+					if (!computex_cond_acf_value_is_filled($row_item)) {
+						$row_item = get_sub_field('post');
+					}
+
+					if (!computex_cond_acf_value_is_filled($row_item)) {
+						$row_item = get_sub_field($field_name);
+					}
+
+					computex_cond_push_hits_slider_item($items, $seen, computex_cond_resolve_hits_post_id($row_item));
+				}
+			}
 		}
 
-		$post_type = get_post_type($id);
-
-		if (!in_array($post_type, array('product', 'catalog'), true)) {
-			continue;
+		foreach ($field_names as $field_name) {
+			computex_cond_import_hits_items_from_raw(get_field($field_name, $post_id), $items, $seen);
 		}
 
-		if (isset($seen[$id])) {
-			continue;
+		$all_fields = get_fields($post_id);
+
+		if (is_array($all_fields)) {
+			foreach ($all_fields as $key => $value) {
+				if (!preg_match('/tovar|product|hit/i', (string) $key)) {
+					continue;
+				}
+
+				computex_cond_import_hits_items_from_raw($value, $items, $seen);
+			}
 		}
 
-		$seen[$id] = true;
-		$items[] = array(
-			'id' => $id,
-			'type' => $post_type,
-		);
+		if (!empty($items)) {
+			break;
+		}
+	}
+
+	if (empty($items)) {
+		foreach (array('options_tovary', 'computex_hits_settings_tovary', 'options_hits-sales-settings_tovary') as $option_key) {
+			$raw = get_option($option_key);
+
+			if (is_string($raw)) {
+				$raw = maybe_unserialize($raw);
+			}
+
+			if (computex_cond_acf_value_is_filled($raw)) {
+				computex_cond_import_hits_items_from_raw($raw, $items, $seen);
+			}
+
+			if (!empty($items)) {
+				break;
+			}
+		}
 	}
 
 	return $items;
+}
+
+/**
+ * Показывать товар в слайдере «Хиты» (выбран вручную в ACF).
+ */
+function computex_cond_is_product_visible_in_hits_slider($product)
+{
+	if (!$product instanceof WC_Product) {
+		return false;
+	}
+
+	return $product->get_status() === 'publish';
 }
 
 /**
@@ -2873,7 +3151,41 @@ function computex_cond_get_hits_product_ids()
 }
 
 /**
- * Карточка catalog CPT в слайдере (как на главной раньше).
+ * Случайные товары catalog для слайдера (как в single-catalog.php).
+ *
+ * @param int $posts_per_page Количество карточек.
+ * @return array<int, array{id: int, type: string}>
+ */
+function computex_cond_get_random_catalog_slider_items($posts_per_page = 12)
+{
+	$items = array();
+	$query = new WP_Query(
+		array(
+			'post_type' => 'catalog',
+			'posts_per_page' => max(1, absint($posts_per_page)),
+			'orderby' => 'rand',
+			'post_status' => 'publish',
+			'no_found_rows' => true,
+		)
+	);
+
+	if ($query->have_posts()) {
+		while ($query->have_posts()) {
+			$query->the_post();
+			$items[] = array(
+				'id' => get_the_ID(),
+				'type' => 'catalog',
+			);
+		}
+
+		wp_reset_postdata();
+	}
+
+	return $items;
+}
+
+/**
+ * Карточка catalog CPT в слайдере (как в single-catalog.php).
  */
 function computex_cond_render_hits_catalog_slide($post_id)
 {
@@ -2884,10 +3196,7 @@ function computex_cond_render_hits_catalog_slide($post_id)
 	}
 
 	$name = get_the_title($post_id);
-	$price = function_exists('get_field') ? get_field('czena', $post_id) : get_post_meta($post_id, 'czena', true);
-	$image_id = get_post_thumbnail_id($post_id);
-	$image_src = $image_id ? wp_get_attachment_image_url($image_id, 'woocommerce_thumbnail') : '';
-	$image_alt = $image_id ? get_post_meta($image_id, '_wp_attachment_image_alt', true) : $name;
+	$price = get_post_meta($post_id, 'czena', true);
 	$permalink = get_permalink($post_id);
 	$properties = array();
 
@@ -2904,13 +3213,15 @@ function computex_cond_render_hits_catalog_slide($post_id)
 	<article class="product-card">
 		<div class="product-card__row">
 			<div class="product-card__img">
-				<?php if ($image_src) : ?>
-					<img src="<?php echo esc_url($image_src); ?>" alt="<?php echo esc_attr($image_alt); ?>" loading="lazy" />
+				<?php if (has_post_thumbnail($post_id)) : ?>
+					<?php echo get_the_post_thumbnail($post_id, 'medium'); ?>
+				<?php else : ?>
+					<img src="<?php echo esc_url(get_template_directory_uri() . '/img/img-card.jpg'); ?>" alt="">
 				<?php endif; ?>
 			</div>
 			<a class="title" href="<?php echo esc_url($permalink); ?>"><?php echo esc_html($name); ?></a>
 			<hr>
-			<ul data-card-specs>
+			<ul>
 				<?php foreach ($properties as $property) : ?>
 					<li class="flex">
 						<p><?php echo esc_html($property['label']); ?>: </p>
@@ -2933,10 +3244,19 @@ function computex_cond_render_hits_catalog_slide($post_id)
  * Слайдер «Хиты продаж» / похожие товары.
  *
  * @param int[]|null $product_ids Список ID WooCommerce. null — из настроек ACF (product + catalog).
- * @param array      $args        title, link, slides_class.
+ * @param array      $args        title, link, slides_class, fallback_random_catalog, fallback_posts_per_page.
  */
 function computex_cond_render_hits_slider($product_ids = null, $args = array())
 {
+	$defaults = array(
+		'title' => (string) computex_cond_get_hits_acf_field_value('zagolovok_hity_prodazh'),
+		'link' => computex_cond_get_hits_acf_field_value('ssylka_hity_prodazh'),
+		'slides_class' => 'swiper-product__wrapp',
+		'fallback_random_catalog' => true,
+		'fallback_posts_per_page' => 12,
+	);
+
+	$args = wp_parse_args($args, $defaults);
 	$items = array();
 
 	if ($product_ids === null) {
@@ -2950,20 +3270,34 @@ function computex_cond_render_hits_slider($product_ids = null, $args = array())
 		}
 	}
 
+	if (empty($items) && !empty($args['fallback_random_catalog'])) {
+		$items = computex_cond_get_random_catalog_slider_items($args['fallback_posts_per_page']);
+	}
+
 	if (empty($items)) {
 		return;
 	}
 
-	$defaults = array(
-		'title' => function_exists('get_field') ? (string) get_field('zagolovok_hity_prodazh', 'option') : '',
-		'link' => function_exists('get_field') ? get_field('ssylka_hity_prodazh', 'option') : null,
-		'slides_class' => 'swiper-product__wrapp',
-	);
-
-	$args = wp_parse_args($args, $defaults);
+	$GLOBALS['computex_cond_hits_slider_rendered'] = true;
 
 	$slider_title = !empty($args['title']) ? $args['title'] : __('Хиты продаж', 'computex-cond');
 	$slider_link = $args['link'];
+
+	if (empty($slider_link) || !is_array($slider_link) || empty($slider_link['url'])) {
+		if (function_exists('wc_get_page_permalink')) {
+			$shop_url = wc_get_page_permalink('shop');
+		} else {
+			$shop_url = home_url('/shop/');
+		}
+
+		if ($shop_url) {
+			$slider_link = array(
+				'url' => $shop_url,
+				'title' => __('Все хиты', 'computex-cond'),
+				'target' => '_self',
+			);
+		}
+	}
 	$slides_wrapper_class = $args['slides_class'];
 
 	if (strpos($slides_wrapper_class, 'products') === false && array_filter(

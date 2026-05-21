@@ -28,7 +28,13 @@ $slides_wrapper_class = !empty($slides_wrapper_class) ? $slides_wrapper_class : 
 				<h2><?php echo esc_html($slider_title); ?></h2>
 				<?php if (!empty($slider_link['url'])) : ?>
 					<a href="<?php echo esc_url($slider_link['url']); ?>" target="<?php echo esc_attr(!empty($slider_link['target']) ? $slider_link['target'] : '_self'); ?>">
-						<?php echo esc_html(!empty($slider_link['title']) ? $slider_link['title'] : ''); ?>
+						<?php
+						echo esc_html(
+							!empty($slider_link['title'])
+								? $slider_link['title']
+								: __('Все хиты', 'computex-cond')
+						);
+						?>
 					</a>
 				<?php endif; ?>
 			</div>
@@ -58,7 +64,7 @@ $slides_wrapper_class = !empty($slides_wrapper_class) ? $slides_wrapper_class : 
 					if ($post_type === 'product' && function_exists('wc_get_product')) {
 						$product = wc_get_product($post_id);
 
-						if ($product && 'publish' === $product->get_status() && computex_cond_is_product_visible_in_catalog($product)) {
+						if ($product && computex_cond_is_product_visible_in_hits_slider($product)) {
 							$GLOBALS['product'] = $product; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 							wc_get_template_part('content', 'product');
 							unset($GLOBALS['product']);

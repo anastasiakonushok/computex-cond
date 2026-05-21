@@ -6,9 +6,16 @@
 
 get_header('main'); ?>
 <main class="main">
-    <?php if (have_rows('stranicza')): ?>
-    <?php while (have_rows('stranicza')):
-            the_row(); ?>
+    <?php
+    $computex_cond_hits_slider_rendered = false;
+    $computex_cond_front_stranicza_id = function_exists('computex_cond_get_front_page_stranicza_post_id')
+        ? computex_cond_get_front_page_stranicza_post_id()
+        : (int) get_option('page_on_front');
+
+    if ($computex_cond_front_stranicza_id && have_rows('stranicza', $computex_cond_front_stranicza_id)) :
+        while (have_rows('stranicza', $computex_cond_front_stranicza_id)) :
+            the_row();
+            ?>
     <?php if (get_row_layout() == 'главный_блок'): ?>
     <section class="hero"
         style="background-image: linear-gradient(rgba(43, 60, 77, 0.74), rgba(43, 60, 77, 0.74)), url('<?php the_sub_field('fon_izobrazhenie'); ?>'); ">
@@ -46,9 +53,14 @@ get_header('main'); ?>
             </div>
         </div>
     </section>
-    <?php elseif (get_row_layout() == 'популярные_товары'): ?>
-    <?php computex_cond_render_hits_slider(); ?>
-    <?php elseif (get_row_layout() == 'услуги'): ?>
+    <?php elseif (get_row_layout() == 'популярные_товары') : ?>
+    <?php
+            if (function_exists('computex_cond_render_hits_slider')) {
+                computex_cond_render_hits_slider(null, array('fallback_random_catalog' => true));
+                $computex_cond_hits_slider_rendered = !empty($GLOBALS['computex_cond_hits_slider_rendered']);
+            }
+            ?>
+    <?php elseif (get_row_layout() == 'услуги') : ?>
     <section class="services-section services-section-main"
         style="background-image: linear-gradient(rgba(43, 60, 77, 0.89), rgba(43, 60, 77, 0.89)), url('<?php the_field('fon_dlya_uslug', 'option'); ?>'); ">
         <div class="container services-section__container flex">
@@ -137,9 +149,17 @@ get_header('main'); ?>
             </div>
         </div>
     </section>
-    <?php endif;
-        endwhile; ?>
     <?php endif; ?>
+    <?php
+        endwhile;
+    endif;
+
+    if (!$computex_cond_hits_slider_rendered && function_exists('computex_cond_render_hits_slider')) {
+        computex_cond_render_hits_slider(null, array('fallback_random_catalog' => true));
+    }
+
+    do_action('computex_cond_front_page_before_news');
+    ?>
     <section class="news">
         <div class="container news__container flex">
             <div class="news__info">

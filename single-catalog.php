@@ -186,97 +186,11 @@ get_header();
                 <?php endif; ?>
             </div>
         </section>
-        <section class="section-product">
-            <div class="container">
-                <div class="section-product__info flex">
-                    <div class="section-product__title">
-                        <h2><?php the_field('zagolovok_hity_prodazh', 'option'); ?></h2>
-                        <?php
-                        $link = get_field('ssylka_hity_prodazh', 'option');
-                        if ($link):
-                            $link_url = $link['url'];
-                            $link_title = $link['title'];
-                            $link_target = $link['target'] ? $link['target'] : '_self';
-                        ?>
-                        <a href="<?php echo esc_url($link_url); ?>" target="<?php echo esc_attr($link_target); ?>">
-                            <?php echo esc_html($link_title); ?>
-                        </a>
-                        <?php endif; ?>
-                    </div>
-                    <div class="section-product__nav flex">
-                        <div class="swiper-product-prev swiper-nav-hover">
-                            <svg width="55" height="55" viewBox="0 0 65 65" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <rect width="65" height="65" rx="8" fill="currentColor"></rect>
-                                <path
-                                    d="M36.5816 41.5816C36.0744 42.0888 35.2808 42.1349 34.7215 41.7199L34.5613 41.5816L25.9898 33.0102C25.4827 32.503 25.4366 31.7093 25.8515 31.1501L25.9899 30.9898L34.5613 22.4184C35.1192 21.8605 36.0237 21.8605 36.5816 22.4184C37.0888 22.9256 37.1349 23.7192 36.7199 24.2785L36.5816 24.4387L29.0203 32L36.5816 39.5613C37.1395 40.1192 37.1395 41.0237 36.5816 41.5816Z"
-                                    fill="white"></path>
-                            </svg>
-                        </div>
-                        <div class="swiper-product-next swiper-nav-hover">
-                            <svg width="55" height="55" viewBox="0 0 65 65" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <rect width="65" height="65" rx="8" fill="currentColor"></rect>
-                                <path
-                                    d="M28.4184 23.4184C28.9256 22.9112 29.7192 22.8651 30.2785 23.2801L30.4387 23.4184L39.0102 31.9898C39.5173 32.497 39.5634 33.2907 39.1485 33.8499L39.0102 34.0102L30.4387 42.5816C29.8808 43.1395 28.9763 43.1395 28.4184 42.5816C27.9112 42.0744 27.8651 41.2808 28.2801 40.7215L28.4184 40.5613L35.9797 33L28.4184 25.4387C27.8605 24.8808 27.8605 23.9763 28.4184 23.4184Z"
-                                    fill="white"></path>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-                <div class="swiper swiper-product">
-                    <div class="swiper-scrollbar swiper-product-scrollbar swiper-scrollbar-horizontal"></div>
-                    <div class="swiper-wrapper swiper-product__wrapp">
-                        <?php
-                        $random_products = new WP_Query(array(
-                            'post_type' => 'catalog', // Указываем тип записи
-                            'posts_per_page' => 12, // Количество товаров для вывода
-                            'orderby' => 'rand' // Случайный порядок
-                        ));
-
-                        if ($random_products->have_posts()):
-                            while ($random_products->have_posts()):
-                                $random_products->the_post(); ?>
-                        <div class="swiper-slide swiper-product__slide">
-                            <article class="product-card">
-                                <div class="product-card__row">
-                                    <div class="product-card__img">
-                                        <?php if (has_post_thumbnail()): ?>
-                                        <?php the_post_thumbnail('medium'); ?>
-                                        <?php else: ?>
-                                        <img src="<?php echo get_template_directory_uri(); ?>/img/img-card.jpg" alt="">
-                                        <?php endif; ?>
-                                    </div>
-                                    <a class="title" href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-                                    <hr>
-                                    <ul>
-                                        <?php if (have_rows('svojstva')): ?>
-                                        <?php while (have_rows('svojstva')):
-                                                        the_row(); ?>
-                                        <li class="flex">
-                                            <p><?php echo esc_html(get_sub_field('zagolovok')); ?>: </p>
-                                            <p><?php echo esc_html(get_sub_field('znachenie')); ?></p>
-                                        </li>
-                                        <?php endwhile; ?>
-                                        <?php endif; ?>
-                                    </ul>
-                                </div>
-                                <div class="product-card__info flex">
-                                    <span
-                                        class="price"><?php echo esc_html(get_post_meta(get_the_ID(), 'czena', true)); ?>
-                                        BYN</span>
-                                    <a class="button-gray" href="<?php the_permalink(); ?>">Подробнее</a>
-                                </div>
-                            </article>
-                        </div>
-                        <?php endwhile;
-                            wp_reset_postdata();
-                        endif;
-                        ?>
-                    </div>
-                </div>
-            </div>
-        </section>
+        <?php
+        if (function_exists('computex_cond_render_hits_slider')) {
+            computex_cond_render_hits_slider(null, array('fallback_random_catalog' => true));
+        }
+        ?>
     </main>
     <?php
     get_footer();
