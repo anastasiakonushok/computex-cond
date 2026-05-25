@@ -64,8 +64,9 @@ $slides_wrapper_class = !empty($slides_wrapper_class) ? $slides_wrapper_class : 
 					if ($post_type === 'product' && function_exists('wc_get_product')) {
 						$product = wc_get_product($post_id);
 
-						if ($product && computex_cond_is_product_visible_in_hits_slider($product)) {
+						if ($product && 'publish' === $product->get_status()) {
 							$GLOBALS['product'] = $product; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+							$GLOBALS['computex_cond_hits_slider_active'] = true;
 							wc_get_template_part('content', 'product');
 							unset($GLOBALS['product']);
 						}

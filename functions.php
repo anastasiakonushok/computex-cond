@@ -300,7 +300,10 @@ function computex_cond_render_front_page_hits_slider_fallback()
 		return;
 	}
 
-	computex_cond_render_hits_slider(null, array('fallback_random_catalog' => true));
+	computex_cond_render_hits_slider(null, array(
+		'fallback_random_catalog' => false,
+		'fallback_wc_products' => true,
+	));
 }
 add_action('computex_cond_front_page_before_news', 'computex_cond_render_front_page_hits_slider_fallback', 10);
 
@@ -3038,85 +3041,63 @@ function computex_cond_import_hits_items_from_raw($raw, array &$items, array &$s
 }
 
 /**
+ * ID товаров из ACF «Настройки хитов продаж» (поле tovary).
+ *
+ * @return int[]
+ */
+function computex_cond_get_hits_tovary_product_ids()
+{
+	if (!function_exists('get_field')) {
+		return array();
+	}
+
+	$ids = array();
+
+	foreach (array('hits-sales-settings', 'option') as $acf_context) {
+		$tovary = get_field('tovary', $acf_context);
+
+		if (empty($tovary)) {
+			continue;
+		}
+
+		foreach ((array) $tovary as $item) {
+			$post_id = 0;
+
+			if ($item instanceof WP_Post) {
+				$post_id = (int) $item->ID;
+			} elseif (is_numeric($item)) {
+				$post_id = (int) $item;
+			} elseif (is_array($item) && !empty($item['ID'])) {
+				$post_id = (int) $item['ID'];
+			}
+
+			if ($post_id > 0 && get_post_type($post_id) === 'product' && get_post_status($post_id) === 'publish') {
+				$ids[] = $post_id;
+			}
+		}
+
+		if (!empty($ids)) {
+			break;
+		}
+	}
+
+	return array_values(array_unique($ids));
+}
+
+/**
  * Элементы слайдера «Хиты продаж» из ACF Options (tovary).
  *
  * @return array<int, array{id: int, type: string}>
  */
 function computex_cond_get_hits_slider_items_from_acf()
 {
-	if (!function_exists('get_field')) {
-		return array();
-	}
-
 	$items = array();
-	$seen = array();
-	$field_names = array('tovary', 'tovar', 'products', 'product');
 
-	foreach (computex_cond_get_hits_acf_option_post_ids() as $post_id) {
-		if (function_exists('have_rows')) {
-			foreach ($field_names as $field_name) {
-				if (!have_rows($field_name, $post_id)) {
-					continue;
-				}
-
-				while (have_rows($field_name, $post_id)) {
-					the_row();
-					$row_item = get_sub_field('tovar');
-
-					if (!computex_cond_acf_value_is_filled($row_item)) {
-						$row_item = get_sub_field('product');
-					}
-
-					if (!computex_cond_acf_value_is_filled($row_item)) {
-						$row_item = get_sub_field('post');
-					}
-
-					if (!computex_cond_acf_value_is_filled($row_item)) {
-						$row_item = get_sub_field($field_name);
-					}
-
-					computex_cond_push_hits_slider_item($items, $seen, computex_cond_resolve_hits_post_id($row_item));
-				}
-			}
-		}
-
-		foreach ($field_names as $field_name) {
-			computex_cond_import_hits_items_from_raw(get_field($field_name, $post_id), $items, $seen);
-		}
-
-		$all_fields = get_fields($post_id);
-
-		if (is_array($all_fields)) {
-			foreach ($all_fields as $key => $value) {
-				if (!preg_match('/tovar|product|hit/i', (string) $key)) {
-					continue;
-				}
-
-				computex_cond_import_hits_items_from_raw($value, $items, $seen);
-			}
-		}
-
-		if (!empty($items)) {
-			break;
-		}
-	}
-
-	if (empty($items)) {
-		foreach (array('options_tovary', 'computex_hits_settings_tovary', 'options_hits-sales-settings_tovary') as $option_key) {
-			$raw = get_option($option_key);
-
-			if (is_string($raw)) {
-				$raw = maybe_unserialize($raw);
-			}
-
-			if (computex_cond_acf_value_is_filled($raw)) {
-				computex_cond_import_hits_items_from_raw($raw, $items, $seen);
-			}
-
-			if (!empty($items)) {
-				break;
-			}
-		}
+	foreach (computex_cond_get_hits_tovary_product_ids() as $post_id) {
+		$items[] = array(
+			'id' => $post_id,
+			'type' => 'product',
+		);
 	}
 
 	return $items;
@@ -3249,24 +3230,56 @@ function computex_cond_render_hits_catalog_slide($post_id)
 function computex_cond_render_hits_slider($product_ids = null, $args = array())
 {
 	$defaults = array(
-		'title' => (string) computex_cond_get_hits_acf_field_value('zagolovok_hity_prodazh'),
-		'link' => computex_cond_get_hits_acf_field_value('ssylka_hity_prodazh'),
+		'title' => '',
+		'link' => null,
 		'slides_class' => 'swiper-product__wrapp',
-		'fallback_random_catalog' => true,
+		'fallback_random_catalog' => false,
+		'fallback_wc_products' => false,
 		'fallback_posts_per_page' => 12,
 	);
 
 	$args = wp_parse_args($args, $defaults);
+
+	if ($args['title'] === '') {
+		$args['title'] = function_exists('get_field')
+			? (string) (get_field('zagolovok_hity_prodazh', 'hits-sales-settings') ?: get_field('zagolovok_hity_prodazh', 'option'))
+			: '';
+	}
+
+	if (empty($args['link']) && function_exists('get_field')) {
+		$args['link'] = get_field('ssylka_hity_prodazh', 'hits-sales-settings') ?: get_field('ssylka_hity_prodazh', 'option');
+	}
+
 	$items = array();
 
 	if ($product_ids === null) {
 		$items = computex_cond_get_hits_slider_items_from_acf();
 	} else {
 		foreach (array_values(array_filter(array_map('absint', (array) $product_ids))) as $id) {
-			$items[] = array(
-				'id' => $id,
-				'type' => 'product',
-			);
+			if ($id > 0 && get_post_type($id) === 'product') {
+				$items[] = array(
+					'id' => $id,
+					'type' => 'product',
+				);
+			}
+		}
+	}
+
+	if (empty($items) && !empty($args['fallback_wc_products']) && function_exists('wc_get_products')) {
+		foreach (wc_get_products(
+			array(
+				'status' => 'publish',
+				'limit' => max(1, absint($args['fallback_posts_per_page'])),
+				'orderby' => 'menu_order',
+				'order' => 'ASC',
+			)
+		) as $wc_product) {
+			if ($wc_product instanceof WC_Product) {
+				$items[] = array(
+					'id' => $wc_product->get_id(),
+					'type' => 'product',
+				);
+			}
 		}
 	}
 
@@ -3279,6 +3292,7 @@ function computex_cond_render_hits_slider($product_ids = null, $args = array())
 	}
 
 	$GLOBALS['computex_cond_hits_slider_rendered'] = true;
+	$GLOBALS['computex_cond_hits_slider_active'] = true;
 
 	$slider_title = !empty($args['title']) ? $args['title'] : __('Хиты продаж', 'computex-cond');
 	$slider_link = $args['link'];
@@ -3319,6 +3333,8 @@ function computex_cond_render_hits_slider($product_ids = null, $args = array())
 			'slides_wrapper_class' => $slides_wrapper_class,
 		)
 	);
+
+	unset($GLOBALS['computex_cond_hits_slider_active']);
 }
 
 /**

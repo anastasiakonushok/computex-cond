@@ -55,9 +55,41 @@ get_header('main'); ?>
     </section>
     <?php elseif (get_row_layout() == 'популярные_товары') : ?>
     <?php
-            if (function_exists('computex_cond_render_hits_slider')) {
-                computex_cond_render_hits_slider(null, array('fallback_random_catalog' => true));
-                $computex_cond_hits_slider_rendered = !empty($GLOBALS['computex_cond_hits_slider_rendered']);
+            $hits_tovary = function_exists('get_field') ? get_field('tovary', 'option') : array();
+            $hits_title = function_exists('get_field') ? (string) get_field('zagolovok_hity_prodazh', 'option') : '';
+            $hits_link = function_exists('get_field') ? get_field('ssylka_hity_prodazh', 'option') : null;
+
+            if (empty($hits_tovary) && function_exists('get_field')) {
+                $hits_tovary = get_field('tovary', 'hits-sales-settings');
+                $hits_title = (string) get_field('zagolovok_hity_prodazh', 'hits-sales-settings');
+                $hits_link = get_field('ssylka_hity_prodazh', 'hits-sales-settings');
+            }
+
+            $hits_items = array();
+
+            if (!empty($hits_tovary) && function_exists('wc_get_product')) {
+                foreach ((array) $hits_tovary as $hits_post) {
+                    $hits_id = is_object($hits_post) ? (int) $hits_post->ID : (int) $hits_post;
+
+                    if ($hits_id > 0 && wc_get_product($hits_id)) {
+                        $hits_items[] = array(
+                            'id' => $hits_id,
+                            'type' => 'product',
+                        );
+                    }
+                }
+            }
+
+            if (!empty($hits_items)) {
+                $computex_cond_hits_slider_rendered = true;
+                $GLOBALS['computex_cond_hits_slider_rendered'] = true;
+                $GLOBALS['computex_cond_hits_slider_active'] = true;
+                $items = $hits_items;
+                $slider_title = $hits_title !== '' ? $hits_title : __('Хиты продаж', 'computex-cond');
+                $slider_link = $hits_link;
+                $slides_wrapper_class = 'swiper-product__wrapp products';
+                include get_template_directory() . '/template-parts/hits-product-slider.php';
+                unset($GLOBALS['computex_cond_hits_slider_active']);
             }
             ?>
     <?php elseif (get_row_layout() == 'услуги') : ?>
@@ -165,10 +197,6 @@ get_header('main'); ?>
     <?php
         endwhile;
     endif;
-
-    if (!$computex_cond_hits_slider_rendered && function_exists('computex_cond_render_hits_slider')) {
-        computex_cond_render_hits_slider(null, array('fallback_random_catalog' => true));
-    }
 
     do_action('computex_cond_front_page_before_news');
     ?>

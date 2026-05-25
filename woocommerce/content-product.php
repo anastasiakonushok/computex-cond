@@ -18,9 +18,12 @@ defined('ABSPATH') || exit;
 
 global $product;
 
+$in_hits_slider = !empty($GLOBALS['computex_cond_hits_slider_active']);
+$is_visible = $in_hits_slider
+	? computex_cond_is_product_visible_in_hits_slider($product)
+	: computex_cond_is_product_visible_in_catalog($product);
 
-
-if (empty($product) || !computex_cond_is_product_visible_in_catalog($product)) {
+if (empty($product) || !$is_visible) {
 
 	return;
 
@@ -46,27 +49,32 @@ $default_option = null;
 
 $price_product = $product;
 
-$shop_filters = computex_cond_get_shop_filter_values();
+$shop_filters = $in_hits_slider
+	? array(
+		'categories' => array(),
+		'areas' => array(),
+		'min_price' => '',
+		'max_price' => '',
+	)
+	: computex_cond_get_shop_filter_values();
 
 if ($product->is_type('variable')) {
 
 	$variation_options = computex_cond_get_product_card_variation_options($product, $shop_filters);
 
-	if (empty($variation_options)) {
+	if (empty($variation_options) && !$in_hits_slider) {
 
 		return;
 
 	}
 
-
-
-	$default_option = $variation_options[0];
-
-	$price_product = wc_get_product($default_option['id']);
-
-	$properties = !empty($default_option['characteristics'])
-		? $default_option['characteristics']
-		: computex_cond_get_card_display_properties($product_id, $default_option['id'], $default_option['label']);
+	if (!empty($variation_options)) {
+		$default_option = $variation_options[0];
+		$price_product = wc_get_product($default_option['id']);
+		$properties = !empty($default_option['characteristics'])
+			? $default_option['characteristics']
+			: computex_cond_get_card_display_properties($product_id, $default_option['id'], $default_option['label']);
+	}
 
 } elseif (!empty($shop_filters['areas']) && !$product->is_type('variable')) {
 
