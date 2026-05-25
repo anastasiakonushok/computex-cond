@@ -25,6 +25,7 @@ get_header();
                 <?php the_content(); ?>
             </div>
         </section>
+        <?php computex_cond_maybe_render_hits_slider(); ?>
     </main><!-- #main -->
 
     <?php get_footer(); ?>

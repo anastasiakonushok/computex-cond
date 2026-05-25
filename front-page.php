@@ -11,6 +11,9 @@ get_header('main'); ?>
     $computex_cond_front_stranicza_id = function_exists('computex_cond_get_front_page_stranicza_post_id')
         ? computex_cond_get_front_page_stranicza_post_id()
         : (int) get_option('page_on_front');
+    $computex_cond_front_has_hits_layout = function_exists('computex_cond_front_page_has_popular_products_layout')
+        ? computex_cond_front_page_has_popular_products_layout($computex_cond_front_stranicza_id)
+        : false;
 
     if ($computex_cond_front_stranicza_id && have_rows('stranicza', $computex_cond_front_stranicza_id)) :
         while (have_rows('stranicza', $computex_cond_front_stranicza_id)) :
@@ -53,11 +56,18 @@ get_header('main'); ?>
                         </div>
                     </div>
                 </section>
+                <?php
+                if (
+                    !$computex_cond_front_has_hits_layout
+                    && function_exists('computex_cond_render_front_page_hits_block')
+                ) {
+                    $computex_cond_hits_slider_rendered = computex_cond_render_front_page_hits_block();
+                }
+                ?>
             <?php elseif (get_row_layout() == 'популярные_товары') : ?>
                 <?php
-                if (function_exists('computex_cond_render_hits_slider_from_options')) {
-                    computex_cond_render_hits_slider_from_options();
-                    $computex_cond_hits_slider_rendered = !empty($GLOBALS['computex_cond_hits_slider_rendered']);
+                if (function_exists('computex_cond_render_front_page_hits_block')) {
+                    $computex_cond_hits_slider_rendered = computex_cond_render_front_page_hits_block();
                 }
                 ?>
             <?php elseif (get_row_layout() == 'услуги') : ?>
@@ -173,9 +183,8 @@ get_header('main'); ?>
         endwhile;
     endif;
 
-    if (empty($computex_cond_hits_slider_rendered) && function_exists('computex_cond_render_hits_slider_from_options')) {
-        computex_cond_render_hits_slider_from_options();
-        $computex_cond_hits_slider_rendered = !empty($GLOBALS['computex_cond_hits_slider_rendered']);
+    if (empty($computex_cond_hits_slider_rendered) && function_exists('computex_cond_render_front_page_hits_block')) {
+        $computex_cond_hits_slider_rendered = computex_cond_render_front_page_hits_block();
     }
 
     do_action('computex_cond_front_page_before_news');

@@ -501,6 +501,13 @@
                 "operator": "==",
                 "value": "12"
             }
+        ],
+        [
+            {
+                "param": "page_template",
+                "operator": "==",
+                "value": "front-page.php"
+            }
         ]
     ],
     "menu_order": 0,
@@ -512,5 +519,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1779706084
+    "modified": 1748192400
 }

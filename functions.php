@@ -317,6 +317,51 @@ function computex_cond_get_front_page_stranicza_post_id()
 }
 
 /**
+ * Есть ли в конструкторе главной блок «Популярные товары».
+ *
+ * @param int $post_id ID страницы с полем stranicza.
+ */
+function computex_cond_front_page_has_popular_products_layout($post_id)
+{
+	if (!$post_id || !function_exists('have_rows') || !have_rows('stranicza', $post_id)) {
+		return false;
+	}
+
+	$found = false;
+
+	while (have_rows('stranicza', $post_id)) {
+		the_row();
+
+		if (get_row_layout() === 'популярные_товары') {
+			$found = true;
+			break;
+		}
+	}
+
+	if (function_exists('reset_rows')) {
+		reset_rows();
+	}
+
+	return $found;
+}
+
+/**
+ * Слайдер хитов на главной (tovary из Options).
+ *
+ * @return bool Блок выведен.
+ */
+function computex_cond_render_front_page_hits_block()
+{
+	if (!empty($GLOBALS['computex_cond_hits_slider_rendered'])) {
+		return true;
+	}
+
+	$section_class = 'section-product section-product--front-hits';
+
+	return computex_cond_include_hits_product_slider();
+}
+
+/**
  * Слайдер хитов на главной, если шаблон не вывел его (запасной хук перед новостями).
  */
 function computex_cond_render_front_page_hits_slider_fallback()
@@ -325,11 +370,11 @@ function computex_cond_render_front_page_hits_slider_fallback()
 		return;
 	}
 
-	if (!function_exists('computex_cond_render_hits_slider_from_options')) {
+	if (!function_exists('computex_cond_render_front_page_hits_block')) {
 		return;
 	}
 
-	computex_cond_render_hits_slider_from_options();
+	computex_cond_render_front_page_hits_block();
 }
 add_action('computex_cond_front_page_before_news', 'computex_cond_render_front_page_hits_slider_fallback', 10);
 
@@ -3154,37 +3199,27 @@ function computex_cond_import_hits_items_from_raw($raw, array &$items, array &$s
  */
 function computex_cond_get_hits_tovary_product_ids()
 {
-	if (!function_exists('get_field')) {
+	$tovary = computex_cond_get_hits_acf_field_value('tovary');
+
+	if (!computex_cond_acf_value_is_filled($tovary)) {
 		return array();
 	}
 
 	$ids = array();
 
-	foreach (array('hits-sales-settings', 'option') as $acf_context) {
-		$tovary = get_field('tovary', $acf_context);
+	foreach ((array) $tovary as $item) {
+		$post_id = 0;
 
-		if (empty($tovary)) {
-			continue;
+		if ($item instanceof WP_Post) {
+			$post_id = (int) $item->ID;
+		} elseif (is_numeric($item)) {
+			$post_id = (int) $item;
+		} elseif (is_array($item) && !empty($item['ID'])) {
+			$post_id = (int) $item['ID'];
 		}
 
-		foreach ((array) $tovary as $item) {
-			$post_id = 0;
-
-			if ($item instanceof WP_Post) {
-				$post_id = (int) $item->ID;
-			} elseif (is_numeric($item)) {
-				$post_id = (int) $item;
-			} elseif (is_array($item) && !empty($item['ID'])) {
-				$post_id = (int) $item['ID'];
-			}
-
-			if ($post_id > 0 && get_post_type($post_id) === 'product' && get_post_status($post_id) === 'publish') {
-				$ids[] = $post_id;
-			}
-		}
-
-		if (!empty($ids)) {
-			break;
+		if ($post_id > 0 && get_post_type($post_id) === 'product' && get_post_status($post_id) === 'publish') {
+			$ids[] = $post_id;
 		}
 	}
 
@@ -3329,61 +3364,77 @@ function computex_cond_render_hits_catalog_slide($post_id)
 }
 
 /**
+ * Вывести слайдер хитов, если он ещё не был показан на странице.
+ *
+ * @param int $exclude_product_id Не показывать этот товар (страница товара).
+ */
+function computex_cond_maybe_render_hits_slider($exclude_product_id = 0)
+{
+	if (!empty($GLOBALS['computex_cond_hits_slider_rendered']) || is_admin()) {
+		return;
+	}
+
+	if (is_front_page()) {
+		return;
+	}
+
+	if (function_exists('is_cart') && (is_cart() || is_checkout())) {
+		return;
+	}
+
+	computex_cond_render_hits_slider_from_options($exclude_product_id);
+}
+
+/**
+ * Подключить шаблон слайдера хитов (tovary из ACF Options).
+ *
+ * @param int $exclude_product_id ID товара, который не показывать.
+ * @return bool Блок выведен.
+ */
+function computex_cond_include_hits_product_slider($exclude_product_id = 0)
+{
+	if (!function_exists('wc_get_product')) {
+		return false;
+	}
+
+	$exclude_product_id = absint($exclude_product_id);
+	$items = array();
+
+	foreach (computex_cond_get_hits_tovary_product_ids() as $hits_id) {
+		if ($hits_id > 0 && $hits_id !== $exclude_product_id && wc_get_product($hits_id)) {
+			$items[] = array(
+				'id' => $hits_id,
+				'type' => 'product',
+			);
+		}
+	}
+
+	if (empty($items)) {
+		return false;
+	}
+
+	$slider_title = (string) (computex_cond_get_hits_acf_field_value('zagolovok_hity_prodazh') ?: '');
+	$slider_link = computex_cond_get_hits_acf_field_value('ssylka_hity_prodazh');
+	$slides_wrapper_class = 'swiper-product__wrapp products';
+
+	$GLOBALS['computex_cond_hits_slider_rendered'] = true;
+	$GLOBALS['computex_cond_hits_slider_active'] = true;
+
+	include get_template_directory() . '/template-parts/hits-product-slider.php';
+
+	unset($GLOBALS['computex_cond_hits_slider_active']);
+
+	return true;
+}
+
+/**
  * Слайдер «Хиты продаж» из ACF Options (tovary, заголовок, ссылка).
  *
  * @param int $exclude_product_id Не показывать этот товар (страница товара).
  */
 function computex_cond_render_hits_slider_from_options($exclude_product_id = 0)
 {
-	if (!function_exists('wc_get_product')) {
-		return;
-	}
-
-	$hits_tovary = function_exists('get_field') ? get_field('tovary', 'option') : array();
-	$hits_title = function_exists('get_field') ? (string) get_field('zagolovok_hity_prodazh', 'option') : '';
-	$hits_link = function_exists('get_field') ? get_field('ssylka_hity_prodazh', 'option') : null;
-
-	if (empty($hits_tovary) && function_exists('get_field')) {
-		$hits_tovary = get_field('tovary', 'hits-sales-settings');
-		$hits_title = (string) get_field('zagolovok_hity_prodazh', 'hits-sales-settings');
-		$hits_link = get_field('ssylka_hity_prodazh', 'hits-sales-settings');
-	}
-
-	$exclude_product_id = absint($exclude_product_id);
-	$hits_items = array();
-
-	if (!empty($hits_tovary)) {
-		foreach ((array) $hits_tovary as $hits_post) {
-			$hits_id = is_object($hits_post) ? (int) $hits_post->ID : (int) $hits_post;
-
-			if ($hits_id > 0 && $hits_id !== $exclude_product_id && wc_get_product($hits_id)) {
-				$hits_items[] = array(
-					'id' => $hits_id,
-					'type' => 'product',
-				);
-			}
-		}
-	}
-
-	if (empty($hits_items)) {
-		return;
-	}
-
-	$GLOBALS['computex_cond_hits_slider_rendered'] = true;
-	$GLOBALS['computex_cond_hits_slider_active'] = true;
-
-	load_template(
-		get_template_directory() . '/template-parts/hits-product-slider.php',
-		false,
-		array(
-			'items' => $hits_items,
-			'slider_title' => $hits_title !== '' ? $hits_title : __('Хиты продаж', 'computex-cond'),
-			'slider_link' => $hits_link,
-			'slides_wrapper_class' => 'swiper-product__wrapp products',
-		)
-	);
-
-	unset($GLOBALS['computex_cond_hits_slider_active']);
+	computex_cond_include_hits_product_slider($exclude_product_id);
 }
 
 /**

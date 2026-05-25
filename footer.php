@@ -11,6 +11,8 @@
 
 ?>
 
+<?php computex_cond_maybe_render_hits_slider(); ?>
+
 <footer class="footer">
 	<?php computex_cond_render_map_section_contacts(); ?>
     <div class="container footer__container">

@@ -22,6 +22,8 @@ get_header();
         </div>
     </section>
 
+    <?php computex_cond_maybe_render_hits_slider(); ?>
+
 </main>
 
 <?php

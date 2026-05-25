@@ -20,8 +20,9 @@ if (empty($items)) {
 
 $slider_title = !empty($slider_title) ? $slider_title : __('Хиты продаж', 'computex-cond');
 $slides_wrapper_class = !empty($slides_wrapper_class) ? $slides_wrapper_class : 'swiper-product__wrapp';
+$section_class = !empty($section_class) ? $section_class : 'section-product';
 ?>
-<section class="section-product">
+<section class="<?php echo esc_attr($section_class); ?>">
 	<div class="container">
 		<div class="section-product__info flex">
 			<div class="section-product__title">
