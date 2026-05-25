@@ -15,160 +15,160 @@ get_header('main'); ?>
     if ($computex_cond_front_stranicza_id && have_rows('stranicza', $computex_cond_front_stranicza_id)) :
         while (have_rows('stranicza', $computex_cond_front_stranicza_id)) :
             the_row();
-            ?>
-    <?php if (get_row_layout() == 'главный_блок'): ?>
-    <section class="hero"
-        style="background-image: linear-gradient(rgba(43, 60, 77, 0.74), rgba(43, 60, 77, 0.74)), url('<?php the_sub_field('fon_izobrazhenie'); ?>'); ">
-        <div class="container hero__container">
-            <div class="hero__content">
-                <h1><?php the_sub_field('zagolovok'); ?></h1>
-                <h2><?php the_sub_field('podzagolovok'); ?></h2>
-                <p><?php the_sub_field('tekst'); ?></p>
-                <?php
+    ?>
+            <?php if (get_row_layout() == 'главный_блок'): ?>
+                <section class="hero"
+                    style="background-image: linear-gradient(rgba(43, 60, 77, 0.74), rgba(43, 60, 77, 0.74)), url('<?php the_sub_field('fon_izobrazhenie'); ?>'); ">
+                    <div class="container hero__container">
+                        <div class="hero__content">
+                            <h1><?php the_sub_field('zagolovok'); ?></h1>
+                            <h2><?php the_sub_field('podzagolovok'); ?></h2>
+                            <p><?php the_sub_field('tekst'); ?></p>
+                            <?php
                             $ssylka = get_sub_field('ssylka');
                             ?>
-                <a class="button-primary" href="<?php echo esc_url($ssylka['url']); ?>"
-                    target="<?php echo esc_attr($ssylka['target']); ?>">
-                    <?php echo esc_html($ssylka['title']); ?>
-                </a>
-            </div>
-        </div>
-    </section>
-    <?php elseif (get_row_layout() == 'популярные_бренды'): ?>
-    <section class="popular-brand">
-        <div class="popular-brand__container">
-            <div class="swiper swiper-brand-chanel">
-                <div class="swiper-wrapper">
-                    <?php if (have_rows('logo_brenda', 'option')):
+                            <a class="button-primary" href="<?php echo esc_url($ssylka['url']); ?>"
+                                target="<?php echo esc_attr($ssylka['target']); ?>">
+                                <?php echo esc_html($ssylka['title']); ?>
+                            </a>
+                        </div>
+                    </div>
+                </section>
+            <?php elseif (get_row_layout() == 'популярные_бренды'): ?>
+                <section class="popular-brand">
+                    <div class="popular-brand__container">
+                        <div class="swiper swiper-brand-chanel">
+                            <div class="swiper-wrapper">
+                                <?php if (have_rows('logo_brenda', 'option')):
                                     while (have_rows('logo_brenda', 'option')):
                                         the_row();
                                         $logo = get_sub_field('foto');
                                 ?>
-                    <div class="swiper-slide">
-                        <img src="<?php echo esc_url($logo['url']); ?>" alt="<?php echo esc_attr($logo['alt']); ?>">
+                                        <div class="swiper-slide">
+                                            <img src="<?php echo esc_url($logo['url']); ?>" alt="<?php echo esc_attr($logo['alt']); ?>">
+                                        </div>
+                                    <?php endwhile; ?>
+                                <?php endif; ?>
+                            </div>
+                        </div>
                     </div>
-                    <?php endwhile; ?>
-                    <?php endif; ?>
-                </div>
-            </div>
-        </div>
-    </section>
-    <?php elseif (get_row_layout() == 'популярные_товары') : ?>
-    <?php
-            if (function_exists('computex_cond_render_hits_slider_from_options')) {
-                computex_cond_render_hits_slider_from_options();
-                $computex_cond_hits_slider_rendered = !empty($GLOBALS['computex_cond_hits_slider_rendered']);
-            }
-            ?>
-    <?php elseif (get_row_layout() == 'услуги') : ?>
-    <section class="services-section services-section-main"
-        style="background-image: linear-gradient(rgba(43, 60, 77, 0.89), rgba(43, 60, 77, 0.89)), url('<?php the_field('fon_dlya_uslug', 'option'); ?>'); ">
-        <div class="container services-section__container flex">
-            <?php if (have_rows('uslugi_blok', 'option')):
+                </section>
+            <?php elseif (get_row_layout() == 'популярные_товары') : ?>
+                <?php
+                if (function_exists('computex_cond_render_hits_slider_from_options')) {
+                    computex_cond_render_hits_slider_from_options();
+                    $computex_cond_hits_slider_rendered = !empty($GLOBALS['computex_cond_hits_slider_rendered']);
+                }
+                ?>
+            <?php elseif (get_row_layout() == 'услуги') : ?>
+                <section class="services-section services-section-main"
+                    style="background-image: linear-gradient(rgba(43, 60, 77, 0.89), rgba(43, 60, 77, 0.89)), url('<?php the_field('fon_dlya_uslug', 'option'); ?>'); ">
+                    <div class="container services-section__container flex">
+                        <?php if (have_rows('uslugi_blok', 'option')):
                             while (have_rows('uslugi_blok', 'option')):
                                 the_row();
                                 $ssylka = get_sub_field('ssylka');
                         ?>
-            <div class="services-section__card"><span><?php the_sub_field('nomer'); ?></span>
-                <h2><?php the_sub_field('zagolovok'); ?></h2>
-                <p><?php the_sub_field('tekst'); ?></p>
-                <a class="button-primary" href="<?php echo esc_url($ssylka['url']); ?>"
-                    target="<?php echo esc_attr($ssylka['target']); ?>">
-                    <?php echo esc_html($ssylka['title']); ?>
-                </a>
-            </div>
-            <?php endwhile; ?>
+                                <div class="services-section__card"><span><?php the_sub_field('nomer'); ?></span>
+                                    <h2><?php the_sub_field('zagolovok'); ?></h2>
+                                    <p><?php the_sub_field('tekst'); ?></p>
+                                    <a class="button-primary" href="<?php echo esc_url($ssylka['url']); ?>"
+                                        target="<?php echo esc_attr($ssylka['target']); ?>">
+                                        <?php echo esc_html($ssylka['title']); ?>
+                                    </a>
+                                </div>
+                            <?php endwhile; ?>
+                        <?php endif; ?>
+                    </div>
+                </section>
+            <?php elseif (get_row_layout() == 'лучшие_предложения'): ?>
+                <section class="info-section info-section--offers">
+                    <div class="container info-section__container">
+                        <div class="info-section__grid">
+                            <?php if (have_rows('blok_skidki')) : ?>
+                                <?php while (have_rows('blok_skidki')) :
+                                    the_row();
+                                    $foto_sale = get_sub_field('izobrazhenie_sale');
+                                    $link = get_sub_field('ssylka');
+                                    $card_url = !empty($link['url']) ? $link['url'] : '#';
+                                    $card_target = !empty($link['target']) ? $link['target'] : '_self';
+                                    $fon_sale = get_sub_field('fon_izobrazhenie');
+                                    $card_style = $fon_sale ? ' style="background-image: url(\'' . esc_url($fon_sale) . '\');"' : '';
+                                ?>
+                                    <a class="info-section__card info-section__card--1 info-section__card--sale" href="<?php echo esc_url($card_url); ?>"
+                                        target="<?php echo esc_attr($card_target); ?>" <?php echo $card_style; ?>>
+                                        <div class="info-section__body">
+                                            <div class="info-section__content">
+                                                <h2><?php echo esc_html(get_sub_field('zagolovok')); ?></h2>
+                                                <p><?php echo esc_html(get_sub_field('tekst')); ?></p>
+                                                <span class="info-offer-card__btn">Подробнее</span>
+                                            </div>
+                                            <?php if (!empty($foto_sale['url'])) : ?>
+                                                <div class="info-section__media">
+                                                    <img src="<?php echo esc_url($foto_sale['url']); ?>"
+                                                        alt="<?php echo esc_attr($foto_sale['alt'] ?? ''); ?>">
+                                                </div>
+                                            <?php endif; ?>
+                                        </div>
+                                    </a>
+                                <?php endwhile; ?>
+                            <?php endif; ?>
+                            <?php if (have_rows('blok_oplaty')) : ?>
+                                <?php while (have_rows('blok_oplaty')) :
+                                    the_row();
+                                    $foto_sale = get_sub_field('izobrazhenie_oplat');
+                                    $link = get_sub_field('ssylka');
+                                    $card_url = !empty($link['url']) ? $link['url'] : '#';
+                                    $card_target = !empty($link['target']) ? $link['target'] : '_self';
+                                    $btn_label = !empty($link['title']) ? $link['title'] : 'Подробнее';
+                                ?>
+                                    <a class="info-section__card info-section__card--2 info-section__card--tall" href="<?php echo esc_url($card_url); ?>"
+                                        target="<?php echo esc_attr($card_target); ?>">
+                                        <div class="info-section__content computex-if-installment__content">
+                                            <div class="computex-if-eyebrow computex-if-installment__badge"><span class="computex-if-pulse"></span> Рассрочка 0%</div>
+                                            <h2><?php echo esc_html(get_sub_field('zagolovok')); ?></h2>
+                                            <p><?php echo esc_html(get_sub_field('tekst')); ?></p>
+                                        </div>
+                                        <?php if (!empty($foto_sale['url'])) : ?>
+                                            <div class="info-section__media info-section__media--center">
+                                                <img src="<?php echo esc_url($foto_sale['url']); ?>"
+                                                    alt="<?php echo esc_attr($foto_sale['alt'] ?? ''); ?>">
+                                            </div>
+                                        <?php endif; ?>
+                                        <span class="info-offer-card__btn"><?php echo esc_html($btn_label); ?></span>
+                                    </a>
+                                <?php endwhile; ?>
+                            <?php endif; ?>
+                            <?php if (have_rows('blok_bolshih_ploshhadej')) : ?>
+                                <?php while (have_rows('blok_bolshih_ploshhadej')) :
+                                    the_row();
+                                    $foto_sale = get_sub_field('izobrazhenie');
+                                    $link = get_sub_field('ssylka');
+                                    $card_url = !empty($link['url']) ? $link['url'] : '#';
+                                    $card_target = !empty($link['target']) ? $link['target'] : '_self';
+                                ?>
+                                    <a class="info-section__card info-section__card--3" href="<?php echo esc_url($card_url); ?>"
+                                        target="<?php echo esc_attr($card_target); ?>">
+                                        <div class="info-section__body">
+                                            <div class="info-section__content">
+                                                <h2><?php echo esc_html(get_sub_field('zagolovok')); ?></h2>
+                                                <p><?php echo esc_html(get_sub_field('tekst')); ?></p>
+                                                <span class="info-offer-card__btn">Подробнее</span>
+                                            </div>
+                                            <?php if (!empty($foto_sale['url'])) : ?>
+                                                <div class="info-section__media">
+                                                    <img src="<?php echo esc_url($foto_sale['url']); ?>"
+                                                        alt="<?php echo esc_attr($foto_sale['alt'] ?? ''); ?>">
+                                                </div>
+                                            <?php endif; ?>
+                                        </div>
+                                    </a>
+                                <?php endwhile; ?>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </section>
             <?php endif; ?>
-        </div>
-    </section>
-    <?php elseif (get_row_layout() == 'лучшие_предложения'): ?>
-    <section class="info-section info-section--offers">
-        <div class="container info-section__container">
-            <div class="info-section__grid">
-                <?php if (have_rows('blok_skidki')) : ?>
-                <?php while (have_rows('blok_skidki')) :
-                    the_row();
-                    $foto_sale = get_sub_field('izobrazhenie_sale');
-                    $link = get_sub_field('ssylka');
-                    $card_url = !empty($link['url']) ? $link['url'] : '#';
-                    $card_target = !empty($link['target']) ? $link['target'] : '_self';
-                    $fon_sale = get_sub_field('fon_izobrazhenie');
-                    $card_style = $fon_sale ? ' style="background-image: url(\'' . esc_url($fon_sale) . '\');"' : '';
-                    ?>
-                <a class="info-section__card info-section__card--1 info-section__card--sale" href="<?php echo esc_url($card_url); ?>"
-                    target="<?php echo esc_attr($card_target); ?>"<?php echo $card_style; ?>>
-                    <div class="info-section__body">
-                        <div class="info-section__content">
-                            <h2><?php echo esc_html(get_sub_field('zagolovok')); ?></h2>
-                            <p><?php echo esc_html(get_sub_field('tekst')); ?></p>
-                            <span class="info-offer-card__btn">Подробнее</span>
-                        </div>
-                        <?php if (!empty($foto_sale['url'])) : ?>
-                        <div class="info-section__media">
-                            <img src="<?php echo esc_url($foto_sale['url']); ?>"
-                                alt="<?php echo esc_attr($foto_sale['alt'] ?? ''); ?>">
-                        </div>
-                        <?php endif; ?>
-                    </div>
-                </a>
-                <?php endwhile; ?>
-                <?php endif; ?>
-                <?php if (have_rows('blok_oplaty')) : ?>
-                <?php while (have_rows('blok_oplaty')) :
-                    the_row();
-                    $foto_sale = get_sub_field('izobrazhenie_oplat');
-                    $link = get_sub_field('ssylka');
-                    $card_url = !empty($link['url']) ? $link['url'] : '#';
-                    $card_target = !empty($link['target']) ? $link['target'] : '_self';
-                    $btn_label = !empty($link['title']) ? $link['title'] : 'Подробнее';
-                    ?>
-                <a class="info-section__card info-section__card--2 info-section__card--tall" href="<?php echo esc_url($card_url); ?>"
-                    target="<?php echo esc_attr($card_target); ?>">
-                    <div class="info-section__content computex-if-installment__content">
-                        <div class="computex-if-eyebrow computex-if-installment__badge"><span class="computex-if-pulse"></span> Рассрочка 0%</div>
-                        <h2><?php echo esc_html(get_sub_field('zagolovok')); ?></h2>
-                        <p><?php echo esc_html(get_sub_field('tekst')); ?></p>
-                    </div>
-                    <?php if (!empty($foto_sale['url'])) : ?>
-                    <div class="info-section__media info-section__media--center">
-                        <img src="<?php echo esc_url($foto_sale['url']); ?>"
-                            alt="<?php echo esc_attr($foto_sale['alt'] ?? ''); ?>">
-                    </div>
-                    <?php endif; ?>
-                    <span class="info-offer-card__btn"><?php echo esc_html($btn_label); ?></span>
-                </a>
-                <?php endwhile; ?>
-                <?php endif; ?>
-                <?php if (have_rows('blok_bolshih_ploshhadej')) : ?>
-                <?php while (have_rows('blok_bolshih_ploshhadej')) :
-                    the_row();
-                    $foto_sale = get_sub_field('izobrazhenie');
-                    $link = get_sub_field('ssylka');
-                    $card_url = !empty($link['url']) ? $link['url'] : '#';
-                    $card_target = !empty($link['target']) ? $link['target'] : '_self';
-                    ?>
-                <a class="info-section__card info-section__card--3" href="<?php echo esc_url($card_url); ?>"
-                    target="<?php echo esc_attr($card_target); ?>">
-                    <div class="info-section__body">
-                        <div class="info-section__content">
-                            <h2><?php echo esc_html(get_sub_field('zagolovok')); ?></h2>
-                            <p><?php echo esc_html(get_sub_field('tekst')); ?></p>
-                            <span class="info-offer-card__btn">Подробнее</span>
-                        </div>
-                        <?php if (!empty($foto_sale['url'])) : ?>
-                        <div class="info-section__media">
-                            <img src="<?php echo esc_url($foto_sale['url']); ?>"
-                                alt="<?php echo esc_attr($foto_sale['alt'] ?? ''); ?>">
-                        </div>
-                        <?php endif; ?>
-                    </div>
-                </a>
-                <?php endwhile; ?>
-                <?php endif; ?>
-            </div>
-        </div>
-    </section>
-    <?php endif; ?>
     <?php
         endwhile;
     endif;
@@ -192,10 +192,10 @@ get_header('main'); ?>
                     $link_title = $link['title'];
                     $link_target = $link['target'] ? $link['target'] : '_self';
                 ?>
-                <a class="news__link" href="<?php echo esc_url($link_url); ?>"
-                    target="<?php echo esc_attr($link_target); ?>">
-                    <?php echo esc_html($link_title); ?>
-                </a>
+                    <a class="news__link" href="<?php echo esc_url($link_url); ?>"
+                        target="<?php echo esc_attr($link_target); ?>">
+                        <?php echo esc_html($link_title); ?>
+                    </a>
                 <?php endif; ?>
                 <div class="news__nav flex">
                     <div class="swiper-news-prev swiper-nav-hover">
@@ -227,20 +227,20 @@ get_header('main'); ?>
                         )
                     );
                     if ($posts->have_posts()): ?>
-                    <?php while ($posts->have_posts()):
+                        <?php while ($posts->have_posts()):
                             $posts->the_post(); ?>
-                    <div class="swiper-slide swiper-news__slide">
-                        <div class="news-single__content">
-                            <div class="info">
-                                <h3><?php the_title(); ?></h3>
-                                <span><?php echo get_the_date('j F Y'); ?></span>
+                            <div class="swiper-slide swiper-news__slide">
+                                <div class="news-single__content">
+                                    <div class="info">
+                                        <h3><?php the_title(); ?></h3>
+                                        <span><?php echo get_the_date('j F Y'); ?></span>
+                                    </div>
+                                    <p><?php the_excerpt(); ?>
+                                    </p>
+                                    <a class="button-primary" href="<?php the_permalink(); ?>">Подробнее</a>
+                                </div>
                             </div>
-                            <p><?php the_excerpt(); ?>
-                            </p>
-                            <a class="button-primary" href="<?php the_permalink(); ?>">Подробнее</a>
-                        </div>
-                    </div>
-                    <?php endwhile; ?>
+                        <?php endwhile; ?>
                     <?php endif;
                     wp_reset_query(); ?>
                 </div>

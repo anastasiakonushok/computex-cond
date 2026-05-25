@@ -44,9 +44,9 @@ get_header();
                         <div class="computex-if-step-num">1</div>
                         <span class="computex-if-card-icon" aria-hidden="true">
                             <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M6 11H18.5C20.433 11 22 9.433 22 7.5C22 5.567 20.433 4 18.5 4C17.285 4 16.214 4.619 15.586 5.559" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                                <path d="M5 16H25.5C27.433 16 29 14.433 29 12.5C29 10.567 27.433 9 25.5 9C24.285 9 23.214 9.619 22.586 10.559" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                                <path d="M8 21H19.5C21.433 21 23 22.567 23 24.5C23 26.433 21.433 28 19.5 28C18.285 28 17.214 27.381 16.586 26.441" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M6 11H18.5C20.433 11 22 9.433 22 7.5C22 5.567 20.433 4 18.5 4C17.285 4 16.214 4.619 15.586 5.559" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                                <path d="M5 16H25.5C27.433 16 29 14.433 29 12.5C29 10.567 27.433 9 25.5 9C24.285 9 23.214 9.619 22.586 10.559" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                                <path d="M8 21H19.5C21.433 21 23 22.567 23 24.5C23 26.433 21.433 28 19.5 28C18.285 28 17.214 27.381 16.586 26.441" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                             </svg>
                         </span>
                         <h3>Забор тепла из воздуха</h3>
@@ -56,11 +56,11 @@ get_header();
                         <div class="computex-if-step-num">2</div>
                         <span class="computex-if-card-icon" aria-hidden="true">
                             <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M8 13L16 6L24 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M10 13V25H24V13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M7 25H26" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                                <path d="M14 16H22M14 20H22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                                <path d="M10 17H6M10 21H6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M8 13L16 6L24 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M10 13V25H24V13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M7 25H26" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                                <path d="M14 16H22M14 20H22" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                                <path d="M10 17H6M10 21H6" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                             </svg>
                         </span>
                         <h3>Сжатие и повышение температуры</h3>
@@ -70,9 +70,9 @@ get_header();
                         <div class="computex-if-step-num">3</div>
                         <span class="computex-if-card-icon" aria-hidden="true">
                             <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M5 15L16 6L27 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M8.5 14.5V26H23.5V14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M13 26V19H19V26" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M5 15L16 6L27 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M8.5 14.5V26H23.5V14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M13 26V19H19V26" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                             </svg>
                         </span>
                         <h3>Передача тепла в дом</h3>
@@ -82,8 +82,8 @@ get_header();
                         <div class="computex-if-step-num">4</div>
                         <span class="computex-if-card-icon" aria-hidden="true">
                             <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M25.5 6.5C17.5 6.5 9 11 9 20C9 24.418 11.91 27 16 27C24 27 28 18 25.5 6.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M7 27C11 20 15.5 15 23 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M25.5 6.5C17.5 6.5 9 11 9 20C9 24.418 11.91 27 16 27C24 27 28 18 25.5 6.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M7 27C11 20 15.5 15 23 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                             </svg>
                         </span>
                         <h3>Экономия энергии</h3>
@@ -103,9 +103,9 @@ get_header();
                     <div class="computex-if-price-card">
                         <span class="computex-if-card-icon" aria-hidden="true">
                             <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M6 10.5C6 7.46243 10.4772 5 16 5C21.5228 5 26 7.46243 26 10.5V21.5C26 24.5376 21.5228 27 16 27C10.4772 27 6 24.5376 6 21.5V10.5Z" stroke="currentColor" stroke-width="2"/>
-                                <path d="M26 10.5C26 13.5376 21.5228 16 16 16C10.4772 16 6 13.5376 6 10.5" stroke="currentColor" stroke-width="2"/>
-                                <path d="M26 16C26 19.0376 21.5228 21.5 16 21.5C10.4772 21.5 6 19.0376 6 16" stroke="currentColor" stroke-width="2"/>
+                                <path d="M6 10.5C6 7.46243 10.4772 5 16 5C21.5228 5 26 7.46243 26 10.5V21.5C26 24.5376 21.5228 27 16 27C10.4772 27 6 24.5376 6 21.5V10.5Z" stroke="currentColor" stroke-width="2" />
+                                <path d="M26 10.5C26 13.5376 21.5228 16 16 16C10.4772 16 6 13.5376 6 10.5" stroke="currentColor" stroke-width="2" />
+                                <path d="M26 16C26 19.0376 21.5228 21.5 16 21.5C10.4772 21.5 6 19.0376 6 16" stroke="currentColor" stroke-width="2" />
                             </svg>
                         </span>
                         <h3>Альтернатива газу</h3>
@@ -114,8 +114,8 @@ get_header();
                     <div class="computex-if-price-card">
                         <span class="computex-if-card-icon" aria-hidden="true">
                             <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M26.5 5.5C17 5.5 9 10.5 9 19.5C9 24 12 27 16.5 27C25.5 27 29 17.5 26.5 5.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-                                <path d="M6 26C10.5 18 16 13 24 9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M26.5 5.5C17 5.5 9 10.5 9 19.5C9 24 12 27 16.5 27C25.5 27 29 17.5 26.5 5.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+                                <path d="M6 26C10.5 18 16 13 24 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                             </svg>
                         </span>
                         <h3>Экологичные хладагенты</h3>
@@ -124,8 +124,8 @@ get_header();
                     <div class="computex-if-price-card">
                         <span class="computex-if-card-icon" aria-hidden="true">
                             <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="16" cy="16" r="5" stroke="currentColor" stroke-width="2"/>
-                                <path d="M16 3V7M16 25V29M3 16H7M25 16H29M6.80761 6.80761L9.63604 9.63604M22.364 22.364L25.1924 25.1924M25.1924 6.80761L22.364 9.63604M9.63604 22.364L6.80761 25.1924" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                <circle cx="16" cy="16" r="5" stroke="currentColor" stroke-width="2" />
+                                <path d="M16 3V7M16 25V29M3 16H7M25 16H29M6.80761 6.80761L9.63604 9.63604M22.364 22.364L25.1924 25.1924M25.1924 6.80761L22.364 9.63604M9.63604 22.364L6.80761 25.1924" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                             </svg>
                         </span>
                         <h3>Климат круглый год</h3>
@@ -134,9 +134,9 @@ get_header();
                     <div class="computex-if-price-card">
                         <span class="computex-if-card-icon" aria-hidden="true">
                             <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M5 13L16 6L27 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M8 13V25M14 13V25M20 13V25M26 13V25" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                                <path d="M5 25H27" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M5 13L16 6L27 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M8 13V25M14 13V25M20 13V25M26 13V25" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                                <path d="M5 25H27" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                             </svg>
                         </span>
                         <h3>Умное управление</h3>
@@ -189,8 +189,8 @@ get_header();
                     <div class="computex-if-warranty computex-if-warranty--compact">
                         <div class="computex-if-warranty__icon" aria-hidden="true">
                             <svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M21 5L33 10V19C33 27 28.1 34 21 37C13.9 34 9 27 9 19V10L21 5Z" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
-                                <path d="M15 21L19 25L27.5 16.5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M21 5L33 10V19C33 27 28.1 34 21 37C13.9 34 9 27 9 19V10L21 5Z" stroke="currentColor" stroke-width="3" stroke-linejoin="round" />
+                                <path d="M15 21L19 25L27.5 16.5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
                             </svg>
                         </div>
                         <div class="computex-if-warranty__content">
@@ -236,8 +236,8 @@ get_header();
                     <div class="computex-if-trust-card">
                         <span class="computex-if-card-icon" aria-hidden="true">
                             <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M16 4L25 8V15C25 21 21.2 26.2 16 28C10.8 26.2 7 21 7 15V8L16 4Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-                                <path d="M11.5 15.5L14.5 18.5L21 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M16 4L25 8V15C25 21 21.2 26.2 16 28C10.8 26.2 7 21 7 15V8L16 4Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+                                <path d="M11.5 15.5L14.5 18.5L21 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                             </svg>
                         </span>
                         <h3>Выезд по Гомелю</h3>
@@ -246,8 +246,8 @@ get_header();
                     <div class="computex-if-trust-card">
                         <span class="computex-if-card-icon" aria-hidden="true">
                             <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M16 4V8M16 24V28M4 16H8M24 16H28M7.5 7.5L10.3 10.3M21.7 21.7L24.5 24.5M24.5 7.5L21.7 10.3M10.3 21.7L7.5 24.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                                <circle cx="16" cy="16" r="6" stroke="currentColor" stroke-width="2"/>
+                                <path d="M16 4V8M16 24V28M4 16H8M24 16H28M7.5 7.5L10.3 10.3M21.7 21.7L24.5 24.5M24.5 7.5L21.7 10.3M10.3 21.7L7.5 24.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                                <circle cx="16" cy="16" r="6" stroke="currentColor" stroke-width="2" />
                             </svg>
                         </span>
                         <h3>Расчет под параметры</h3>
@@ -256,8 +256,8 @@ get_header();
                     <div class="computex-if-trust-card">
                         <span class="computex-if-card-icon" aria-hidden="true">
                             <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M16 28C16 28 25 20.5 25 12.5C25 7.52944 20.9706 4 16 4C11.0294 4 7 7.52944 7 12.5C7 20.5 16 28 16 28Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-                                <circle cx="16" cy="12.5" r="3.5" stroke="currentColor" stroke-width="2"/>
+                                <path d="M16 28C16 28 25 20.5 25 12.5C25 7.52944 20.9706 4 16 4C11.0294 4 7 7.52944 7 12.5C7 20.5 16 28 16 28Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+                                <circle cx="16" cy="12.5" r="3.5" stroke="currentColor" stroke-width="2" />
                             </svg>
                         </span>
                         <h3>Понятная смета</h3>
@@ -266,9 +266,9 @@ get_header();
                     <div class="computex-if-trust-card">
                         <span class="computex-if-card-icon" aria-hidden="true">
                             <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="16" cy="12" r="7" stroke="currentColor" stroke-width="2"/>
-                                <path d="M12 18L10 28L16 24L22 28L20 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M13 12L15 14L19.5 9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="16" cy="12" r="7" stroke="currentColor" stroke-width="2" />
+                                <path d="M12 18L10 28L16 24L22 28L20 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M13 12L15 14L19.5 9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                             </svg>
                         </span>
                         <h3>Запуск и настройка</h3>
