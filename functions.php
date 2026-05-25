@@ -2701,6 +2701,7 @@ function computex_cond_get_brand_option_map()
 		'Ultima' => 'ultima_opisanie',
 		'General' => 'general_opisanie',
 		'TLC' => 'tlc_opisanie',
+		'Daichi' => 'daichi_opisanie',
 	);
 }
 

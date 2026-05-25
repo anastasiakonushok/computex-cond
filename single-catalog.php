@@ -104,6 +104,8 @@ get_header();
                                 }
 								elseif ($selected_brand === 'TLC') {
                                     $description = get_field('tlc_opisanie', 'option');
+                                } elseif ($selected_brand === 'Daichi') {
+                                    $description = get_field('daichi_opisanie', 'option');
                                 }
 
                                 // Выводим описание на странице
