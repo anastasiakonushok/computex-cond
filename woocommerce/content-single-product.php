@@ -255,33 +255,39 @@ $variations_json = !empty($variation_options)
 	<?php endif; ?>
 
 	<?php
-	$related = wc_get_related_products($product_id, 12);
+	$hits_tovary = function_exists('get_field') ? get_field('tovary', 'option') : array();
+	$hits_title = function_exists('get_field') ? (string) get_field('zagolovok_hity_prodazh', 'option') : '';
+	$hits_link = function_exists('get_field') ? get_field('ssylka_hity_prodazh', 'option') : null;
 
-	if (empty($related)) {
-		$fallback_products = wc_get_products(
-			array(
-				'status' => 'publish',
-				'limit' => 12,
-				'exclude' => array($product_id),
-				'orderby' => 'rand',
-			)
-		);
+	if (empty($hits_tovary) && function_exists('get_field')) {
+		$hits_tovary = get_field('tovary', 'hits-sales-settings');
+		$hits_title = (string) get_field('zagolovok_hity_prodazh', 'hits-sales-settings');
+		$hits_link = get_field('ssylka_hity_prodazh', 'hits-sales-settings');
+	}
 
-		foreach ($fallback_products as $fallback_product) {
-			if ($fallback_product instanceof WC_Product) {
-				$related[] = $fallback_product->get_id();
+	$hits_items = array();
+
+	if (!empty($hits_tovary) && function_exists('wc_get_product')) {
+		foreach ((array) $hits_tovary as $hits_post) {
+			$hits_id = is_object($hits_post) ? (int) $hits_post->ID : (int) $hits_post;
+
+			if ($hits_id > 0 && $hits_id !== $product_id && wc_get_product($hits_id)) {
+				$hits_items[] = array(
+					'id' => $hits_id,
+					'type' => 'product',
+				);
 			}
 		}
 	}
 
-	if (!empty($related)) {
-		computex_cond_render_hits_slider(
-			$related,
-			array(
-				'title' => function_exists('get_field') ? (string) get_field('zagolovok_hity_prodazh', 'option') : __('Похожие товары', 'computex-cond'),
-				'link' => function_exists('get_field') ? get_field('ssylka_hity_prodazh', 'option') : null,
-			)
-		);
+	if (!empty($hits_items)) {
+		$GLOBALS['computex_cond_hits_slider_active'] = true;
+		$items = $hits_items;
+		$slider_title = $hits_title !== '' ? $hits_title : __('Хиты продаж', 'computex-cond');
+		$slider_link = $hits_link;
+		$slides_wrapper_class = 'swiper-product__wrapp products';
+		include get_template_directory() . '/template-parts/hits-product-slider.php';
+		unset($GLOBALS['computex_cond_hits_slider_active']);
 	}
 	?>
 </div>

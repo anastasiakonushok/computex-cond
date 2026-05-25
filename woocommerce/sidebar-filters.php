@@ -21,9 +21,30 @@ $product_categories = get_terms(
 );
 
 $area_terms = computex_cond_get_area_filter_terms();
-$has_active_filters = !empty($filters['categories']) || !empty($filters['areas']) || $filters['min_price'] !== '' || $filters['max_price'] !== '';
+$hits_filter_options = array(
+	'acf' => array(
+		'label' => 'Избранное',
+		'count' => count(computex_cond_get_hits_tovary_product_ids()),
+	),
+	'featured' => array(
+		'label' => 'Советуем',
+		'count' => count(computex_cond_get_featured_product_ids()),
+	),
+);
+$has_hits_filters = array_filter(
+	$hits_filter_options,
+	function ($option) {
+		return $option['count'] > 0;
+	}
+);
 
-$active_filter_count = count($filters['categories']) + count($filters['areas']);
+$has_active_filters = !empty($filters['categories'])
+	|| !empty($filters['hits'])
+	|| !empty($filters['areas'])
+	|| $filters['min_price'] !== ''
+	|| $filters['max_price'] !== '';
+
+$active_filter_count = count($filters['categories']) + count($filters['hits']) + count($filters['areas']);
 if ($filters['min_price'] !== '') {
 	$active_filter_count++;
 }
@@ -78,6 +99,38 @@ if ($filters['max_price'] !== '') {
 					<p class="shop-filters__empty">Нет категорий</p>
 				<?php endif; ?>
 			</section>
+
+			<?php if (!empty($has_hits_filters)) : ?>
+				<section class="shop-filters__section">
+					<h3 class="shop-filters__section-title">
+						<span class="shop-filters__section-icon" aria-hidden="true">
+							<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M9 2.5l1.8 3.6 4 .6-2.9 2.8.7 4-3.6-1.9-3.6 1.9.7-4L3.2 6.7l4-.6L9 2.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+							</svg>
+						</span>
+						Хиты продаж
+					</h3>
+					<ul class="shop-filters__list">
+						<?php foreach ($has_hits_filters as $hit_key => $hit_option) : ?>
+							<?php $is_checked = in_array($hit_key, $filters['hits'], true); ?>
+							<li class="shop-filters__item">
+								<label class="shop-filters__check<?php echo $is_checked ? ' is-active' : ''; ?>">
+									<input
+										type="checkbox"
+										class="shop-filters__input"
+										name="filter_hits[]"
+										value="<?php echo esc_attr($hit_key); ?>"
+										<?php checked($is_checked); ?>
+									>
+									<span class="shop-filters__box" aria-hidden="true"></span>
+									<span class="shop-filters__label"><?php echo esc_html($hit_option['label']); ?></span>
+									<span class="shop-filters__count"><?php echo esc_html((string) $hit_option['count']); ?></span>
+								</label>
+							</li>
+						<?php endforeach; ?>
+					</ul>
+				</section>
+			<?php endif; ?>
 
 			<section class="shop-filters__section">
 				<h3 class="shop-filters__section-title">

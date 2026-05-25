@@ -1255,6 +1255,15 @@ function computex_cond_normalize_shop_filter_request()
 		$_GET['filter_category'] = $categories;
 		$_REQUEST['filter_category'] = $categories;
 	}
+
+	if (isset($_GET['filter_hits'])) {
+		$allowed_hits = array('acf', 'featured');
+		$hits = array_map('computex_cond_decode_filter_param', (array) wp_unslash($_GET['filter_hits']));
+		$hits = array_values(array_intersect($allowed_hits, array_filter($hits)));
+
+		$_GET['filter_hits'] = $hits;
+		$_REQUEST['filter_hits'] = $hits;
+	}
 }
 
 add_action('init', 'computex_cond_normalize_shop_filter_request', 1);
@@ -1301,15 +1310,74 @@ function computex_cond_get_shop_filter_values()
 		);
 	}
 
+	$hits = array();
+
+	if (isset($_GET['filter_hits'])) {
+		$allowed_hits = array('acf', 'featured');
+		$hits = array_map('computex_cond_decode_filter_param', (array) $_GET['filter_hits']);
+		$hits = array_values(array_intersect($allowed_hits, array_filter($hits)));
+	}
+
 	$min_price = isset($_GET['min_price']) ? wc_clean(wp_unslash($_GET['min_price'])) : '';
 	$max_price = isset($_GET['max_price']) ? wc_clean(wp_unslash($_GET['max_price'])) : '';
 
 	return array(
 		'categories' => $categories,
+		'hits' => $hits,
 		'min_price' => ($min_price !== '' && (float) $min_price > 0) ? $min_price : '',
 		'max_price' => ($max_price !== '' && (float) $max_price > 0) ? $max_price : '',
 		'areas' => $areas,
 	);
+}
+
+/**
+ * ID товаров WooCommerce с меткой «Рекомендуемый» (Советуем).
+ *
+ * @return int[]
+ */
+function computex_cond_get_featured_product_ids()
+{
+	if (!function_exists('wc_get_products')) {
+		return array();
+	}
+
+	$products = wc_get_products(
+		array(
+			'status' => 'publish',
+			'limit' => -1,
+			'featured' => true,
+			'return' => 'ids',
+		)
+	);
+
+	return array_values(array_unique(array_map('intval', (array) $products)));
+}
+
+/**
+ * ID товаров по фильтру «Хиты продаж» (acf = из настроек, featured = Советуем).
+ *
+ * @param string[] $hit_filters Значения filter_hits[].
+ * @return int[]
+ */
+function computex_cond_get_product_ids_by_hits_filters($hit_filters)
+{
+	$hit_filters = array_values(array_intersect(array('acf', 'featured'), (array) $hit_filters));
+
+	if (empty($hit_filters)) {
+		return array();
+	}
+
+	$product_ids = array();
+
+	if (in_array('acf', $hit_filters, true)) {
+		$product_ids = array_merge($product_ids, computex_cond_get_hits_tovary_product_ids());
+	}
+
+	if (in_array('featured', $hit_filters, true)) {
+		$product_ids = array_merge($product_ids, computex_cond_get_featured_product_ids());
+	}
+
+	return array_values(array_unique(array_map('intval', $product_ids)));
 }
 
 function computex_cond_get_area_attribute_taxonomy()
@@ -1835,6 +1903,7 @@ function computex_cond_has_active_shop_filters()
 	$filters = computex_cond_get_shop_filter_values();
 
 	return !empty($filters['categories'])
+		|| !empty($filters['hits'])
 		|| !empty($filters['areas'])
 		|| $filters['min_price'] !== ''
 		|| $filters['max_price'] !== '';
@@ -1966,7 +2035,7 @@ function computex_cond_apply_shop_filters_to_main_query($query)
 
 	$filters = computex_cond_get_shop_filter_values();
 
-	if (empty($filters['categories']) && empty($filters['areas'])) {
+	if (empty($filters['categories']) && empty($filters['areas']) && empty($filters['hits'])) {
 		return;
 	}
 
@@ -1994,6 +2063,13 @@ function computex_cond_apply_shop_filters_to_main_query($query)
 		);
 	}
 
+	if (!empty($filters['hits'])) {
+		$product_ids = computex_cond_merge_product_id_filters(
+			$product_ids,
+			computex_cond_get_product_ids_by_hits_filters($filters['hits'])
+		);
+	}
+
 	$query->set('post__in', !empty($product_ids) ? $product_ids : array(0));
 }
 
@@ -2011,6 +2087,10 @@ function computex_cond_get_shop_pagination_add_args()
 
 	foreach ($filters['areas'] as $area_slug) {
 		$query_args['filter_area'][] = $area_slug;
+	}
+
+	foreach ($filters['hits'] as $hit_slug) {
+		$query_args['filter_hits'][] = $hit_slug;
 	}
 
 	if ($filters['min_price'] !== '') {
