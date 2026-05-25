@@ -534,6 +534,11 @@ get_header();
                 </div>
             </div>
         </section>
+        <?php
+        if (function_exists('computex_cond_render_hits_slider_from_options')) {
+            computex_cond_render_hits_slider_from_options();
+        }
+        ?>
     </main>
 </div>
 

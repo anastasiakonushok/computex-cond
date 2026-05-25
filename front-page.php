@@ -55,41 +55,9 @@ get_header('main'); ?>
     </section>
     <?php elseif (get_row_layout() == 'популярные_товары') : ?>
     <?php
-            $hits_tovary = function_exists('get_field') ? get_field('tovary', 'option') : array();
-            $hits_title = function_exists('get_field') ? (string) get_field('zagolovok_hity_prodazh', 'option') : '';
-            $hits_link = function_exists('get_field') ? get_field('ssylka_hity_prodazh', 'option') : null;
-
-            if (empty($hits_tovary) && function_exists('get_field')) {
-                $hits_tovary = get_field('tovary', 'hits-sales-settings');
-                $hits_title = (string) get_field('zagolovok_hity_prodazh', 'hits-sales-settings');
-                $hits_link = get_field('ssylka_hity_prodazh', 'hits-sales-settings');
-            }
-
-            $hits_items = array();
-
-            if (!empty($hits_tovary) && function_exists('wc_get_product')) {
-                foreach ((array) $hits_tovary as $hits_post) {
-                    $hits_id = is_object($hits_post) ? (int) $hits_post->ID : (int) $hits_post;
-
-                    if ($hits_id > 0 && wc_get_product($hits_id)) {
-                        $hits_items[] = array(
-                            'id' => $hits_id,
-                            'type' => 'product',
-                        );
-                    }
-                }
-            }
-
-            if (!empty($hits_items)) {
-                $computex_cond_hits_slider_rendered = true;
-                $GLOBALS['computex_cond_hits_slider_rendered'] = true;
-                $GLOBALS['computex_cond_hits_slider_active'] = true;
-                $items = $hits_items;
-                $slider_title = $hits_title !== '' ? $hits_title : __('Хиты продаж', 'computex-cond');
-                $slider_link = $hits_link;
-                $slides_wrapper_class = 'swiper-product__wrapp products';
-                include get_template_directory() . '/template-parts/hits-product-slider.php';
-                unset($GLOBALS['computex_cond_hits_slider_active']);
+            if (function_exists('computex_cond_render_hits_slider_from_options')) {
+                computex_cond_render_hits_slider_from_options();
+                $computex_cond_hits_slider_rendered = !empty($GLOBALS['computex_cond_hits_slider_rendered']);
             }
             ?>
     <?php elseif (get_row_layout() == 'услуги') : ?>
@@ -114,7 +82,7 @@ get_header('main'); ?>
         </div>
     </section>
     <?php elseif (get_row_layout() == 'лучшие_предложения'): ?>
-    <section class="info-section">
+    <section class="info-section info-section--offers">
         <div class="container info-section__container">
             <div class="info-section__grid">
                 <?php if (have_rows('blok_skidki')) : ?>
@@ -124,21 +92,24 @@ get_header('main'); ?>
                     $link = get_sub_field('ssylka');
                     $card_url = !empty($link['url']) ? $link['url'] : '#';
                     $card_target = !empty($link['target']) ? $link['target'] : '_self';
+                    $fon_sale = get_sub_field('fon_izobrazhenie');
+                    $card_style = $fon_sale ? ' style="background-image: url(\'' . esc_url($fon_sale) . '\');"' : '';
                     ?>
-                <a class="info-section__card info-section__card--1" href="<?php echo esc_url($card_url); ?>"
-                    target="<?php echo esc_attr($card_target); ?>"
-                    style="background-image: url('<?php echo esc_url(get_sub_field('fon_izobrazhenie')); ?>');">
-                    <div class="info-section__text">
-                        <h2><?php echo esc_html(get_sub_field('zagolovok')); ?></h2>
-                        <p><?php echo esc_html(get_sub_field('tekst')); ?></p>
-                        <span>Подробнее</span>
+                <a class="info-section__card info-section__card--1 info-section__card--sale" href="<?php echo esc_url($card_url); ?>"
+                    target="<?php echo esc_attr($card_target); ?>"<?php echo $card_style; ?>>
+                    <div class="info-section__body">
+                        <div class="info-section__content">
+                            <h2><?php echo esc_html(get_sub_field('zagolovok')); ?></h2>
+                            <p><?php echo esc_html(get_sub_field('tekst')); ?></p>
+                            <span class="info-offer-card__btn">Подробнее</span>
+                        </div>
+                        <?php if (!empty($foto_sale['url'])) : ?>
+                        <div class="info-section__media">
+                            <img src="<?php echo esc_url($foto_sale['url']); ?>"
+                                alt="<?php echo esc_attr($foto_sale['alt'] ?? ''); ?>">
+                        </div>
+                        <?php endif; ?>
                     </div>
-                    <?php if (!empty($foto_sale['url'])) : ?>
-                    <div class="info-section__img">
-                        <img src="<?php echo esc_url($foto_sale['url']); ?>"
-                            alt="<?php echo esc_attr($foto_sale['alt'] ?? ''); ?>">
-                    </div>
-                    <?php endif; ?>
                 </a>
                 <?php endwhile; ?>
                 <?php endif; ?>
@@ -149,20 +120,22 @@ get_header('main'); ?>
                     $link = get_sub_field('ssylka');
                     $card_url = !empty($link['url']) ? $link['url'] : '#';
                     $card_target = !empty($link['target']) ? $link['target'] : '_self';
+                    $btn_label = !empty($link['title']) ? $link['title'] : 'Подробнее';
                     ?>
-                <a class="info-section__card info-section__card--2" href="<?php echo esc_url($card_url); ?>"
+                <a class="info-section__card info-section__card--2 info-section__card--tall" href="<?php echo esc_url($card_url); ?>"
                     target="<?php echo esc_attr($card_target); ?>">
-                    <div class="info-section__info">
+                    <div class="info-section__content computex-if-installment__content">
+                        <div class="computex-if-eyebrow computex-if-installment__badge"><span class="computex-if-pulse"></span> Рассрочка 0%</div>
                         <h2><?php echo esc_html(get_sub_field('zagolovok')); ?></h2>
                         <p><?php echo esc_html(get_sub_field('tekst')); ?></p>
                     </div>
                     <?php if (!empty($foto_sale['url'])) : ?>
-                    <img src="<?php echo esc_url($foto_sale['url']); ?>"
-                        alt="<?php echo esc_attr($foto_sale['alt'] ?? ''); ?>">
+                    <div class="info-section__media info-section__media--center">
+                        <img src="<?php echo esc_url($foto_sale['url']); ?>"
+                            alt="<?php echo esc_attr($foto_sale['alt'] ?? ''); ?>">
+                    </div>
                     <?php endif; ?>
-                    <?php if (!empty($link['title'])) : ?>
-                    <span><?php echo esc_html($link['title']); ?></span>
-                    <?php endif; ?>
+                    <span class="info-offer-card__btn"><?php echo esc_html($btn_label); ?></span>
                 </a>
                 <?php endwhile; ?>
                 <?php endif; ?>
@@ -176,17 +149,19 @@ get_header('main'); ?>
                     ?>
                 <a class="info-section__card info-section__card--3" href="<?php echo esc_url($card_url); ?>"
                     target="<?php echo esc_attr($card_target); ?>">
-                    <div class="info-section__text">
-                        <h2><?php echo esc_html(get_sub_field('zagolovok')); ?></h2>
-                        <p><?php echo esc_html(get_sub_field('tekst')); ?></p>
-                        <span>Подробнее</span>
+                    <div class="info-section__body">
+                        <div class="info-section__content">
+                            <h2><?php echo esc_html(get_sub_field('zagolovok')); ?></h2>
+                            <p><?php echo esc_html(get_sub_field('tekst')); ?></p>
+                            <span class="info-offer-card__btn">Подробнее</span>
+                        </div>
+                        <?php if (!empty($foto_sale['url'])) : ?>
+                        <div class="info-section__media">
+                            <img src="<?php echo esc_url($foto_sale['url']); ?>"
+                                alt="<?php echo esc_attr($foto_sale['alt'] ?? ''); ?>">
+                        </div>
+                        <?php endif; ?>
                     </div>
-                    <?php if (!empty($foto_sale['url'])) : ?>
-                    <div class="info-section__img">
-                        <img src="<?php echo esc_url($foto_sale['url']); ?>"
-                            alt="<?php echo esc_attr($foto_sale['alt'] ?? ''); ?>">
-                    </div>
-                    <?php endif; ?>
                 </a>
                 <?php endwhile; ?>
                 <?php endif; ?>
@@ -197,6 +172,11 @@ get_header('main'); ?>
     <?php
         endwhile;
     endif;
+
+    if (empty($computex_cond_hits_slider_rendered) && function_exists('computex_cond_render_hits_slider_from_options')) {
+        computex_cond_render_hits_slider_from_options();
+        $computex_cond_hits_slider_rendered = !empty($GLOBALS['computex_cond_hits_slider_rendered']);
+    }
 
     do_action('computex_cond_front_page_before_news');
     ?>

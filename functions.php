@@ -200,6 +200,35 @@ function computex_cond_get_asset_version($relative_path)
 }
 
 /**
+ * SVG-иконки блока контактов (карта / футер) в стиле computex-if.
+ *
+ * @param string $type location|phone|clock
+ */
+function computex_cond_map_section_icon($type)
+{
+	$stroke = '2.5';
+	$icons = array(
+		'location' => '<svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M16 26.5C16 26.5 23.5 19 23.5 13C23.5 9.13401 20.134 6 16 6C11.866 6 8.5 9.13401 8.5 13C8.5 19 16 26.5 16 26.5Z" stroke="currentColor" stroke-width="' . $stroke . '" stroke-linejoin="round"/><circle cx="16" cy="13" r="3" stroke="currentColor" stroke-width="' . $stroke . '"/></svg>',
+		'phone' => '<svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="10.5" y="5.5" width="11" height="21" rx="2.5" stroke="currentColor" stroke-width="' . $stroke . '"/><path d="M13.5 23.5H18.5" stroke="currentColor" stroke-width="' . $stroke . '" stroke-linecap="round"/><path d="M14.5 8H17.5" stroke="currentColor" stroke-width="' . $stroke . '" stroke-linecap="round"/></svg>',
+		'clock' => '<svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="16" cy="16" r="10.5" stroke="currentColor" stroke-width="' . $stroke . '"/><path d="M16 11V16H20" stroke="currentColor" stroke-width="' . $stroke . '" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+		'mail' => '<svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="5" y="8" width="22" height="16" rx="2.5" stroke="currentColor" stroke-width="' . $stroke . '"/><path d="M5 10.5L16 18L27 10.5" stroke="currentColor" stroke-width="' . $stroke . '" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+		'doc' => '<svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M10 5H18L24 11V25C24 26.6569 22.6569 28 21 28H11C9.34315 28 8 26.6569 8 25V7C8 5.34315 9.34315 4 11 4H10Z" stroke="currentColor" stroke-width="' . $stroke . '" stroke-linejoin="round"/><path d="M18 5V11H24" stroke="currentColor" stroke-width="' . $stroke . '" stroke-linejoin="round"/><path d="M12 17H20M12 21H17" stroke="currentColor" stroke-width="' . $stroke . '" stroke-linecap="round"/></svg>',
+	);
+
+	return isset($icons[$type]) ? $icons[$type] : '';
+}
+
+/**
+ * Блок контактов в футере / на страницах каталога.
+ *
+ * @param array $args Аргументы для template-parts/map-section-contacts.php.
+ */
+function computex_cond_render_map_section_contacts($args = array())
+{
+	get_template_part('template-parts/map-section', 'contacts', $args);
+}
+
+/**
  * Enqueue scripts and styles.
  */
 function computex_cond_scripts()
@@ -296,14 +325,11 @@ function computex_cond_render_front_page_hits_slider_fallback()
 		return;
 	}
 
-	if (!function_exists('computex_cond_render_hits_slider')) {
+	if (!function_exists('computex_cond_render_hits_slider_from_options')) {
 		return;
 	}
 
-	computex_cond_render_hits_slider(null, array(
-		'fallback_random_catalog' => false,
-		'fallback_wc_products' => true,
-	));
+	computex_cond_render_hits_slider_from_options();
 }
 add_action('computex_cond_front_page_before_news', 'computex_cond_render_front_page_hits_slider_fallback', 10);
 
@@ -3299,6 +3325,64 @@ function computex_cond_render_hits_catalog_slide($post_id)
 		</div>
 	</article>
 	<?php
+}
+
+/**
+ * Слайдер «Хиты продаж» из ACF Options (tovary, заголовок, ссылка).
+ *
+ * @param int $exclude_product_id Не показывать этот товар (страница товара).
+ */
+function computex_cond_render_hits_slider_from_options($exclude_product_id = 0)
+{
+	if (!function_exists('wc_get_product')) {
+		return;
+	}
+
+	$hits_tovary = function_exists('get_field') ? get_field('tovary', 'option') : array();
+	$hits_title = function_exists('get_field') ? (string) get_field('zagolovok_hity_prodazh', 'option') : '';
+	$hits_link = function_exists('get_field') ? get_field('ssylka_hity_prodazh', 'option') : null;
+
+	if (empty($hits_tovary) && function_exists('get_field')) {
+		$hits_tovary = get_field('tovary', 'hits-sales-settings');
+		$hits_title = (string) get_field('zagolovok_hity_prodazh', 'hits-sales-settings');
+		$hits_link = get_field('ssylka_hity_prodazh', 'hits-sales-settings');
+	}
+
+	$exclude_product_id = absint($exclude_product_id);
+	$hits_items = array();
+
+	if (!empty($hits_tovary)) {
+		foreach ((array) $hits_tovary as $hits_post) {
+			$hits_id = is_object($hits_post) ? (int) $hits_post->ID : (int) $hits_post;
+
+			if ($hits_id > 0 && $hits_id !== $exclude_product_id && wc_get_product($hits_id)) {
+				$hits_items[] = array(
+					'id' => $hits_id,
+					'type' => 'product',
+				);
+			}
+		}
+	}
+
+	if (empty($hits_items)) {
+		return;
+	}
+
+	$GLOBALS['computex_cond_hits_slider_rendered'] = true;
+	$GLOBALS['computex_cond_hits_slider_active'] = true;
+
+	load_template(
+		get_template_directory() . '/template-parts/hits-product-slider.php',
+		false,
+		array(
+			'items' => $hits_items,
+			'slider_title' => $hits_title !== '' ? $hits_title : __('Хиты продаж', 'computex-cond'),
+			'slider_link' => $hits_link,
+			'slides_wrapper_class' => 'swiper-product__wrapp products',
+		)
+	);
+
+	unset($GLOBALS['computex_cond_hits_slider_active']);
 }
 
 /**

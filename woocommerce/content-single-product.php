@@ -227,7 +227,7 @@ $variations_json = !empty($variation_options)
 		?>
 		<section
 			style="background-image: linear-gradient(rgba(43, 60, 77, 0.89), rgba(43, 60, 77, 0.89)), url('<?php echo esc_url($services_bg); ?>');"
-			class="services-section"
+			class="services-section services-section--product"
 		>
 			<div class="container services-section__container flex">
 				<?php
@@ -255,39 +255,8 @@ $variations_json = !empty($variation_options)
 	<?php endif; ?>
 
 	<?php
-	$hits_tovary = function_exists('get_field') ? get_field('tovary', 'option') : array();
-	$hits_title = function_exists('get_field') ? (string) get_field('zagolovok_hity_prodazh', 'option') : '';
-	$hits_link = function_exists('get_field') ? get_field('ssylka_hity_prodazh', 'option') : null;
-
-	if (empty($hits_tovary) && function_exists('get_field')) {
-		$hits_tovary = get_field('tovary', 'hits-sales-settings');
-		$hits_title = (string) get_field('zagolovok_hity_prodazh', 'hits-sales-settings');
-		$hits_link = get_field('ssylka_hity_prodazh', 'hits-sales-settings');
-	}
-
-	$hits_items = array();
-
-	if (!empty($hits_tovary) && function_exists('wc_get_product')) {
-		foreach ((array) $hits_tovary as $hits_post) {
-			$hits_id = is_object($hits_post) ? (int) $hits_post->ID : (int) $hits_post;
-
-			if ($hits_id > 0 && $hits_id !== $product_id && wc_get_product($hits_id)) {
-				$hits_items[] = array(
-					'id' => $hits_id,
-					'type' => 'product',
-				);
-			}
-		}
-	}
-
-	if (!empty($hits_items)) {
-		$GLOBALS['computex_cond_hits_slider_active'] = true;
-		$items = $hits_items;
-		$slider_title = $hits_title !== '' ? $hits_title : __('Хиты продаж', 'computex-cond');
-		$slider_link = $hits_link;
-		$slides_wrapper_class = 'swiper-product__wrapp products';
-		include get_template_directory() . '/template-parts/hits-product-slider.php';
-		unset($GLOBALS['computex_cond_hits_slider_active']);
+	if (function_exists('computex_cond_render_hits_slider_from_options')) {
+		computex_cond_render_hits_slider_from_options($product_id);
 	}
 	?>
 </div>

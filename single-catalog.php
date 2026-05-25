@@ -187,8 +187,8 @@ get_header();
             </div>
         </section>
         <?php
-        if (function_exists('computex_cond_render_hits_slider')) {
-            computex_cond_render_hits_slider(null, array('fallback_random_catalog' => true));
+        if (function_exists('computex_cond_render_hits_slider_from_options')) {
+            computex_cond_render_hits_slider_from_options();
         }
         ?>
     </main>

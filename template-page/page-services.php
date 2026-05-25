@@ -125,7 +125,7 @@ get_header();
             <?php endif; ?>
         </div>
     </section>
-    <?php computex_cond_render_hits_slider(); ?>
+    <?php computex_cond_render_hits_slider_from_options(); ?>
 </main><!-- #main -->
 
 <?php
