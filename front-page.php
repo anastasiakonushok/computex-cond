@@ -85,64 +85,76 @@ get_header('main'); ?>
     <section class="info-section">
         <div class="container info-section__container">
             <div class="info-section__grid">
-                <?php if (have_rows('blok_skidki')): ?>
-                <?php while (have_rows('blok_skidki')):
-                                    the_row();
-                                    $foto_sale = get_sub_field('izobrazhenie_sale');
-                                    $term = get_sub_field('ssylka');
-                                    $term_link = is_wp_error(get_term_link($term)) ? '#' : get_term_link($term); // Проверка на ошибку
-                                ?>
-                <a class="info-section__card info-section__card--1" href="<?php echo esc_url($term_link); ?>"
+                <?php if (have_rows('blok_skidki')) : ?>
+                <?php while (have_rows('blok_skidki')) :
+                    the_row();
+                    $foto_sale = get_sub_field('izobrazhenie_sale');
+                    $link = get_sub_field('ssylka');
+                    $card_url = !empty($link['url']) ? $link['url'] : '#';
+                    $card_target = !empty($link['target']) ? $link['target'] : '_self';
+                    ?>
+                <a class="info-section__card info-section__card--1" href="<?php echo esc_url($card_url); ?>"
+                    target="<?php echo esc_attr($card_target); ?>"
                     style="background-image: url('<?php echo esc_url(get_sub_field('fon_izobrazhenie')); ?>');">
                     <div class="info-section__text">
                         <h2><?php echo esc_html(get_sub_field('zagolovok')); ?></h2>
                         <p><?php echo esc_html(get_sub_field('tekst')); ?></p>
                         <span>Подробнее</span>
                     </div>
+                    <?php if (!empty($foto_sale['url'])) : ?>
                     <div class="info-section__img">
                         <img src="<?php echo esc_url($foto_sale['url']); ?>"
-                            alt="<?php echo esc_attr($foto_sale['alt']); ?>">
+                            alt="<?php echo esc_attr($foto_sale['alt'] ?? ''); ?>">
                     </div>
+                    <?php endif; ?>
                 </a>
                 <?php endwhile; ?>
                 <?php endif; ?>
-                <?php if (have_rows('blok_oplaty')): ?>
-                <?php while (have_rows('blok_oplaty')):
-                                    the_row();
-                                    $foto_sale = get_sub_field('izobrazhenie_oplat');
-                                    $link = get_sub_field('ssylka');
-                                ?>
-                <a class="info-section__card info-section__card--2" href="<?php echo esc_url($link['url']); ?>">
+                <?php if (have_rows('blok_oplaty')) : ?>
+                <?php while (have_rows('blok_oplaty')) :
+                    the_row();
+                    $foto_sale = get_sub_field('izobrazhenie_oplat');
+                    $link = get_sub_field('ssylka');
+                    $card_url = !empty($link['url']) ? $link['url'] : '#';
+                    $card_target = !empty($link['target']) ? $link['target'] : '_self';
+                    ?>
+                <a class="info-section__card info-section__card--2" href="<?php echo esc_url($card_url); ?>"
+                    target="<?php echo esc_attr($card_target); ?>">
                     <div class="info-section__info">
                         <h2><?php echo esc_html(get_sub_field('zagolovok')); ?></h2>
                         <p><?php echo esc_html(get_sub_field('tekst')); ?></p>
                     </div>
+                    <?php if (!empty($foto_sale['url'])) : ?>
                     <img src="<?php echo esc_url($foto_sale['url']); ?>"
-                        alt="<?php echo esc_attr($foto_sale['alt']); ?>">
+                        alt="<?php echo esc_attr($foto_sale['alt'] ?? ''); ?>">
+                    <?php endif; ?>
+                    <?php if (!empty($link['title'])) : ?>
                     <span><?php echo esc_html($link['title']); ?></span>
+                    <?php endif; ?>
                 </a>
                 <?php endwhile; ?>
                 <?php endif; ?>
-                <?php if (have_rows('blok_bolshih_ploshhadej')): ?>
-                <?php while (have_rows('blok_bolshih_ploshhadej')):
-                                    the_row();
-                                    $link = get_sub_field('ssylka');
-                                    $foto_sale = get_sub_field('izobrazhenie');
-                                    $term = get_sub_field('ssylka');
-                                    $term_link = is_wp_error(get_term_link($term)) ? '#' : get_term_link($term); // Проверка на ошибку
-                                ?>
-                <a class="info-section__card info-section__card--3" href="<?php echo esc_url($term_link); ?>">
+                <?php if (have_rows('blok_bolshih_ploshhadej')) : ?>
+                <?php while (have_rows('blok_bolshih_ploshhadej')) :
+                    the_row();
+                    $foto_sale = get_sub_field('izobrazhenie');
+                    $link = get_sub_field('ssylka');
+                    $card_url = !empty($link['url']) ? $link['url'] : '#';
+                    $card_target = !empty($link['target']) ? $link['target'] : '_self';
+                    ?>
+                <a class="info-section__card info-section__card--3" href="<?php echo esc_url($card_url); ?>"
+                    target="<?php echo esc_attr($card_target); ?>">
                     <div class="info-section__text">
                         <h2><?php echo esc_html(get_sub_field('zagolovok')); ?></h2>
                         <p><?php echo esc_html(get_sub_field('tekst')); ?></p>
                         <span>Подробнее</span>
                     </div>
-
+                    <?php if (!empty($foto_sale['url'])) : ?>
                     <div class="info-section__img">
                         <img src="<?php echo esc_url($foto_sale['url']); ?>"
-                            alt="<?php echo esc_attr($foto_sale['alt']); ?>">
+                            alt="<?php echo esc_attr($foto_sale['alt'] ?? ''); ?>">
                     </div>
-
+                    <?php endif; ?>
                 </a>
                 <?php endwhile; ?>
                 <?php endif; ?>

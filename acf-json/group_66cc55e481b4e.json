@@ -1,531 +1,516 @@
 {
     "key": "group_66cc55e481b4e",
-        "title": "Главная страница",
-        "fields": [
-            {
-                "key": "field_66cc55fb7b6aa",
-                "label": "Страница",
-                "name": "stranicza",
-                "aria-label": "",
-                "type": "flexible_content",
-                "instructions": "",
-                "required": 0,
-                "conditional_logic": 0,
-                "wrapper": {
-                    "width": "",
-                    "class": "",
-                    "id": ""
+    "title": "Главная страница",
+    "fields": [
+        {
+            "key": "field_66cc55fb7b6aa",
+            "label": "Страница",
+            "name": "stranicza",
+            "aria-label": "",
+            "type": "flexible_content",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layouts": {
+                "layout_66cc56021cc02": {
+                    "key": "layout_66cc56021cc02",
+                    "name": "главный_блок",
+                    "label": "Главный блок",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_66cd7eb2dc9a8",
+                            "label": "Фон изображение",
+                            "name": "fon_izobrazhenie",
+                            "aria-label": "",
+                            "type": "image",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "return_format": "url",
+                            "preview_size": "medium",
+                            "library": "all",
+                            "min_width": "",
+                            "min_height": "",
+                            "min_size": "",
+                            "max_width": "",
+                            "max_height": "",
+                            "max_size": "",
+                            "mime_types": ""
+                        },
+                        {
+                            "key": "field_66cd7ec5dc9a9",
+                            "label": "Заголовок",
+                            "name": "zagolovok",
+                            "aria-label": "",
+                            "type": "text",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "maxlength": ""
+                        },
+                        {
+                            "key": "field_66cd7efbdc9ad",
+                            "label": "Подзаголовок",
+                            "name": "podzagolovok",
+                            "aria-label": "",
+                            "type": "textarea",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "placeholder": "",
+                            "maxlength": "",
+                            "rows": "",
+                            "new_lines": ""
+                        },
+                        {
+                            "key": "field_66cd7eccdc9aa",
+                            "label": "Текст",
+                            "name": "tekst",
+                            "aria-label": "",
+                            "type": "textarea",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "placeholder": "",
+                            "maxlength": "",
+                            "rows": "",
+                            "new_lines": ""
+                        },
+                        {
+                            "key": "field_66cd7ed6dc9ab",
+                            "label": "Ссылка",
+                            "name": "ssylka",
+                            "aria-label": "",
+                            "type": "link",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "return_format": "array"
+                        }
+                    ],
+                    "min": "1",
+                    "max": "1"
                 },
-                "layouts": {
-                    "layout_66cc56021cc02": {
-                        "key": "layout_66cc56021cc02",
-                        "name": "главный_блок",
-                        "label": "Главный блок",
-                        "display": "block",
-                        "sub_fields": [
-                            {
-                                "key": "field_66cd7eb2dc9a8",
-                                "label": "Фон изображение",
-                                "name": "fon_izobrazhenie",
-                                "aria-label": "",
-                                "type": "image",
-                                "instructions": "",
-                                "required": 0,
-                                "conditional_logic": 0,
-                                "wrapper": {
-                                    "width": "",
-                                    "class": "",
-                                    "id": ""
-                                },
-                                "return_format": "url",
-                                "preview_size": "medium",
-                                "library": "all",
-                                "min_width": "",
-                                "min_height": "",
-                                "min_size": "",
-                                "max_width": "",
-                                "max_height": "",
-                                "max_size": "",
-                                "mime_types": ""
-                            },
-                            {
-                                "key": "field_66cd7ec5dc9a9",
-                                "label": "Заголовок",
-                                "name": "zagolovok",
-                                "aria-label": "",
-                                "type": "text",
-                                "instructions": "",
-                                "required": 0,
-                                "conditional_logic": 0,
-                                "wrapper": {
-                                    "width": "",
-                                    "class": "",
-                                    "id": ""
-                                },
-                                "default_value": "",
-                                "placeholder": "",
-                                "prepend": "",
-                                "append": "",
-                                "maxlength": ""
-                            },
-                            {
-                                "key": "field_66cd7efbdc9ad",
-                                "label": "Подзаголовок",
-                                "name": "podzagolovok",
-                                "aria-label": "",
-                                "type": "textarea",
-                                "instructions": "",
-                                "required": 0,
-                                "conditional_logic": 0,
-                                "wrapper": {
-                                    "width": "",
-                                    "class": "",
-                                    "id": ""
-                                },
-                                "default_value": "",
-                                "placeholder": "",
-                                "maxlength": "",
-                                "rows": "",
-                                "new_lines": ""
-                            },
-                            {
-                                "key": "field_66cd7eccdc9aa",
-                                "label": "Текст",
-                                "name": "tekst",
-                                "aria-label": "",
-                                "type": "textarea",
-                                "instructions": "",
-                                "required": 0,
-                                "conditional_logic": 0,
-                                "wrapper": {
-                                    "width": "",
-                                    "class": "",
-                                    "id": ""
-                                },
-                                "default_value": "",
-                                "placeholder": "",
-                                "maxlength": "",
-                                "rows": "",
-                                "new_lines": ""
-                            },
-                            {
-                                "key": "field_66cd7ed6dc9ab",
-                                "label": "Ссылка",
-                                "name": "ssylka",
-                                "aria-label": "",
-                                "type": "link",
-                                "instructions": "",
-                                "required": 0,
-                                "conditional_logic": 0,
-                                "wrapper": {
-                                    "width": "",
-                                    "class": "",
-                                    "id": ""
-                                },
-                                "return_format": "array"
-                            }
-                        ],
-                        "min": "1",
-                        "max": "1"
-                    },
-                    "layout_66cc56247b6ab": {
-                        "key": "layout_66cc56247b6ab",
-                        "name": "популярные_бренды",
-                        "label": "Популярные бренды",
-                        "display": "block",
-                        "sub_fields": [],
-                        "min": "1",
-                        "max": "1"
-                    },
-                    "layout_66cc56327b6ac": {
-                        "key": "layout_66cc56327b6ac",
-                        "name": "популярные_товары",
-                        "label": "Популярные товары",
-                        "display": "block",
-                        "sub_fields": [],
-                        "min": "1",
-                        "max": "1"
-                    },
-                    "layout_66cc56407b6ad": {
-                        "key": "layout_66cc56407b6ad",
-                        "name": "услуги",
-                        "label": "Услуги",
-                        "display": "block",
-                        "sub_fields": [],
-                        "min": "1",
-                        "max": "1"
-                    },
-                    "layout_66cc565b7b6ae": {
-                        "key": "layout_66cc565b7b6ae",
-                        "name": "лучшие_предложения",
-                        "label": "Лучшие предложения",
-                        "display": "block",
-                        "sub_fields": [
-                            {
-                                "key": "field_66cda74217d39",
-                                "label": "Блок скидки",
-                                "name": "blok_skidki",
-                                "aria-label": "",
-                                "type": "group",
-                                "instructions": "",
-                                "required": 0,
-                                "conditional_logic": 0,
-                                "wrapper": {
-                                    "width": "",
-                                    "class": "",
-                                    "id": ""
-                                },
-                                "layout": "block",
-                                "sub_fields": [
-                                    {
-                                        "key": "field_66cdbb8c17d3b",
-                                        "label": "Заголовок",
-                                        "name": "zagolovok",
-                                        "aria-label": "",
-                                        "type": "text",
-                                        "instructions": "",
-                                        "required": 0,
-                                        "conditional_logic": 0,
-                                        "wrapper": {
-                                            "width": "",
-                                            "class": "",
-                                            "id": ""
-                                        },
-                                        "default_value": "",
-                                        "placeholder": "",
-                                        "prepend": "",
-                                        "append": "",
-                                        "maxlength": ""
-                                    },
-                                    {
-                                        "key": "field_66cdbbae17d3e",
-                                        "label": "Текст",
-                                        "name": "tekst",
-                                        "aria-label": "",
-                                        "type": "textarea",
-                                        "instructions": "",
-                                        "required": 0,
-                                        "conditional_logic": 0,
-                                        "wrapper": {
-                                            "width": "",
-                                            "class": "",
-                                            "id": ""
-                                        },
-                                        "default_value": "",
-                                        "placeholder": "",
-                                        "maxlength": "",
-                                        "rows": "",
-                                        "new_lines": ""
-                                    },
-                                    {
-                                        "key": "field_66cdbb9417d3c",
-                                        "label": "Ссылка",
-                                        "name": "ssylka",
-                                        "aria-label": "",
-                                        "type": "taxonomy",
-                                        "instructions": "",
-                                        "required": 0,
-                                        "conditional_logic": 0,
-                                        "wrapper": {
-                                            "width": "",
-                                            "class": "",
-                                            "id": ""
-                                        },
-                                        "taxonomy": "catalog-cat",
-                                        "field_type": "select",
-                                        "allow_null": 0,
-                                        "add_term": 1,
-                                        "save_terms": 0,
-                                        "load_terms": 0,
-                                        "return_format": "id",
-                                        "multiple": 0,
-                                        "bidirectional_target": []
-                                    },
-                                    {
-                                        "key": "field_66cdbbbe17d3f",
-                                        "label": "Изображение",
-                                        "name": "izobrazhenie_sale",
-                                        "aria-label": "",
-                                        "type": "image",
-                                        "instructions": "",
-                                        "required": 0,
-                                        "conditional_logic": 0,
-                                        "wrapper": {
-                                            "width": "",
-                                            "class": "",
-                                            "id": ""
-                                        },
-                                        "return_format": "array",
-                                        "preview_size": "medium",
-                                        "library": "all",
-                                        "min_width": "",
-                                        "min_height": "",
-                                        "min_size": "",
-                                        "max_width": "",
-                                        "max_height": "",
-                                        "max_size": "",
-                                        "mime_types": ""
-                                    },
-                                    {
-                                        "key": "field_66cdbe1795b36",
-                                        "label": "Фон изображение",
-                                        "name": "fon_izobrazhenie",
-                                        "aria-label": "",
-                                        "type": "image",
-                                        "instructions": "",
-                                        "required": 0,
-                                        "conditional_logic": 0,
-                                        "wrapper": {
-                                            "width": "",
-                                            "class": "",
-                                            "id": ""
-                                        },
-                                        "return_format": "url",
-                                        "preview_size": "medium",
-                                        "library": "all",
-                                        "min_width": "",
-                                        "min_height": "",
-                                        "min_size": "",
-                                        "max_width": "",
-                                        "max_height": "",
-                                        "max_size": "",
-                                        "mime_types": ""
-                                    }
-                                ]
-                            },
-                            {
-                                "key": "field_66cdbbe517d40",
-                                "label": "Блок оплаты",
-                                "name": "blok_oplaty",
-                                "aria-label": "",
-                                "type": "group",
-                                "instructions": "",
-                                "required": 0,
-                                "conditional_logic": 0,
-                                "wrapper": {
-                                    "width": "",
-                                    "class": "",
-                                    "id": ""
-                                },
-                                "layout": "block",
-                                "sub_fields": [
-                                    {
-                                        "key": "field_66cdbbe517d41",
-                                        "label": "Заголовок",
-                                        "name": "zagolovok",
-                                        "aria-label": "",
-                                        "type": "text",
-                                        "instructions": "",
-                                        "required": 0,
-                                        "conditional_logic": 0,
-                                        "wrapper": {
-                                            "width": "",
-                                            "class": "",
-                                            "id": ""
-                                        },
-                                        "default_value": "",
-                                        "placeholder": "",
-                                        "prepend": "",
-                                        "append": "",
-                                        "maxlength": ""
-                                    },
-                                    {
-                                        "key": "field_66cdbbe517d44",
-                                        "label": "Текст",
-                                        "name": "tekst",
-                                        "aria-label": "",
-                                        "type": "text",
-                                        "instructions": "",
-                                        "required": 0,
-                                        "conditional_logic": 0,
-                                        "wrapper": {
-                                            "width": "",
-                                            "class": "",
-                                            "id": ""
-                                        },
-                                        "default_value": "",
-                                        "placeholder": "",
-                                        "prepend": "",
-                                        "append": "",
-                                        "maxlength": ""
-                                    },
-                                    {
-                                        "key": "field_66cdbbe517d43",
-                                        "label": "Ссылка",
-                                        "name": "ssylka",
-                                        "aria-label": "",
-                                        "type": "link",
-                                        "instructions": "",
-                                        "required": 0,
-                                        "conditional_logic": 0,
-                                        "wrapper": {
-                                            "width": "",
-                                            "class": "",
-                                            "id": ""
-                                        },
-                                        "return_format": ""
-                                    },
-                                    {
-                                        "key": "field_66cdbbe517d45",
-                                        "label": "Изображение",
-                                        "name": "izobrazhenie_oplat",
-                                        "aria-label": "",
-                                        "type": "image",
-                                        "instructions": "",
-                                        "required": 0,
-                                        "conditional_logic": 0,
-                                        "wrapper": {
-                                            "width": "",
-                                            "class": "",
-                                            "id": ""
-                                        },
-                                        "return_format": "array",
-                                        "preview_size": "medium",
-                                        "library": "all",
-                                        "min_width": "",
-                                        "min_height": "",
-                                        "min_size": "",
-                                        "max_width": "",
-                                        "max_height": "",
-                                        "max_size": "",
-                                        "mime_types": ""
-                                    }
-                                ]
-                            },
-                            {
-                                "key": "field_66cdbbfb17d46",
-                                "label": "Блок кондиционеры для больших площадей",
-                                "name": "blok_bolshih_ploshhadej",
-                                "aria-label": "",
-                                "type": "group",
-                                "instructions": "",
-                                "required": 0,
-                                "conditional_logic": 0,
-                                "wrapper": {
-                                    "width": "",
-                                    "class": "",
-                                    "id": ""
-                                },
-                                "layout": "block",
-                                "sub_fields": [
-                                    {
-                                        "key": "field_66cdbbfb17d47",
-                                        "label": "Заголовок",
-                                        "name": "zagolovok",
-                                        "aria-label": "",
-                                        "type": "text",
-                                        "instructions": "",
-                                        "required": 0,
-                                        "conditional_logic": 0,
-                                        "wrapper": {
-                                            "width": "",
-                                            "class": "",
-                                            "id": ""
-                                        },
-                                        "default_value": "",
-                                        "placeholder": "",
-                                        "prepend": "",
-                                        "append": "",
-                                        "maxlength": ""
-                                    },
-                                    {
-                                        "key": "field_66cdbbfb17d4a",
-                                        "label": "Текст",
-                                        "name": "tekst",
-                                        "aria-label": "",
-                                        "type": "text",
-                                        "instructions": "",
-                                        "required": 0,
-                                        "conditional_logic": 0,
-                                        "wrapper": {
-                                            "width": "",
-                                            "class": "",
-                                            "id": ""
-                                        },
-                                        "default_value": "",
-                                        "placeholder": "",
-                                        "prepend": "",
-                                        "append": "",
-                                        "maxlength": ""
-                                    },
-                                    {
-                                        "key": "field_66cdbbfb17d49",
-                                        "label": "Ссылка",
-                                        "name": "ssylka",
-                                        "aria-label": "",
-                                        "type": "taxonomy",
-                                        "instructions": "",
-                                        "required": 0,
-                                        "conditional_logic": 0,
-                                        "wrapper": {
-                                            "width": "",
-                                            "class": "",
-                                            "id": ""
-                                        },
-                                        "taxonomy": "catalog-cat",
-                                        "field_type": "select",
-                                        "allow_null": 0,
-                                        "add_term": 1,
-                                        "save_terms": 0,
-                                        "load_terms": 0,
-                                        "return_format": "id",
-                                        "multiple": 0,
-                                        "bidirectional_target": []
-                                    },
-                                    {
-                                        "key": "field_66cdbbfb17d4b",
-                                        "label": "Изображение",
-                                        "name": "izobrazhenie",
-                                        "aria-label": "",
-                                        "type": "image",
-                                        "instructions": "",
-                                        "required": 0,
-                                        "conditional_logic": 0,
-                                        "wrapper": {
-                                            "width": "",
-                                            "class": "",
-                                            "id": ""
-                                        },
-                                        "return_format": "array",
-                                        "preview_size": "medium",
-                                        "library": "all",
-                                        "min_width": "",
-                                        "min_height": "",
-                                        "min_size": "",
-                                        "max_width": "",
-                                        "max_height": "",
-                                        "max_size": "",
-                                        "mime_types": ""
-                                    }
-                                ]
-                            }
-                        ],
-                        "min": "1",
-                        "max": "1"
-                    }
+                "layout_66cc56247b6ab": {
+                    "key": "layout_66cc56247b6ab",
+                    "name": "популярные_бренды",
+                    "label": "Популярные бренды",
+                    "display": "block",
+                    "sub_fields": [],
+                    "min": "1",
+                    "max": "1"
                 },
-                "button_label": "Добавить блок",
-                "min": "",
-                "max": ""
-            }
-        ],
-        "location": [
-            [
-                {
-                    "param": "page_type",
-                    "operator": "==",
-                    "value": "front_page"
+                "layout_66cc56327b6ac": {
+                    "key": "layout_66cc56327b6ac",
+                    "name": "популярные_товары",
+                    "label": "Популярные товары",
+                    "display": "block",
+                    "sub_fields": [],
+                    "min": "1",
+                    "max": "1"
+                },
+                "layout_66cc56407b6ad": {
+                    "key": "layout_66cc56407b6ad",
+                    "name": "услуги",
+                    "label": "Услуги",
+                    "display": "block",
+                    "sub_fields": [],
+                    "min": "1",
+                    "max": "1"
+                },
+                "layout_66cc565b7b6ae": {
+                    "key": "layout_66cc565b7b6ae",
+                    "name": "лучшие_предложения",
+                    "label": "Лучшие предложения",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_66cda74217d39",
+                            "label": "Блок скидки",
+                            "name": "blok_skidki",
+                            "aria-label": "",
+                            "type": "group",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "layout": "block",
+                            "sub_fields": [
+                                {
+                                    "key": "field_66cdbb8c17d3b",
+                                    "label": "Заголовок",
+                                    "name": "zagolovok",
+                                    "aria-label": "",
+                                    "type": "text",
+                                    "instructions": "",
+                                    "required": 0,
+                                    "conditional_logic": 0,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "default_value": "",
+                                    "placeholder": "",
+                                    "prepend": "",
+                                    "append": "",
+                                    "maxlength": ""
+                                },
+                                {
+                                    "key": "field_66cdbbae17d3e",
+                                    "label": "Текст",
+                                    "name": "tekst",
+                                    "aria-label": "",
+                                    "type": "textarea",
+                                    "instructions": "",
+                                    "required": 0,
+                                    "conditional_logic": 0,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "default_value": "",
+                                    "placeholder": "",
+                                    "maxlength": "",
+                                    "rows": "",
+                                    "new_lines": ""
+                                },
+                                {
+                                    "key": "field_66cdbb9417d3c",
+                                    "label": "Ссылка",
+                                    "name": "ssylka",
+                                    "aria-label": "",
+                                    "type": "link",
+                                    "instructions": "",
+                                    "required": 0,
+                                    "conditional_logic": 0,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "return_format": "array",
+                                    "allow_in_bindings": 1
+                                },
+                                {
+                                    "key": "field_66cdbbbe17d3f",
+                                    "label": "Изображение",
+                                    "name": "izobrazhenie_sale",
+                                    "aria-label": "",
+                                    "type": "image",
+                                    "instructions": "",
+                                    "required": 0,
+                                    "conditional_logic": 0,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "return_format": "array",
+                                    "preview_size": "medium",
+                                    "library": "all",
+                                    "min_width": "",
+                                    "min_height": "",
+                                    "min_size": "",
+                                    "max_width": "",
+                                    "max_height": "",
+                                    "max_size": "",
+                                    "mime_types": ""
+                                },
+                                {
+                                    "key": "field_66cdbe1795b36",
+                                    "label": "Фон изображение",
+                                    "name": "fon_izobrazhenie",
+                                    "aria-label": "",
+                                    "type": "image",
+                                    "instructions": "",
+                                    "required": 0,
+                                    "conditional_logic": 0,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "return_format": "url",
+                                    "preview_size": "medium",
+                                    "library": "all",
+                                    "min_width": "",
+                                    "min_height": "",
+                                    "min_size": "",
+                                    "max_width": "",
+                                    "max_height": "",
+                                    "max_size": "",
+                                    "mime_types": ""
+                                }
+                            ]
+                        },
+                        {
+                            "key": "field_66cdbbe517d40",
+                            "label": "Блок оплаты",
+                            "name": "blok_oplaty",
+                            "aria-label": "",
+                            "type": "group",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "layout": "block",
+                            "sub_fields": [
+                                {
+                                    "key": "field_66cdbbe517d41",
+                                    "label": "Заголовок",
+                                    "name": "zagolovok",
+                                    "aria-label": "",
+                                    "type": "text",
+                                    "instructions": "",
+                                    "required": 0,
+                                    "conditional_logic": 0,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "default_value": "",
+                                    "placeholder": "",
+                                    "prepend": "",
+                                    "append": "",
+                                    "maxlength": ""
+                                },
+                                {
+                                    "key": "field_66cdbbe517d44",
+                                    "label": "Текст",
+                                    "name": "tekst",
+                                    "aria-label": "",
+                                    "type": "text",
+                                    "instructions": "",
+                                    "required": 0,
+                                    "conditional_logic": 0,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "default_value": "",
+                                    "placeholder": "",
+                                    "prepend": "",
+                                    "append": "",
+                                    "maxlength": ""
+                                },
+                                {
+                                    "key": "field_66cdbbe517d43",
+                                    "label": "Ссылка",
+                                    "name": "ssylka",
+                                    "aria-label": "",
+                                    "type": "link",
+                                    "instructions": "",
+                                    "required": 0,
+                                    "conditional_logic": 0,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "return_format": ""
+                                },
+                                {
+                                    "key": "field_66cdbbe517d45",
+                                    "label": "Изображение",
+                                    "name": "izobrazhenie_oplat",
+                                    "aria-label": "",
+                                    "type": "image",
+                                    "instructions": "",
+                                    "required": 0,
+                                    "conditional_logic": 0,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "return_format": "array",
+                                    "preview_size": "medium",
+                                    "library": "all",
+                                    "min_width": "",
+                                    "min_height": "",
+                                    "min_size": "",
+                                    "max_width": "",
+                                    "max_height": "",
+                                    "max_size": "",
+                                    "mime_types": ""
+                                }
+                            ]
+                        },
+                        {
+                            "key": "field_66cdbbfb17d46",
+                            "label": "Блок кондиционеры для больших площадей",
+                            "name": "blok_bolshih_ploshhadej",
+                            "aria-label": "",
+                            "type": "group",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "layout": "block",
+                            "sub_fields": [
+                                {
+                                    "key": "field_66cdbbfb17d47",
+                                    "label": "Заголовок",
+                                    "name": "zagolovok",
+                                    "aria-label": "",
+                                    "type": "text",
+                                    "instructions": "",
+                                    "required": 0,
+                                    "conditional_logic": 0,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "default_value": "",
+                                    "placeholder": "",
+                                    "prepend": "",
+                                    "append": "",
+                                    "maxlength": ""
+                                },
+                                {
+                                    "key": "field_66cdbbfb17d4a",
+                                    "label": "Текст",
+                                    "name": "tekst",
+                                    "aria-label": "",
+                                    "type": "text",
+                                    "instructions": "",
+                                    "required": 0,
+                                    "conditional_logic": 0,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "default_value": "",
+                                    "placeholder": "",
+                                    "prepend": "",
+                                    "append": "",
+                                    "maxlength": ""
+                                },
+                                {
+                                    "key": "field_66cdbbfb17d49",
+                                    "label": "Ссылка",
+                                    "name": "ssylka",
+                                    "aria-label": "",
+                                    "type": "link",
+                                    "instructions": "",
+                                    "required": false,
+                                    "conditional_logic": 0,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "return_format": "array"
+                                },
+                                {
+                                    "key": "field_66cdbbfb17d4b",
+                                    "label": "Изображение",
+                                    "name": "izobrazhenie",
+                                    "aria-label": "",
+                                    "type": "image",
+                                    "instructions": "",
+                                    "required": 0,
+                                    "conditional_logic": 0,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "return_format": "array",
+                                    "preview_size": "medium",
+                                    "library": "all",
+                                    "min_width": "",
+                                    "min_height": "",
+                                    "min_size": "",
+                                    "max_width": "",
+                                    "max_height": "",
+                                    "max_size": "",
+                                    "mime_types": ""
+                                }
+                            ]
+                        }
+                    ],
+                    "min": "1",
+                    "max": "1"
                 }
-            ]
-        ],
-        "menu_order": 0,
-        "position": "normal",
-        "style": "default",
-        "label_placement": "top",
-        "instruction_placement": "label",
-        "hide_on_screen": "",
-        "active": true,
-        "description": "",
-        "show_in_rest": false,
-    "modified": 1747862400
+            },
+            "button_label": "Добавить блок",
+            "min": "",
+            "max": ""
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "page",
+                "operator": "==",
+                "value": "12"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "",
+    "show_in_rest": 0,
+    "modified": 1779706084
 }
