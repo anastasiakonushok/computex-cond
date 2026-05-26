@@ -31,23 +31,33 @@ get_header();
                     </div>
                 </section>
             <?php elseif (get_row_layout() == 'блок_с_картинкой'): ?>
-                <section class="services-img">
+                <section class="services-img services-img--styled-panel">
                     <div class="container flex services-img__container">
                         <div class="services-img__img">
                             <?php
-                            $image = get_sub_field('izobrazhenie'); // Получаем данные изображения
+                            $image = get_sub_field('izobrazhenie');
 
-                            if (!empty($image)): // Проверяем, есть ли изображение
-                                $image_url = esc_url($image['url']); // URL изображения
-                                $image_alt = esc_attr($image['alt']); // Текст для атрибута alt
-                            ?>
+                            if (!empty($image)) {
+                                $image_url = esc_url($image['url']);
+                                $image_alt = esc_attr($image['alt']);
+                                ?>
                                 <img src="<?php echo $image_url; ?>" alt="<?php echo $image_alt; ?>">
-                            <?php else: ?>
-                                <img src="./img/law-img.png" alt="">
-                            <?php endif; ?>
+                            <?php } else { ?>
+                                <img src="<?php echo esc_url(get_template_directory_uri() . '/img/law-img.png'); ?>" alt="">
+                            <?php } ?>
                         </div>
-                        <div class="services-img__content inner-content">
-                            <?php the_sub_field('tekst_s_opisaniem'); ?>
+                        <div class="services-img__content services-img__content--styled computex-if-warranty computex-if-warranty--compact inner-content">
+                            <div class="computex-if-warranty__content">
+                                <div class="computex-if-eyebrow computex-if-warranty__badge">
+                                    <span class="computex-if-pulse"></span> Гарантия 3 года
+                                </div>
+                                <?php
+                                echo computex_cond_format_services_checklist_html(
+                                    (string) get_sub_field('tekst_s_opisaniem'),
+                                    'services-img__list'
+                                ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+                                ?>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -68,7 +78,7 @@ get_header();
                                     <?php if (have_rows('tablicza_s_czenami')):
                                         while (have_rows('tablicza_s_czenami')):
                                             the_row();
-                                    ?>
+                                            ?>
                                             <tr>
                                                 <td><?php the_sub_field('usluga'); ?></td>
                                                 <td><?php the_sub_field('czena'); ?></td>
@@ -88,7 +98,7 @@ get_header();
                             <?php if (have_rows('voprosy')):
                                 while (have_rows('voprosy')):
                                     the_row();
-                            ?>
+                                    ?>
                                     <div class="accordion">
                                         <div class="accordion__title">
                                             <h3><?php the_sub_field('vopros'); ?></h3>
@@ -102,7 +112,7 @@ get_header();
                         </div>
                     </div>
                 </section>
-        <?php endif;
+            <?php endif;
         endwhile; ?>
     <?php endif; ?>
     <section class="services-section"
@@ -112,7 +122,7 @@ get_header();
                 while (have_rows('uslugi_blok', 'option')):
                     the_row();
                     $ssylka = get_sub_field('ssylka');
-            ?>
+                    ?>
                     <div class="services-section__card"><span><?php the_sub_field('nomer'); ?></span>
                         <h2><?php the_sub_field('zagolovok'); ?></h2>
                         <p><?php the_sub_field('tekst'); ?></p>

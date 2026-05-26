@@ -3913,6 +3913,89 @@ p#breadcrumbs a {
   color: var(--main-gray);
 }
 
+/* Жёлтая карточка — страница услуг: computex-if-warranty + прежнее расположение */
+.services-img--styled-panel .services-img__content.computex-if-warranty {
+  display: block;
+  width: 60%;
+  right: 20px;
+  bottom: -30%;
+  position: absolute;
+  padding: 30px;
+  border-radius: 8px;
+  color: var(--main-gray);
+}
+
+.services-img--styled-panel .services-img__content.computex-if-warranty--compact {
+  min-height: 0;
+  gap: 0;
+}
+
+.services-img--styled-panel .services-img__content .computex-if-warranty__content {
+  position: relative;
+  z-index: 1;
+}
+
+.services-img--styled-panel .services-img__content .computex-if-warranty__badge {
+  margin-bottom: 16px;
+}
+
+.services-img--styled-panel .services-img__content--styled > h2,
+.services-img--styled-panel .services-img__content--styled > h3,
+.services-img--styled-panel .services-img__content--styled .computex-if-warranty__content > h2,
+.services-img--styled-panel .services-img__content--styled .computex-if-warranty__content > h3 {
+  margin: 0 0 14px;
+  color: #2f3d4c;
+  font-size: clamp(18px, 1.8vw, 24px);
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.services-img--styled-panel .services-img__content--styled > p,
+.services-img--styled-panel .services-img__content--styled .computex-if-warranty__content > p {
+  margin: 0 0 12px;
+  color: rgba(47, 61, 76, 0.82);
+  font-size: var(--regular-font);
+  line-height: 1.5;
+}
+
+.services-img--styled-panel .services-img__content--styled.inner-content ul.computex-if-list {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+}
+
+.services-img--styled-panel .services-img__content--styled .computex-if-list li {
+  padding: 10px 0;
+  margin: 0 0 0;
+  border-bottom: 1px solid rgba(47, 61, 76, 0.14);
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: var(--regular-font);
+  font-weight: 400;
+  line-height: 1.4;
+  text-transform: none;
+  color: var(--main-gray);
+}
+
+.services-img--styled-panel .services-img__content--styled .computex-if-list li strong,
+.services-img--styled-panel .services-img__content--styled .computex-if-list li b {
+  font-size: inherit;
+  font-weight: 400;
+  text-transform: none;
+  color: inherit;
+}
+
+.services-img--styled-panel .services-img__content--styled .computex-if-check {
+  color: #e2e6ea;
+  font-size: 15px;
+  line-height: 1.2;
+  font-weight: 950;
+  flex: 0 0 auto;
+}
+
 .services-price {
   margin-top: 200px;
   padding: 90px 0px;

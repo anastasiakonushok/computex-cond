@@ -3577,6 +3577,38 @@ function computex_cond_get_random_catalog_slider_items($posts_per_page = 12)
 }
 
 /**
+ * Галочки computex-if-list для блока «картинка + текст» на странице услуг.
+ *
+ * @param string $html       Содержимое WYSIWYG.
+ * @param string $list_class Дополнительный класс для ul.
+ */
+function computex_cond_format_services_checklist_html($html, $list_class = 'services-checklist')
+{
+	if (!is_string($html) || $html === '') {
+		return '';
+	}
+
+	$list_class = sanitize_html_class($list_class);
+	$html = preg_replace(
+		'/<ul\b([^>]*)>/i',
+		'<ul class="computex-if-list ' . esc_attr($list_class) . '"$1>',
+		$html
+	);
+
+	return preg_replace_callback(
+		'/<li\b([^>]*)>(.*?)<\/li>/is',
+		static function ($matches) {
+			if (stripos($matches[2], 'computex-if-check') !== false) {
+				return $matches[0];
+			}
+
+			return '<li' . $matches[1] . '><span class="computex-if-check" aria-hidden="true">✓</span> ' . trim($matches[2]) . '</li>';
+		},
+		$html
+	);
+}
+
+/**
  * Карточка catalog CPT в слайдере (как в single-catalog.php).
  */
 function computex_cond_render_hits_catalog_slide($post_id)
