@@ -53,25 +53,49 @@ if ($filters['max_price'] !== '') {
 }
 ?>
 
-<div class="sidebar__wrapp sidebar__wrapp--filters shop-filters-panel">
-	<form class="shop-filters" method="get" action="<?php echo esc_url($form_action); ?>">
-		<div class="shop-filters__header">
-			<h2 class="shop-filters__title">Фильтры</h2>
-			<?php if ($active_filter_count > 0) : ?>
-				<span class="shop-filters__badge"><?php echo esc_html((string) $active_filter_count); ?></span>
-			<?php endif; ?>
-		</div>
+<?php
+$shop_filters_panel_open = $active_filter_count > 0;
+$shop_filters_categories_open = !empty($active_category_slugs);
+$shop_filters_hits_open = !empty($filters['hits']);
+$shop_filters_price_open = $filters['min_price'] !== '' || $filters['max_price'] !== '';
+$shop_filters_areas_open = !empty($filters['areas']);
+?>
 
+<div class="sidebar__wrapp sidebar__wrapp--filters shop-filters-panel<?php echo $shop_filters_panel_open ? ' is-filters-open' : ''; ?>">
+	<form class="shop-filters" method="get" action="<?php echo esc_url($form_action); ?>">
+		<button
+			type="button"
+			class="shop-filters__header"
+			id="shop-filters-header-toggle"
+			aria-expanded="<?php echo $shop_filters_panel_open ? 'true' : 'false'; ?>"
+			aria-controls="shop-filters-collapsible"
+		>
+			<span class="shop-filters__header-main">
+				<span class="shop-filters__title">Фильтры</span>
+				<?php if ($active_filter_count > 0) : ?>
+					<span class="shop-filters__badge"><?php echo esc_html((string) $active_filter_count); ?></span>
+				<?php endif; ?>
+			</span>
+			<span class="shop-filters__header-chevron" aria-hidden="true"></span>
+		</button>
+
+		<div class="shop-filters__collapsible" id="shop-filters-collapsible">
 		<div class="shop-filters__body">
-			<section class="shop-filters__section">
-				<h3 class="shop-filters__section-title">
+			<section class="shop-filters__section<?php echo $shop_filters_categories_open ? ' is-open' : ''; ?>">
+				<button
+					type="button"
+					class="shop-filters__section-title"
+					aria-expanded="<?php echo $shop_filters_categories_open ? 'true' : 'false'; ?>"
+				>
 					<span class="shop-filters__section-icon" aria-hidden="true">
 						<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
 							<path d="M3 4.5h12M3 9h8M3 13.5h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
 						</svg>
 					</span>
-					Категории
-				</h3>
+					<span class="shop-filters__section-label">Категории</span>
+					<span class="shop-filters__section-chevron" aria-hidden="true"></span>
+				</button>
+				<div class="shop-filters__section-content">
 				<?php if (!is_wp_error($product_categories) && !empty($product_categories)) : ?>
 					<ul class="shop-filters__list">
 						<?php foreach ($product_categories as $category) : ?>
@@ -98,18 +122,25 @@ if ($filters['max_price'] !== '') {
 				<?php else : ?>
 					<p class="shop-filters__empty">Нет категорий</p>
 				<?php endif; ?>
+				</div>
 			</section>
 
 			<?php if (!empty($has_hits_filters)) : ?>
-				<section class="shop-filters__section">
-					<h3 class="shop-filters__section-title">
+				<section class="shop-filters__section<?php echo $shop_filters_hits_open ? ' is-open' : ''; ?>">
+					<button
+						type="button"
+						class="shop-filters__section-title"
+						aria-expanded="<?php echo $shop_filters_hits_open ? 'true' : 'false'; ?>"
+					>
 						<span class="shop-filters__section-icon" aria-hidden="true">
 							<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
 								<path d="M9 2.5l1.8 3.6 4 .6-2.9 2.8.7 4-3.6-1.9-3.6 1.9.7-4L3.2 6.7l4-.6L9 2.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
 							</svg>
 						</span>
-						Хиты продаж
-					</h3>
+						<span class="shop-filters__section-label">Хиты продаж</span>
+						<span class="shop-filters__section-chevron" aria-hidden="true"></span>
+					</button>
+					<div class="shop-filters__section-content">
 					<ul class="shop-filters__list">
 						<?php foreach ($has_hits_filters as $hit_key => $hit_option) : ?>
 							<?php $is_checked = in_array($hit_key, $filters['hits'], true); ?>
@@ -129,18 +160,25 @@ if ($filters['max_price'] !== '') {
 							</li>
 						<?php endforeach; ?>
 					</ul>
+					</div>
 				</section>
 			<?php endif; ?>
 
-			<section class="shop-filters__section">
-				<h3 class="shop-filters__section-title">
+			<section class="shop-filters__section<?php echo $shop_filters_price_open ? ' is-open' : ''; ?>">
+				<button
+					type="button"
+					class="shop-filters__section-title"
+					aria-expanded="<?php echo $shop_filters_price_open ? 'true' : 'false'; ?>"
+				>
 					<span class="shop-filters__section-icon" aria-hidden="true">
 						<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
 							<path d="M4 4.5V3.5a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v1M4 6h10l-1.2 8.4a1 1 0 0 1-1 .6H6.2a1 1 0 0 1-1-.6L4 6z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
 						</svg>
 					</span>
-					Цена, BYN
-				</h3>
+					<span class="shop-filters__section-label">Цена, BYN</span>
+					<span class="shop-filters__section-chevron" aria-hidden="true"></span>
+				</button>
+				<div class="shop-filters__section-content">
 				<div class="shop-filters__price">
 					<label class="shop-filters__price-field">
 						<span class="shop-filters__price-caption">От</span>
@@ -168,19 +206,26 @@ if ($filters['max_price'] !== '') {
 						>
 					</label>
 				</div>
+				</div>
 			</section>
 
 			<?php if (!empty($area_terms)) : ?>
-				<section class="shop-filters__section">
-					<h3 class="shop-filters__section-title">
+				<section class="shop-filters__section<?php echo $shop_filters_areas_open ? ' is-open' : ''; ?>">
+					<button
+						type="button"
+						class="shop-filters__section-title"
+						aria-expanded="<?php echo $shop_filters_areas_open ? 'true' : 'false'; ?>"
+					>
 						<span class="shop-filters__section-icon" aria-hidden="true">
 							<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
 								<rect x="3" y="3" width="12" height="12" rx="1.5" stroke="currentColor" stroke-width="1.4"/>
 								<path d="M3 9h12M9 3v12" stroke="currentColor" stroke-width="1.4"/>
 							</svg>
 						</span>
-						Обслуживаемая площадь
-					</h3>
+						<span class="shop-filters__section-label">Обслуживаемая площадь</span>
+						<span class="shop-filters__section-chevron" aria-hidden="true"></span>
+					</button>
+					<div class="shop-filters__section-content">
 					<ul class="shop-filters__list shop-filters__list--grid">
 						<?php foreach ($area_terms as $area_term) : ?>
 							<?php $is_checked = in_array($area_term->slug, $filters['areas'], true); ?>
@@ -199,6 +244,7 @@ if ($filters['max_price'] !== '') {
 							</li>
 						<?php endforeach; ?>
 					</ul>
+					</div>
 				</section>
 			<?php endif; ?>
 		</div>
@@ -213,6 +259,7 @@ if ($filters['max_price'] !== '') {
 					Сбросить
 				</a>
 			<?php endif; ?>
+		</div>
 		</div>
 	</form>
 </div>

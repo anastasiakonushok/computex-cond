@@ -4,7 +4,7 @@
  * */
 get_header(); ?>
 
-<main class="main">
+<main class="main page-contacts">
     <section class="hero-services"
         style="background-image: linear-gradient(rgba(43, 60, 77, 0.74), rgba(43, 60, 77, 0.74)), url('<?php the_field('fon_kartinka'); ?>'); ">
         <div class="container">

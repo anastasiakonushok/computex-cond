@@ -316,7 +316,88 @@
 		});
 	}
 
+	function initShopFiltersMobile() {
+		var panel = document.querySelector('.shop-filters-panel');
+		if (!panel) {
+			return;
+		}
+
+		var mobileQuery = window.matchMedia('(max-width: 1023px)');
+		var headerToggle = panel.querySelector('.shop-filters__header');
+		var sections = panel.querySelectorAll('.shop-filters__section');
+
+		function syncSectionState(section, isOpen) {
+			var title = section.querySelector('.shop-filters__section-title');
+			section.classList.toggle('is-open', isOpen);
+
+			if (title) {
+				title.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+			}
+		}
+
+		function bindSectionToggles() {
+			sections.forEach(function (section) {
+				var title = section.querySelector('.shop-filters__section-title');
+				if (!title || title.dataset.bound === '1') {
+					return;
+				}
+
+				title.dataset.bound = '1';
+				title.addEventListener('click', function () {
+					if (!mobileQuery.matches) {
+						return;
+					}
+
+					syncSectionState(section, !section.classList.contains('is-open'));
+				});
+			});
+		}
+
+		function syncPanelState(isOpen) {
+			panel.classList.toggle('is-filters-open', isOpen);
+
+			if (headerToggle) {
+				headerToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+			}
+		}
+
+		if (headerToggle && headerToggle.dataset.bound !== '1') {
+			headerToggle.dataset.bound = '1';
+			headerToggle.addEventListener('click', function () {
+				if (!mobileQuery.matches) {
+					return;
+				}
+
+				syncPanelState(!panel.classList.contains('is-filters-open'));
+			});
+		}
+
+		function applyMode() {
+			if (!mobileQuery.matches) {
+				syncPanelState(true);
+				sections.forEach(function (section) {
+					syncSectionState(section, true);
+				});
+				return;
+			}
+
+			if (!panel.classList.contains('is-filters-open')) {
+				syncPanelState(false);
+			}
+		}
+
+		bindSectionToggles();
+		applyMode();
+
+		if (typeof mobileQuery.addEventListener === 'function') {
+			mobileQuery.addEventListener('change', applyMode);
+		} else if (typeof mobileQuery.addListener === 'function') {
+			mobileQuery.addListener(applyMode);
+		}
+	}
+
 	document.addEventListener('DOMContentLoaded', function () {
 		document.querySelectorAll('.product-card[data-variations], .product-card[data-properties]').forEach(initCard);
+		initShopFiltersMobile();
 	});
 })();
