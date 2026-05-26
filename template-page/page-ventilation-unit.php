@@ -6,6 +6,15 @@
  */
 
 get_header();
+
+$ventilation_shop_url = add_query_arg(
+	array(
+		'filter_category' => array('ventilyaciya'),
+	),
+	function_exists('computex_cond_get_catalog_filters_page_url')
+		? computex_cond_get_catalog_filters_page_url()
+		: home_url('/shop/')
+);
 ?>
 <div class="computex-if-page computex-vent-page">
     <main>
@@ -14,21 +23,21 @@ get_header();
                 <div>
                     <div class="computex-if-eyebrow"><span class="computex-if-pulse"></span> Приточно-вытяжная установка</div>
                     <h1>Свежий воздух в доме <span class="computex-if-highlight">без потери тепла.</span></h1>
-                    <p class="computex-if-hero-copy">Mitsubishi Electric Lossnay VL-100EU5-E - настенная приточно-вытяжная установка для квартиры, дома или небольшого помещения.</p>
-                    <p class="computex-if-hero-copy">Система одновременно подает свежий воздух и удаляет отработанный. Через теплообменник входящий поток частично подогревается зимой, охлаждается летом и становится комфортнее для помещения.</p>
+                    <p class="computex-if-hero-copy">Приточно-вытяжная вентиляция одновременно подает свежий воздух и удаляет отработанный. Подходит для квартиры, частного дома, офиса и других помещений, где важен стабильный воздухообмен.</p>
+                    <p class="computex-if-hero-copy">В установках с рекуперацией теплообменник передает часть тепла и влаги между потоками: зимой приток подогревается, летом — частично охлаждается и осушается. Так проветривание становится комфортнее, чем через открытое окно.</p>
                     <div class="computex-if-actions">
                         <a class="computex-if-btn" href="#vent-request">Получить консультацию</a>
                         <a class="computex-if-btn computex-if-btn-secondary" href="#vent-steps">Как это работает</a>
                     </div>
                     <div class="computex-if-proof-row">
-                        <span>Возврат тепла до 80%</span>
-                        <span>Расход воздуха 55/100 м3/ч</span>
-                        <span>Настенный монтаж</span>
-                        <span>Фильтр P-100HF5-E</span>
+                        <span>Приток и вытяжка</span>
+                        <span>Рекуперация тепла</span>
+                        <span>Фильтрация воздуха</span>
+                        <span>Монтаж под ключ</span>
                     </div>
                 </div>
                 <div class="computex-if-hero-product computex-vent-hero-product">
-                    <img src="https://klimat.computex.by/wp-content/uploads/2026/05/me-lossnay-vl-100-removebg-preview.png" alt="Приточно-вытяжная установка Mitsubishi Electric Lossnay">
+                    <img src="https://klimat.computex.by/wp-content/uploads/2026/05/me-lossnay-vl-100-removebg-preview.png" alt="Приточно-вытяжная установка с рекуперацией">
                 </div>
             </div>
         </section>
@@ -92,7 +101,7 @@ get_header();
             <div class="computex-if-container">
                 <div class="computex-if-section-header">
                     <div class="computex-if-kicker">Преимущества</div>
-                    <h2>Что дает Lossnay в доме.</h2>
+                    <h2>Что дает приточно-вытяжная вентиляция в доме.</h2>
                 </div>
                 <div class="computex-if-offer-grid">
                     <div class="computex-if-price-card">
@@ -127,7 +136,7 @@ get_header();
                             </svg>
                         </span>
                         <h3>Комфорт по влажности</h3>
-                        <p>Lossnay работает не только с температурой, но и с влагосодержанием воздуха: зимой помогает не пересушивать приток, летом - уменьшать лишнюю влажность.</p>
+                        <p>Установки с рекуперацией работают не только с температурой, но и с влагосодержанием воздуха: зимой помогают не пересушивать приток, летом — уменьшать лишнюю влажность.</p>
                     </div>
                     <div class="computex-if-price-card">
                         <span class="computex-if-card-icon" aria-hidden="true">
@@ -312,7 +321,7 @@ get_header();
             <div class="computex-if-container">
                 <div class="computex-if-section-header">
                     <div class="computex-if-kicker">Опыт компании</div>
-                    <h2>Подберем установку и аккуратно смонтируем в Гомеле.</h2>
+                    <h2>Подберем систему вентиляции и аккуратно смонтируем в Гомеле.</h2>
                 </div>
                 <div class="computex-if-offer-grid">
                     <div class="computex-if-trust-card">
@@ -369,9 +378,9 @@ get_header();
                 </div>
                 <div class="computex-if-comparison-grid computex-if-comparison-grid--vs">
                     <div class="computex-if-compare-box computex-if-compare-featured">
-                        <h3>Установка Lossnay</h3>
+                        <h3>Приточно-вытяжная установка</h3>
                         <div class="computex-if-compare-img computex-vent-compare-img">
-                            <img src="https://klimat.computex.by/wp-content/uploads/2026/05/me-lossnay-vl-100-removebg-preview.png" alt="Приточно-вытяжная установка Mitsubishi Electric Lossnay">
+                            <img src="https://klimat.computex.by/wp-content/uploads/2026/05/me-lossnay-vl-100-removebg-preview.png" alt="Приточно-вытяжная установка с рекуперацией">
                         </div>
                         <ul class="computex-if-list">
                             <li><span class="computex-if-check">✓</span> Подает свежий воздух и удаляет отработанный одновременно.</li>
@@ -419,24 +428,19 @@ get_header();
                         </div>
                     </div>
                     <div class="computex-if-compare-box">
-                        <h3>Характеристики</h3>
+                        <h3>Какие решения подбираем</h3>
                         <ul class="computex-if-rules">
-                            <li><span>Модель</span><strong>Lossnay VL-100EU5-E</strong></li>
-                            <li><span>Расход воздуха</span><strong>55 / 100 м3/ч</strong></li>
-                            <li><span>Эффективность по энтальпии</span><strong>80 / 73%</strong></li>
-                            <li><span>Потребляемая мощность</span><strong>13 / 30 Вт</strong></li>
-                            <li><span>Уровень шума</span><strong>24 / 36,5 дБ(А)</strong></li>
-                            <li><span>Вес</span><strong>7,5 кг</strong></li>
-                            <li><span>Размеры</span><strong>620 × 200 × 265 мм</strong></li>
-                            <li><span>Отверстия в стене</span><strong>2 отв. Ø85-90 мм</strong></li>
-                            <li><span>Толщина стены</span><strong>50-550 мм</strong></li>
-                            <li><span>Температура снаружи</span><strong>-10°C ... +40°C</strong></li>
-                            <li><span>Фильтр</span><strong>P-100HF5-E</strong></li>
-                            <li><span>Монтаж</span><strong>настенный</strong></li>
-                            <li><span>Питание</span><strong>220-240В / 50Гц</strong></li>
-                            <li><span>Управление</span><strong>проводной выключатель</strong></li>
+                            <li><span>Комнатные установки</span><strong>приток + вытяжка с рекуперацией для одной зоны</strong></li>
+                            <li><span>Приточные комплексы</span><strong>стабильный приток свежего воздуха в помещение</strong></li>
+                            <li><span>Вытяжные системы</span><strong>удаление влаги, запахов и загрязненного воздуха</strong></li>
+                            <li><span>Канальные решения</span><strong>вентиляция нескольких комнат или всего дома</strong></li>
+                            <li><span>Для кухни и ванной</span><strong>усиленная вытяжка там, где больше влаги и запахов</strong></li>
+                            <li><span>Для спальни и детской</span><strong>тихий режим и комфортный приток ночью</strong></li>
+                            <li><span>Для офиса</span><strong>поддержание нормального воздухообмена в рабочих зонах</strong></li>
+                            <li><span>Монтаж</span><strong>настенный, канальный или комбинированный</strong></li>
                         </ul>
-                        <a class="computex-if-btn computex-if-btn-full" href="#vent-request">Подробнее</a>
+                        <p class="computex-if-compare-note">Конкретную модель, расход воздуха, уровень шума и стоимость монтажа подбираем под площадь, количество жильцов и особенности помещения.</p>
+                        <a class="computex-if-btn computex-if-btn-full" href="<?php echo esc_url($ventilation_shop_url); ?>">Смотреть каталог</a>
                     </div>
                 </div>
             </div>
@@ -448,7 +452,7 @@ get_header();
                     <div class="computex-if-installment__content">
                         <div class="computex-if-eyebrow computex-if-installment__badge"><span class="computex-if-pulse"></span> Рассрочка 0%</div>
                         <h2>Рассрочка на оборудование и монтаж</h2>
-                        <p>Подскажем доступные варианты оплаты для приточно-вытяжной установки, монтажа и запуска системы.</p>
+                        <p>Подскажем доступные варианты оплаты для оборудования, монтажа приточно-вытяжной системы и запуска.</p>
                         <div class="computex-if-installment__chips">
                             <span>Оборудование</span>
                             <span>Монтаж</span>
@@ -466,8 +470,8 @@ get_header();
                 <div class="computex-if-price-offer">
                     <div>
                         <div class="computex-if-eyebrow computex-if-price-offer__badge"><span class="computex-if-pulse"></span> Под ключ</div>
-                        <h2>Приточно-вытяжные установки <span class="computex-if-price-accent">от 2600 руб</span></h2>
-                        <p>Подскажем подходящий вариант установки, оценим монтаж через стену и подготовим предварительный расчет.</p>
+                        <h2>Приточно-вытяжная вентиляция <span class="computex-if-price-accent">от 2600 руб</span></h2>
+                        <p>Подберем тип установки — приточную, вытяжную или комбинированную, оценим монтаж и подготовим предварительный расчет.</p>
                         <small>Стоимость указана ориентировочно. Итоговая цена зависит от модели оборудования, комплектации, сложности монтажа и особенностей помещения.</small>
                     </div>
                     <a class="computex-if-btn" href="#vent-request">Рассчитать стоимость</a>
@@ -528,8 +532,8 @@ get_header();
         <section id="vent-request" class="computex-if-section computex-if-section-alt">
             <div class="computex-if-container">
                 <div class="computex-if-cta-box">
-                    <h2><span>Получите бесплатную консультацию</span> по приточно-вытяжной установке</h2>
-                    <p>Оставьте свои контактные данные: специалист подскажет, подойдет ли Lossnay для вашего помещения, и рассчитает стоимость монтажа.</p>
+                    <h2><span>Получите бесплатную консультацию</span> по вентиляции</h2>
+                    <p>Оставьте контактные данные: специалист подскажет, какое решение подойдет для вашего помещения — приток, вытяжку или приточно-вытяжную установку, и рассчитает стоимость монтажа.</p>
                     <a class="computex-if-btn" href="https://t.me/computex_gomel">Получить консультацию</a>
                 </div>
             </div>

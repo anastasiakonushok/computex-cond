@@ -909,6 +909,13 @@
     font-weight: 900;
 }
 
+.computex-if-compare-note {
+    margin: 16px 0 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--computex-muted);
+}
+
 .computex-if-example-box {
     margin-top: 20px;
     padding: 15px;

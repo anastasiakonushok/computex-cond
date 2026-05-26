@@ -220,7 +220,6 @@ get_header();
                             <li><span>Системы отопления</span><strong>полы, радиаторы, фанкойлы</strong></li>
                             <li><span>Управление</span><strong>Wi‑Fi</strong></li>
                         </ul>
-                        <a class="computex-if-btn computex-if-btn-full" href="#heating-request">Подробнее</a>
                     </div>
                 </div>
             </div>
