@@ -444,6 +444,275 @@ function create_catalog_taxonomies()
 	));
 }
 
+/**
+ * URL магазина WooCommerce (/shop).
+ */
+function computex_cond_get_shop_url()
+{
+	if (function_exists('wc_get_page_permalink')) {
+		$url = wc_get_page_permalink('shop');
+
+		if ($url) {
+			return $url;
+		}
+	}
+
+	return home_url('/shop/');
+}
+
+/**
+ * WooCommerce-товар по slug записи старого catalog.
+ *
+ * @param int|WP_Post $catalog_post ID или объект catalog.
+ * @return int ID product или 0.
+ */
+function computex_cond_get_wc_product_id_for_catalog_post($catalog_post)
+{
+	if (is_numeric($catalog_post)) {
+		$catalog_post = get_post((int) $catalog_post);
+	}
+
+	if (!$catalog_post instanceof WP_Post || $catalog_post->post_type !== 'catalog') {
+		return 0;
+	}
+
+	$slug = $catalog_post->post_name;
+
+	if ($slug === '') {
+		return 0;
+	}
+
+	$product = get_page_by_path($slug, OBJECT, 'product');
+
+	if ($product instanceof WP_Post && $product->post_status === 'publish') {
+		return (int) $product->ID;
+	}
+
+	return 0;
+}
+
+/**
+ * Куда вести со старой карточки catalog: товар WC или /shop.
+ *
+ * @param int|WP_Post $catalog_post ID или объект catalog.
+ * @return string
+ */
+function computex_cond_get_catalog_post_redirect_url($catalog_post)
+{
+	$product_id = computex_cond_get_wc_product_id_for_catalog_post($catalog_post);
+
+	if ($product_id > 0) {
+		$permalink = get_permalink($product_id);
+
+		if ($permalink) {
+			return $permalink;
+		}
+	}
+
+	return computex_cond_get_shop_url();
+}
+
+/**
+ * Куда вести со старой категории catalog-cat: /shop (+ фильтр, если есть product_cat с тем же slug).
+ *
+ * @param int|WP_Term $term ID или объект catalog-cat.
+ * @return string
+ */
+function computex_cond_get_catalog_cat_redirect_url($term)
+{
+	if (is_numeric($term)) {
+		$term = get_term((int) $term, 'catalog-cat');
+	}
+
+	$shop_url = computex_cond_get_shop_url();
+
+	if (!$term instanceof WP_Term || is_wp_error($term)) {
+		return $shop_url;
+	}
+
+	$product_cat = get_term_by('slug', $term->slug, 'product_cat');
+
+	if ($product_cat instanceof WP_Term && !is_wp_error($product_cat)) {
+		return add_query_arg(
+			array(
+				'filter_category' => array($term->slug),
+			),
+			$shop_url
+		);
+	}
+
+	return $shop_url;
+}
+
+/**
+ * Подмена ссылок catalog / catalog-cat в меню и контенте.
+ */
+function computex_cond_filter_catalog_post_type_link($permalink, $post)
+{
+	if (!$post instanceof WP_Post || $post->post_type !== 'catalog') {
+		return $permalink;
+	}
+
+	return computex_cond_get_catalog_post_redirect_url($post);
+}
+add_filter('post_type_link', 'computex_cond_filter_catalog_post_type_link', 10, 2);
+
+/**
+ * @param string  $termlink Term link URL.
+ * @param WP_Term $term Term object.
+ * @param string  $taxonomy Taxonomy slug.
+ */
+function computex_cond_filter_catalog_cat_term_link($termlink, $term, $taxonomy)
+{
+	if ($taxonomy !== 'catalog-cat' || !$term instanceof WP_Term) {
+		return $termlink;
+	}
+
+	return computex_cond_get_catalog_cat_redirect_url($term);
+}
+add_filter('term_link', 'computex_cond_filter_catalog_cat_term_link', 10, 3);
+
+/**
+ * 301: старый CPT catalog и таксономия catalog-cat → магазин WooCommerce.
+ */
+function computex_cond_redirect_old_catalog_urls()
+{
+	if (is_admin() || wp_doing_ajax() || (defined('REST_REQUEST') && REST_REQUEST)) {
+		return;
+	}
+
+	$redirect_url = '';
+
+	if (is_singular('catalog')) {
+		$redirect_url = computex_cond_get_catalog_post_redirect_url(get_queried_object_id());
+	} elseif (is_tax('catalog-cat')) {
+		$redirect_url = computex_cond_get_catalog_cat_redirect_url(get_queried_object());
+	} elseif (is_post_type_archive('catalog')) {
+		$redirect_url = computex_cond_get_shop_url();
+	}
+
+	if ($redirect_url === '') {
+		return;
+	}
+
+	wp_safe_redirect($redirect_url, 301);
+	exit;
+}
+add_action('template_redirect', 'computex_cond_redirect_old_catalog_urls', 1);
+
+/**
+ * Запасной редирект по пути (если запрос не попал в is_tax / is_singular).
+ */
+function computex_cond_redirect_old_catalog_request_paths()
+{
+	if (is_admin() || wp_doing_ajax()) {
+		return;
+	}
+
+	$path = isset($GLOBALS['wp']->request) ? trim((string) $GLOBALS['wp']->request, '/') : '';
+
+	if ($path === '') {
+		return;
+	}
+
+	if ($path === 'catalog' || preg_match('#^catalog/page/\d+$#', $path)) {
+		wp_safe_redirect(computex_cond_get_shop_url(), 301);
+		exit;
+	}
+
+	if (preg_match('#^catalog/([^/]+)/?$#', $path, $matches)) {
+		$catalog_post = get_page_by_path($matches[1], OBJECT, 'catalog');
+
+		if ($catalog_post instanceof WP_Post) {
+			wp_safe_redirect(computex_cond_get_catalog_post_redirect_url($catalog_post), 301);
+			exit;
+		}
+
+		wp_safe_redirect(computex_cond_get_shop_url(), 301);
+		exit;
+	}
+
+	if (preg_match('#^catalog-category(?:/([^/]+))?(?:/page/\d+)?/?$#', $path, $matches)) {
+		if (!empty($matches[1])) {
+			$term = get_term_by('slug', $matches[1], 'catalog-cat');
+
+			if ($term instanceof WP_Term && !is_wp_error($term)) {
+				wp_safe_redirect(computex_cond_get_catalog_cat_redirect_url($term), 301);
+				exit;
+			}
+		}
+
+		wp_safe_redirect(computex_cond_get_shop_url(), 301);
+		exit;
+	}
+}
+add_action('template_redirect', 'computex_cond_redirect_old_catalog_request_paths', 2);
+
+/**
+ * Принудительный редирект при загрузке legacy-шаблонов catalog (single / archive / taxonomy).
+ */
+function computex_cond_redirect_legacy_catalog_template_bootstrap()
+{
+	if (is_admin() || wp_doing_ajax()) {
+		return;
+	}
+
+	global $post;
+
+	if (is_singular('catalog') || ($post instanceof WP_Post && $post->post_type === 'catalog')) {
+		$catalog_id = get_queried_object_id();
+
+		if (!$catalog_id && $post instanceof WP_Post) {
+			$catalog_id = (int) $post->ID;
+		}
+
+		wp_safe_redirect(computex_cond_get_catalog_post_redirect_url($catalog_id), 301);
+		exit;
+	}
+
+	if (is_tax('catalog-cat')) {
+		wp_safe_redirect(computex_cond_get_catalog_cat_redirect_url(get_queried_object()), 301);
+		exit;
+	}
+
+	if (is_post_type_archive('catalog')) {
+		wp_safe_redirect(computex_cond_get_shop_url(), 301);
+		exit;
+	}
+
+	if (function_exists('is_page_template') && is_page_template('archive-catalog.php')) {
+		wp_safe_redirect(computex_cond_get_shop_url(), 301);
+		exit;
+	}
+}
+
+/**
+ * Не отдавать legacy-шаблоны catalog — только редирект.
+ *
+ * @param string $template Путь к подключаемому шаблону.
+ * @return string
+ */
+function computex_cond_redirect_legacy_catalog_template_include($template)
+{
+	if (is_admin() || wp_doing_ajax() || !$template) {
+		return $template;
+	}
+
+	$legacy_templates = array(
+		'single-catalog.php',
+		'archive-catalog.php',
+		'taxonomy-catalog-cat.php',
+	);
+
+	if (!in_array(basename($template), $legacy_templates, true)) {
+		return $template;
+	}
+
+	computex_cond_redirect_legacy_catalog_template_bootstrap();
+
+	return $template;
+}
+add_filter('template_include', 'computex_cond_redirect_legacy_catalog_template_include', 1);
 
 function disable_search_redirect()
 {
