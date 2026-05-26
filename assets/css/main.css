@@ -3954,10 +3954,8 @@ p#breadcrumbs a {
   display: block;
   width: 60%;
   right: 20px;
-  bottom: -30%;
+  bottom: -40%;
   position: absolute;
-  padding: 30px;
-  border-radius: 8px;
   color: var(--main-gray);
 }
 
