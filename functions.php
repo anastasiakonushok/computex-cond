@@ -2576,25 +2576,171 @@ function computex_cond_filter_variation_options_by_area($variation_options, $are
 	return computex_cond_filter_variation_options_by_shop_filters($variation_options, $filters);
 }
 
-function computex_cond_get_variation_characteristic_fields()
+/**
+ * Профили полей характеристик вариаций по категориям товара.
+ *
+ * @return array<string, array{label: string, category_slugs: string[], category_name_contains: string[], fields: array<string, string>}>
+ */
+function computex_cond_get_variation_field_profiles()
 {
-	return array(
-		'cooling_power' => 'Мощность охлаждения, кВт',
-		'heating_power' => 'Мощность обогрева, кВт',
-		'cooling_consumption' => 'Потребляемая мощность при охлаждении, кВт',
-		'heating_consumption' => 'Потребляемая мощность при обогреве, кВт',
-		'indoor_dimensions' => 'Габариты внутреннего блока',
-		'outdoor_dimensions' => 'Габариты наружного блока',
-		'indoor_weight' => 'Вес внутреннего блока, кг',
-		'outdoor_weight' => 'Вес наружного блока, кг',
+	$profiles = array(
+		'ventilation' => array(
+			'label' => 'Вентиляция',
+			'category_slugs' => array(
+				'ventilyaciya',
+				'ventilaciya',
+				'ventilation',
+				'vnutrennyaya-ventilyaciya',
+				'pritochno-vytyazhnaya-ventilyaciya',
+			),
+			'category_name_contains' => array('вентил'),
+			'fields' => array(
+				'variation_model' => 'Модель',
+				'air_flow' => 'Расход воздуха, м³/ч',
+				'power_consumption' => 'Потребляемая мощность, Вт',
+				'noise_level' => 'Уровень шума, дБ',
+				'recuperation_efficiency' => 'Эффективность рекуперации, %',
+				'duct_connection_size' => 'Размер подключения воздуховодов',
+				'supply_voltage' => 'Напряжение питания',
+				'dimensions' => 'Габаритные размеры',
+				'weight' => 'Вес, кг',
+			),
+		),
+		'conditioner' => array(
+			'label' => 'Кондиционеры',
+			'category_slugs' => array(
+				'kondicionery',
+				'konditsionery',
+				'kondicioner',
+				'split-sistemy',
+				'multi-split',
+				'kassetnye',
+				'kanalnye',
+				'napolno-potolochnye',
+			),
+			'category_name_contains' => array('кондицион'),
+			'fields' => array(
+				'cooling_power' => 'Мощность охлаждения, кВт',
+				'heating_power' => 'Мощность обогрева, кВт',
+				'cooling_consumption' => 'Потребляемая мощность при охлаждении, кВт',
+				'heating_consumption' => 'Потребляемая мощность при обогреве, кВт',
+				'indoor_dimensions' => 'Габариты внутреннего блока',
+				'outdoor_dimensions' => 'Габариты наружного блока',
+				'indoor_weight' => 'Вес внутреннего блока, кг',
+				'outdoor_weight' => 'Вес наружного блока, кг',
+			),
+		),
 	);
+
+	return apply_filters('computex_cond_variation_field_profiles', $profiles);
+}
+
+/**
+ * Категории товара (включая родительские) для выбора профиля полей.
+ *
+ * @return WP_Term[]
+ */
+function computex_cond_get_product_category_terms_with_ancestors($product_id)
+{
+	$product_id = absint($product_id);
+
+	if (!$product_id) {
+		return array();
+	}
+
+	$terms = wp_get_post_terms($product_id, 'product_cat');
+
+	if (is_wp_error($terms) || empty($terms)) {
+		return array();
+	}
+
+	$all_terms = array();
+
+	foreach ($terms as $term) {
+		$all_terms[ $term->term_id ] = $term;
+
+		foreach (get_ancestors($term->term_id, 'product_cat', 'taxonomy') as $ancestor_id) {
+			$ancestor = get_term($ancestor_id, 'product_cat');
+
+			if ($ancestor instanceof WP_Term && !is_wp_error($ancestor)) {
+				$all_terms[ $ancestor->term_id ] = $ancestor;
+			}
+		}
+	}
+
+	return array_values($all_terms);
+}
+
+/**
+ * Ключ профиля полей вариации: ventilation | conditioner.
+ */
+function computex_cond_get_product_variation_field_profile_key($product_id)
+{
+	$product_id = absint($product_id);
+	$profiles   = computex_cond_get_variation_field_profiles();
+	$terms      = computex_cond_get_product_category_terms_with_ancestors($product_id);
+
+	if ($product_id && empty($terms)) {
+		return 'conditioner';
+	}
+
+	$profile_order = array('ventilation', 'conditioner');
+
+	foreach ($profile_order as $profile_key) {
+		if (empty($profiles[ $profile_key ])) {
+			continue;
+		}
+
+		$profile = $profiles[ $profile_key ];
+		$slugs   = array_map('strval', (array) ($profile['category_slugs'] ?? array()));
+		$names   = array_map('strval', (array) ($profile['category_name_contains'] ?? array()));
+
+		foreach ($terms as $term) {
+			if ($slugs !== array() && in_array($term->slug, $slugs, true)) {
+				return $profile_key;
+			}
+
+			foreach ($names as $needle) {
+				if ($needle !== '' && mb_stripos($term->name, $needle, 0, 'UTF-8') !== false) {
+					return $profile_key;
+				}
+			}
+
+			if ($profile_key === 'ventilation' && strpos($term->slug, 'ventil') !== false) {
+				return $profile_key;
+			}
+
+			if ($profile_key === 'conditioner' && strpos($term->slug, 'kondic') !== false) {
+				return $profile_key;
+			}
+		}
+	}
+
+	return 'conditioner';
+}
+
+/**
+ * @param int $product_id ID родительского товара (0 — поля кондиционеров по умолчанию).
+ */
+function computex_cond_get_variation_characteristic_fields($product_id = 0)
+{
+	$profiles    = computex_cond_get_variation_field_profiles();
+	$profile_key = computex_cond_get_product_variation_field_profile_key($product_id);
+
+	if (!empty($profiles[ $profile_key ]['fields']) && is_array($profiles[ $profile_key ]['fields'])) {
+		return $profiles[ $profile_key ]['fields'];
+	}
+
+	return $profiles['conditioner']['fields'] ?? array();
 }
 
 function computex_cond_get_variation_characteristics($variation_id)
 {
+	$variation_id = absint($variation_id);
+	$parent_id    = $variation_id ? (int) wp_get_post_parent_id($variation_id) : 0;
 	$characteristics = array();
 
-	foreach (computex_cond_get_variation_characteristic_fields() as $key => $label) {
+	foreach (computex_cond_get_variation_characteristic_fields($parent_id) as $key => $label) {
 		$value = get_post_meta($variation_id, '_' . $key, true);
 
 		if ($value !== '') {
@@ -2613,20 +2759,31 @@ add_action('woocommerce_product_after_variable_attributes', 'custom_variation_fi
 
 function custom_variation_fields($loop, $variation_data, $variation)
 {
-	$fields = computex_cond_get_variation_characteristic_fields();
+	$variation_id = isset($variation->ID) ? absint($variation->ID) : 0;
+	$parent_id    = $variation_id ? (int) wp_get_post_parent_id($variation_id) : 0;
+	$fields       = computex_cond_get_variation_characteristic_fields($parent_id);
+	$profiles     = computex_cond_get_variation_field_profiles();
+	$profile_key  = computex_cond_get_product_variation_field_profile_key($parent_id);
+	$profile_label = $profiles[ $profile_key ]['label'] ?? '';
 
 	echo '<div class="form-row form-row-full">';
-	echo '<h4 style="margin: 12px 0;">Характеристики вариации</h4>';
+	echo '<h4 style="margin: 12px 0;">Характеристики вариации';
+	if ($profile_label !== '') {
+		echo ' <span style="font-weight:400;color:#646970;">(' . esc_html($profile_label) . ')</span>';
+	}
+	echo '</h4>';
 	echo '</div>';
 
 	foreach ($fields as $key => $label) {
-		woocommerce_wp_text_input(array(
-			'id' => $key . '_' . $loop,
-			'name' => $key . '[' . $loop . ']',
-			'label' => $label,
-			'value' => get_post_meta($variation->ID, '_' . $key, true),
-			'wrapper_class' => 'form-row form-row-full',
-		));
+		woocommerce_wp_text_input(
+			array(
+				'id' => $key . '_' . $loop,
+				'name' => $key . '[' . $loop . ']',
+				'label' => $label,
+				'value' => get_post_meta($variation_id, '_' . $key, true),
+				'wrapper_class' => 'form-row form-row-full',
+			)
+		);
 	}
 }
 
@@ -2635,14 +2792,16 @@ add_action('woocommerce_save_product_variation', 'save_custom_variation_fields',
 
 function save_custom_variation_fields($variation_id, $i)
 {
-	$fields = array_keys(computex_cond_get_variation_characteristic_fields());
+	$variation_id = absint($variation_id);
+	$parent_id    = $variation_id ? (int) wp_get_post_parent_id($variation_id) : 0;
+	$fields       = array_keys(computex_cond_get_variation_characteristic_fields($parent_id));
 
 	foreach ($fields as $field) {
-		if (isset($_POST[$field][$i])) {
+		if (isset($_POST[ $field ][ $i ])) {
 			update_post_meta(
 				$variation_id,
 				'_' . $field,
-				sanitize_text_field(wp_unslash($_POST[$field][$i]))
+				sanitize_text_field(wp_unslash($_POST[ $field ][ $i ]))
 			);
 		}
 	}
