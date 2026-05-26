@@ -1638,3 +1638,72 @@
         padding-bottom: 84px;
     }
 }
+
+/* Хиты продаж на лендингах — как на главной, кнопка «Подробнее» с белым текстом */
+.computex-if-page .section-product--landing-hits {
+    padding-top: 60px;
+    padding-bottom: 90px;
+    background: transparent;
+}
+
+.computex-if-page .section-product--landing-hits .section-product__info {
+    justify-content: space-between;
+    margin-bottom: 30px;
+    align-items: center;
+}
+
+.computex-if-page .section-product--landing-hits .section-product__title {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.computex-if-page .section-product--landing-hits .section-product__title h2 {
+    margin: 0;
+    color: var(--dark-color, #35495f);
+    font-family: var(--title-font, inherit);
+    font-size: clamp(28px, 3vw, 40px);
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.computex-if-page .section-product--landing-hits .section-product__title a {
+    color: var(--main-yellow, #f8c957);
+    font-size: var(--regular-font, 16px);
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.computex-if-page .section-product--landing-hits .section-product__nav .swiper-product-prev,
+.computex-if-page .section-product--landing-hits .section-product__nav .swiper-product-next {
+    color: var(--main-yellow, #f8c957);
+    cursor: pointer;
+}
+
+.computex-if-page .section-product--landing-hits .product-card a.title {
+    color: var(--dark-color, #35495f);
+    font-weight: 700;
+}
+
+.computex-if-page .section-product--landing-hits .product-card a.title:hover {
+    color: var(--dark-color, #35495f);
+}
+
+.computex-if-page .section-product--landing-hits .product-card__info > a.button-gray {
+    display: block;
+    width: 100%;
+    text-align: center;
+    color: var(--main-white, #fff) !important;
+    background: var(--main-gray, #35495f);
+}
+
+.computex-if-page .section-product--landing-hits .product-card__info > a.button-gray:hover,
+.computex-if-page .section-product--landing-hits .product-card__info > a.button-gray:focus {
+    color: var(--main-white, #fff) !important;
+    background: var(--main-yellow, #f8c957);
+}
+
+.computex-if-page .section-product--landing-hits .product-card__variant {
+    color: var(--dark-color, #35495f) !important;
+}

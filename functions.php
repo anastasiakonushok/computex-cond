@@ -3964,11 +3964,19 @@ function computex_cond_maybe_render_hits_slider($exclude_product_id = 0)
  * @param int $exclude_product_id ID товара, который не показывать.
  * @return bool Блок выведен.
  */
-function computex_cond_include_hits_product_slider($exclude_product_id = 0)
+function computex_cond_include_hits_product_slider($exclude_product_id = 0, $args = array())
 {
 	if (!function_exists('wc_get_product')) {
 		return false;
 	}
+
+	$args = wp_parse_args(
+		(array) $args,
+		array(
+			'section_class' => 'section-product',
+		)
+	);
+	$section_class = (string) $args['section_class'];
 
 	$exclude_product_id = absint($exclude_product_id);
 	$items = array();
@@ -4003,11 +4011,28 @@ function computex_cond_include_hits_product_slider($exclude_product_id = 0)
 /**
  * Слайдер «Хиты продаж» из ACF Options (tovary, заголовок, ссылка).
  *
- * @param int $exclude_product_id Не показывать этот товар (страница товара).
+ * @param int   $exclude_product_id Не показывать этот товар (страница товара).
+ * @param array $args               section_class и др.
  */
-function computex_cond_render_hits_slider_from_options($exclude_product_id = 0)
+function computex_cond_render_hits_slider_from_options($exclude_product_id = 0, $args = array())
 {
-	computex_cond_include_hits_product_slider($exclude_product_id);
+	computex_cond_include_hits_product_slider($exclude_product_id, $args);
+}
+
+/**
+ * Хиты продаж на лендингах (вентиляция, тепло) — разметка и стили как на главной.
+ *
+ * @param int $exclude_product_id ID товара, который не показывать.
+ * @return bool
+ */
+function computex_cond_render_landing_page_hits_slider($exclude_product_id = 0)
+{
+	return computex_cond_include_hits_product_slider(
+		$exclude_product_id,
+		array(
+			'section_class' => 'section-product section-product--landing-hits',
+		)
+	);
 }
 
 /**
