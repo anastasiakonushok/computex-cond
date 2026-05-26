@@ -41,10 +41,14 @@ $has_hits_filters = array_filter(
 $has_active_filters = !empty($filters['categories'])
 	|| !empty($filters['hits'])
 	|| !empty($filters['areas'])
+	|| $filters['search'] !== ''
 	|| $filters['min_price'] !== ''
 	|| $filters['max_price'] !== '';
 
 $active_filter_count = count($filters['categories']) + count($filters['hits']) + count($filters['areas']);
+if ($filters['search'] !== '') {
+	$active_filter_count++;
+}
 if ($filters['min_price'] !== '') {
 	$active_filter_count++;
 }
@@ -81,6 +85,37 @@ $shop_filters_areas_open = !empty($filters['areas']);
 
 		<div class="shop-filters__collapsible" id="shop-filters-collapsible">
 		<div class="shop-filters__body">
+			<section class="shop-filters__section shop-filters__section--search is-open">
+				<button
+					type="button"
+					class="shop-filters__section-title"
+					aria-expanded="true"
+				>
+					<span class="shop-filters__section-icon" aria-hidden="true">
+						<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<circle cx="8" cy="8" r="4.75" stroke="currentColor" stroke-width="1.5"/>
+							<path d="M11.5 11.5L15 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+						</svg>
+					</span>
+					<span class="shop-filters__section-label">Поиск</span>
+					<span class="shop-filters__section-chevron" aria-hidden="true"></span>
+				</button>
+				<div class="shop-filters__section-content">
+					<label class="shop-filters__search-field">
+						<span class="screen-reader-text">Поиск по названию</span>
+						<input
+							type="search"
+							class="shop-filters__search-input"
+							name="filter_search"
+							value="<?php echo esc_attr($filters['search']); ?>"
+							placeholder="Название, модель, артикул"
+							autocomplete="off"
+							maxlength="120"
+						>
+					</label>
+				</div>
+			</section>
+
 			<section class="shop-filters__section<?php echo $shop_filters_categories_open ? ' is-open' : ''; ?>">
 				<button
 					type="button"

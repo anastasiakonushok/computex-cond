@@ -1014,6 +1014,37 @@ p#breadcrumbs a {
   color: var(--main-white);
 }
 
+.shop-filters__search-field {
+  display: block;
+}
+
+.shop-filters__search-input {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid rgba(53, 73, 95, 0.18);
+  border-radius: 8px;
+  background: var(--main-white);
+  font-family: var(--body-font);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--dark-color);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.shop-filters__search-input::placeholder {
+  color: rgba(44, 40, 40, 0.35);
+}
+
+.shop-filters__search-input:hover {
+  border-color: rgba(248, 201, 87, 0.8);
+}
+
+.shop-filters__search-input:focus {
+  outline: none;
+  border-color: var(--main-yellow);
+  box-shadow: 0 0 0 3px rgba(248, 201, 87, 0.25);
+}
+
 .shop-filters__price {
   display: grid;
   grid-template-columns: 1fr auto 1fr;

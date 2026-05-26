@@ -1613,6 +1613,14 @@ function computex_cond_normalize_shop_filter_request()
 		$_GET['filter_hits'] = $hits;
 		$_REQUEST['filter_hits'] = $hits;
 	}
+
+	if (isset($_GET['filter_search'])) {
+		$search = sanitize_text_field(wp_unslash($_GET['filter_search']));
+		$search = mb_substr(trim($search), 0, 120, 'UTF-8');
+
+		$_GET['filter_search'] = $search;
+		$_REQUEST['filter_search'] = $search;
+	}
 }
 
 add_action('init', 'computex_cond_normalize_shop_filter_request', 1);
@@ -1669,6 +1677,8 @@ function computex_cond_get_shop_filter_values()
 
 	$min_price = isset($_GET['min_price']) ? wc_clean(wp_unslash($_GET['min_price'])) : '';
 	$max_price = isset($_GET['max_price']) ? wc_clean(wp_unslash($_GET['max_price'])) : '';
+	$search = isset($_GET['filter_search']) ? sanitize_text_field(wp_unslash($_GET['filter_search'])) : '';
+	$search = mb_substr(trim($search), 0, 120, 'UTF-8');
 
 	return array(
 		'categories' => $categories,
@@ -1676,7 +1686,84 @@ function computex_cond_get_shop_filter_values()
 		'min_price' => ($min_price !== '' && (float) $min_price > 0) ? $min_price : '',
 		'max_price' => ($max_price !== '' && (float) $max_price > 0) ? $max_price : '',
 		'areas' => $areas,
+		'search' => $search,
 	);
+}
+
+/**
+ * ID товаров по поиску в названии, артикуле и модели вариации.
+ *
+ * @param string $search Строка поиска.
+ * @return int[]
+ */
+function computex_cond_get_product_ids_by_name_search($search)
+{
+	global $wpdb;
+
+	$search = trim(wp_strip_all_tags((string) $search));
+
+	if ($search === '') {
+		return array();
+	}
+
+	$like = '%' . $wpdb->esc_like($search) . '%';
+	$meta_keys = apply_filters(
+		'computex_cond_shop_search_meta_keys',
+		array('_sku', '_variation_model')
+	);
+	$meta_keys_sql = implode(
+		', ',
+		array_map(
+			static function ($meta_key) use ($wpdb) {
+				return "'" . esc_sql((string) $meta_key) . "'";
+			},
+			array_values(array_filter((array) $meta_keys))
+		)
+	);
+
+	if ($meta_keys_sql === '') {
+		$meta_keys_sql = "'_sku'";
+	}
+
+	$sql = "
+		SELECT DISTINCT posts.ID
+		FROM {$wpdb->posts} AS posts
+		LEFT JOIN {$wpdb->postmeta} AS search_meta
+			ON posts.ID = search_meta.post_id
+			AND search_meta.meta_key IN ({$meta_keys_sql})
+		WHERE posts.post_status = 'publish'
+			AND posts.post_type IN ('product', 'product_variation')
+			AND (
+				posts.post_title LIKE %s
+				OR search_meta.meta_value LIKE %s
+			)
+	";
+
+	$post_ids = $wpdb->get_col($wpdb->prepare($sql, $like, $like));
+
+	$parent_ids = array();
+
+	foreach ((array) $post_ids as $post_id) {
+		$post_id = absint($post_id);
+
+		if (!$post_id) {
+			continue;
+		}
+
+		if (get_post_type($post_id) === 'product_variation') {
+			$parent_id = wp_get_post_parent_id($post_id);
+
+			if ($parent_id) {
+				$parent_ids[] = (int) $parent_id;
+			}
+
+			continue;
+		}
+
+		$parent_ids[] = $post_id;
+	}
+
+	return array_values(array_unique($parent_ids));
 }
 
 /**
@@ -2254,6 +2341,7 @@ function computex_cond_has_active_shop_filters()
 	return !empty($filters['categories'])
 		|| !empty($filters['hits'])
 		|| !empty($filters['areas'])
+		|| $filters['search'] !== ''
 		|| $filters['min_price'] !== ''
 		|| $filters['max_price'] !== '';
 }
@@ -2384,7 +2472,12 @@ function computex_cond_apply_shop_filters_to_main_query($query)
 
 	$filters = computex_cond_get_shop_filter_values();
 
-	if (empty($filters['categories']) && empty($filters['areas']) && empty($filters['hits'])) {
+	if (
+		empty($filters['categories'])
+		&& empty($filters['areas'])
+		&& empty($filters['hits'])
+		&& $filters['search'] === ''
+	) {
 		return;
 	}
 
@@ -2419,6 +2512,13 @@ function computex_cond_apply_shop_filters_to_main_query($query)
 		);
 	}
 
+	if ($filters['search'] !== '') {
+		$product_ids = computex_cond_merge_product_id_filters(
+			$product_ids,
+			computex_cond_get_product_ids_by_name_search($filters['search'])
+		);
+	}
+
 	$query->set('post__in', !empty($product_ids) ? $product_ids : array(0));
 }
 
@@ -2448,6 +2548,10 @@ function computex_cond_get_shop_pagination_add_args()
 
 	if ($filters['max_price'] !== '') {
 		$query_args['max_price'] = $filters['max_price'];
+	}
+
+	if ($filters['search'] !== '') {
+		$query_args['filter_search'] = $filters['search'];
 	}
 
 	return $query_args;
