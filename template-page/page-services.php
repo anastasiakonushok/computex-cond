@@ -67,11 +67,11 @@ get_header();
                         <h2><?php the_sub_field('zagolovok'); ?></h2>
                         <p class="services-price__text"><?php the_sub_field('tekst_opisanie_o_czene'); ?></p>
                         <div class="services-price__table">
-                            <table class="styled-table">
+                            <table class="styled-table services-price-table">
                                 <thead>
                                     <tr>
-                                        <td>Услуга</td>
-                                        <td>Цена</td>
+                                        <th scope="col">Услуга</th>
+                                        <th scope="col">Цена</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -91,19 +91,21 @@ get_header();
                     </div>
                 </section>
             <?php elseif (get_row_layout() == 'блок_с_популярными_вопросами'): ?>
-                <section class="reference">
+                <section class="reference services-faq">
                     <div class="container">
-                        <h2><?php the_sub_field('zagolovok'); ?></h2>
-                        <div class="accordion-wrapp">
+                        <div class="computex-if-section-header">
+                            <h2><?php the_sub_field('zagolovok'); ?></h2>
+                        </div>
+                        <div class="computex-if-faq-stack accordion-wrapp">
                             <?php if (have_rows('voprosy')):
                                 while (have_rows('voprosy')):
                                     the_row();
                                     ?>
-                                    <div class="accordion">
+                                    <div class="accordion computex-if-faq">
                                         <div class="accordion__title">
                                             <h3><?php the_sub_field('vopros'); ?></h3>
                                         </div>
-                                        <div class="accordion__body inner-content">
+                                        <div class="accordion__body computex-if-faq-content inner-content">
                                             <?php the_sub_field('otvet_na_vopros'); ?>
                                         </div>
                                     </div>
