@@ -1475,10 +1475,19 @@ function computex_cond_render_single_product_services($product_id = 0, $modifier
 	$block_class = 'catalog-single__benefits';
 
 	if ($modifier !== '') {
-		$block_class .= ' ' . sanitize_html_class($modifier);
+		$modifiers = preg_split('/\s+/', trim($modifier));
+		$sanitized   = array_filter(array_map('sanitize_html_class', $modifiers));
+
+		if ($sanitized !== []) {
+			$block_class .= ' ' . implode(' ', $sanitized);
+		}
 	}
 
-	$clip_guarantee = 'clip-benefit-guarantee-' . absint($product_id);
+	$clip_suffix = (string) absint($product_id);
+	if ($modifier !== '') {
+		$clip_suffix .= '-' . substr(md5($modifier), 0, 8);
+	}
+	$clip_guarantee = 'clip-benefit-guarantee-' . $clip_suffix;
 
 	echo '<div class="' . esc_attr($block_class) . '">';
 	echo '<div class="catalog-single__benefits-grid">';

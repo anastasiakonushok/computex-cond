@@ -2140,6 +2140,14 @@ p#breadcrumbs a {
     grid-template-columns: 1fr;
   }
 
+  .post-single__layout {
+    grid-template-columns: 1fr;
+  }
+
+  .post-single__aside {
+    position: static;
+  }
+
   .catalog-single--wc .catalog-single__description--full {
     width: 100%;
     flex: 1 1 100%;
@@ -3353,6 +3361,89 @@ p#breadcrumbs a {
 .news-single-page {
   padding: 60px 0px 0px 0px;
   color: var(--dark-color);
+}
+
+.post-single__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
+  gap: clamp(28px, 4vw, 48px);
+  align-items: start;
+}
+
+.post-single__main {
+  min-width: 0;
+}
+
+.post-single__aside {
+  position: sticky;
+  top: 96px;
+  width: 100%;
+  min-width: 0;
+}
+
+.post-single__aside .catalog-single__benefits {
+  margin: 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+.post-single__aside .catalog-single__benefits-grid {
+  display: flex;
+  flex-direction: column;
+  grid-template-columns: unset;
+  gap: 12px;
+  width: 100%;
+}
+
+.post-single__aside .catalog-single__benefit {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 16px 14px 14px;
+  border-radius: 18px;
+}
+
+.post-single__aside .catalog-single__benefit-row {
+  flex-direction: row;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.post-single__aside .catalog-single__benefit-icon svg {
+  width: 44px;
+  height: 44px;
+}
+
+.post-single__aside .catalog-single__benefit-body {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.post-single__aside .catalog-single__benefit-body h4 {
+  font-size: 0.95rem;
+}
+
+.post-single__aside .catalog-single__benefit-body p {
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.post-single__aside .catalog-single__benefit-meta {
+  padding: 8px 10px;
+  font-size: 0.78rem;
+}
+
+.post-single__aside .catalog-single__benefit-chips span {
+  font-size: 10px;
+  padding: 5px 9px;
+}
+
+.post-single__content {
+  padding: clamp(24px, 3vw, 36px);
+  border-radius: 12px;
+  background: var(--main-white);
+  box-shadow: 0 12px 36px rgba(53, 73, 95, 0.08);
+  border: 1px solid rgba(53, 73, 95, 0.08);
 }
 
 .news-single-page h1 {
