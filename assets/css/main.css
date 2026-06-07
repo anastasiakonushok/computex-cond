@@ -3928,6 +3928,22 @@ p#breadcrumbs a {
   box-shadow: none;
 }
 
+.product-card--model-variants .product-card__variants {
+  gap: 8px;
+}
+
+.product-card--model-variants .product-card__variant {
+  flex: 0 0 calc((100% - 8px) / 2);
+  max-width: calc((100% - 8px) / 2);
+  padding: 8px 6px;
+  font-size: 11px;
+  line-height: 1.25;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+  word-break: break-word;
+}
+
 .product-card .title {
   font-weight: 700;
   min-height: 50px;

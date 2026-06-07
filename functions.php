@@ -1159,8 +1159,13 @@ function computex_cond_get_card_display_properties($product_id, $variation_id = 
 {
 	$properties = array();
 	$labels_seen = array();
+	$skip_area = computex_cond_product_uses_relax_catalog_rules($product_id);
 
 	foreach (computex_cond_get_product_properties($product_id) as $property) {
+		if ($skip_area && computex_cond_is_area_property_label($property['label'])) {
+			continue;
+		}
+
 		if ($variation_id && computex_cond_is_area_property_label($property['label'])) {
 			continue;
 		}
@@ -1191,7 +1196,7 @@ function computex_cond_get_card_display_properties($product_id, $variation_id = 
 			$properties[] = $property;
 		}
 
-		if ($area_label !== '') {
+		if ($area_label !== '' && !$skip_area) {
 			$area_value = computex_cond_extract_serviced_area_value($area_label);
 			$area_inserted = false;
 
@@ -1217,8 +1222,21 @@ function computex_cond_get_card_display_properties($product_id, $variation_id = 
 		$properties,
 		$labels_seen,
 		computex_cond_get_product_haraktersitiki_rows($product_id),
-		(bool) $variation_id
+		$skip_area || (bool) $variation_id
 	);
+
+	if ($skip_area) {
+		$properties = array_values(
+			array_filter(
+				$properties,
+				function ($property) {
+					return !computex_cond_is_area_property_label($property['label']);
+				}
+			)
+		);
+
+		return $properties;
+	}
 
 	return computex_cond_move_area_property_first($properties);
 }

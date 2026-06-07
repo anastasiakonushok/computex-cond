@@ -92,6 +92,11 @@ $default_price_data = computex_cond_get_product_price_data($price_product ?: $pr
 
 $default_image = $default_option && !empty($default_option['image']) ? $default_option['image'] : $image_src;
 $detail_url = $permalink;
+$card_class = 'product-card';
+
+if (function_exists('computex_cond_product_uses_relax_catalog_rules') && computex_cond_product_uses_relax_catalog_rules($product_id)) {
+	$card_class .= ' product-card--model-variants';
+}
 
 if ($default_option) {
 	$detail_url = computex_cond_get_product_link_with_variation(
@@ -107,7 +112,7 @@ if ($default_option) {
 
 <article
 
-	class="product-card"
+	class="<?php echo esc_attr($card_class); ?>"
 
 	data-permalink="<?php echo esc_url($permalink); ?>"
 
