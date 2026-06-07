@@ -799,11 +799,19 @@ add_action('init', 'disable_comments_admin_bar');
 
 function computex_cond_format_product_price($price)
 {
-	if ($price === '' || $price === null) {
+	if ($price === '' || $price === null || (float) $price <= 0) {
 		return '';
 	}
 
 	return number_format((float) $price, 2, ',', ' ') . ' BYN';
+}
+
+/**
+ * Текст вместо цены, если она не указана.
+ */
+function computex_cond_get_empty_price_label()
+{
+	return apply_filters('computex_cond_empty_price_label', __('Уточнить по телефону', 'computex-cond'));
 }
 
 function computex_cond_format_savings_label($regular_price, $sale_price)
@@ -1299,6 +1307,7 @@ function computex_cond_get_product_price_data($wc_product)
 			'discount_percent' => 0,
 			'discount_label' => '',
 			'savings' => '',
+			'has_price' => false,
 		);
 	}
 
@@ -1320,13 +1329,25 @@ function computex_cond_get_product_price_data($wc_product)
 		'discount_percent' => $discount_percent,
 		'discount_label' => $on_sale && $discount_percent > 0 ? '-' . $discount_percent . '%' : '',
 		'savings' => $on_sale ? computex_cond_format_savings_label($regular, $sale) : '',
+		'has_price' => $current_price > 0,
 	);
 }
 
 function computex_cond_render_product_card_price_html($price_data)
 {
-	if (empty($price_data['current'])) {
-		return '';
+	$has_price = !empty($price_data['has_price']) && !empty($price_data['current']);
+
+	if (!$has_price) {
+		$empty_label = computex_cond_get_empty_price_label();
+
+		if ($empty_label === '') {
+			return '';
+		}
+
+		return sprintf(
+			'<div class="product-card__price product-card__price--empty" data-card-price><span class="product-card__price-current">%s</span></div>',
+			esc_html($empty_label)
+		);
 	}
 
 	if (!empty($price_data['on_sale']) && !empty($price_data['regular'])) {
@@ -1543,6 +1564,74 @@ function computex_cond_variable_product_has_stock($product)
 	return false;
 }
 
+/**
+ * Есть ли у вариативного товара опубликованные вариации (для каталога без жёсткой проверки цены/остатка).
+ */
+function computex_cond_variable_product_has_published_variations($product)
+{
+	if (!$product instanceof WC_Product || !$product->is_type('variable')) {
+		return false;
+	}
+
+	foreach ($product->get_children() as $variation_id) {
+		$variation = wc_get_product($variation_id);
+
+		if ($variation && $variation->get_status() === 'publish') {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/**
+ * Категории с мягкими правилами каталога (вентиляция, тепловые насосы).
+ */
+function computex_cond_product_uses_relax_catalog_rules($product_id)
+{
+	$product_id = absint($product_id);
+
+	if (!$product_id) {
+		return false;
+	}
+
+	$profile = computex_cond_get_product_variation_field_profile_key($product_id);
+
+	if (in_array($profile, array('ventilation', 'heat_pump_air_water'), true)) {
+		return true;
+	}
+
+	$patterns = apply_filters(
+		'computex_cond_relax_catalog_category_patterns',
+		array(
+			'/ventil/iu',
+			'/teplov|tepl.*nasos|nasos/iu',
+			'/vozduh.*voda|air.*water/iu',
+		)
+	);
+
+	foreach (computex_cond_get_product_category_terms_with_ancestors($product_id) as $term) {
+		$haystack = $term->slug . ' ' . $term->name;
+
+		foreach ((array) $patterns as $pattern) {
+			if ($pattern !== '' && preg_match($pattern, $haystack)) {
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+/**
+ * Для кондиционеров — строгие правила (площадь, наличие, цена).
+ * Для вентиляции и тепловых насосов — показываем в каталоге без жёстких ограничений.
+ */
+function computex_cond_uses_strict_catalog_variation_rules($product_id)
+{
+	return !computex_cond_product_uses_relax_catalog_rules($product_id);
+}
+
 function computex_cond_is_product_visible_in_catalog($product)
 {
 	if (!$product instanceof WC_Product) {
@@ -1551,6 +1640,10 @@ function computex_cond_is_product_visible_in_catalog($product)
 
 	if ($product->get_status() !== 'publish') {
 		return false;
+	}
+
+	if (computex_cond_product_uses_relax_catalog_rules($product->get_id())) {
+		return true;
 	}
 
 	if ($product->is_type('variable')) {
@@ -2117,6 +2210,7 @@ function computex_cond_get_product_card_variation_options($product, $shop_filter
 	}
 
 	$product_id = $product->get_id();
+	$strict_rules = computex_cond_uses_strict_catalog_variation_rules($product_id);
 	$variation_options = array();
 	$index = 0;
 
@@ -2124,7 +2218,15 @@ function computex_cond_get_product_card_variation_options($product, $shop_filter
 		$variation_id = absint($variation_id);
 		$variation_product = wc_get_product($variation_id);
 
-		if (!$variation_product || !$variation_product->is_in_stock() || !$variation_product->is_purchasable()) {
+		if (!$variation_product) {
+			continue;
+		}
+
+		if ($strict_rules) {
+			if (!$variation_product->is_in_stock() || !$variation_product->is_purchasable()) {
+				continue;
+			}
+		} elseif ($variation_product->get_status() !== 'publish') {
 			continue;
 		}
 
@@ -2710,6 +2812,30 @@ function computex_cond_get_variation_field_profiles()
 				'weight' => 'Вес, кг',
 			),
 		),
+		'heat_pump_air_water' => array(
+			'label' => 'Тепловые насосы воздух-вода',
+			'category_slugs' => array(
+				'teplovye-nasosy',
+				'teplovye-nasosy-vozduh-voda',
+				'vozduh-voda',
+				'air-water',
+				'heat-pump-air-water',
+			),
+			'category_name_contains' => array('теплов', 'насос', 'воздух-вода', 'воздух вода', 'воздух‑вода'),
+			'fields' => array(
+				'heat_output' => 'Тепловая мощность',
+				'cooling_capacity' => 'Холодопроизводительность',
+				'cop' => 'COP',
+				'power_consumption' => 'Потребляемая мощность',
+				'power_supply' => 'Электропитание',
+				'max_current' => 'Максимальный ток',
+				'outdoor_weight' => 'Вес наружного блока',
+				'indoor_weight' => 'Вес внутреннего блока',
+				'outdoor_dimensions' => 'Размер наружного блока',
+				'indoor_dimensions' => 'Размер внутреннего блока',
+				'noise_level' => 'Уровень шума',
+			),
+		),
 		'conditioner' => array(
 			'label' => 'Кондиционеры',
 			'category_slugs' => array(
@@ -2788,7 +2914,7 @@ function computex_cond_get_product_variation_field_profile_key($product_id)
 		return 'conditioner';
 	}
 
-	$profile_order = array('ventilation', 'conditioner');
+	$profile_order = array('ventilation', 'heat_pump_air_water', 'conditioner');
 
 	foreach ($profile_order as $profile_key) {
 		if (empty($profiles[ $profile_key ])) {
@@ -2811,6 +2937,10 @@ function computex_cond_get_product_variation_field_profile_key($product_id)
 			}
 
 			if ($profile_key === 'ventilation' && strpos($term->slug, 'ventil') !== false) {
+				return $profile_key;
+			}
+
+			if ($profile_key === 'heat_pump_air_water' && preg_match('/teplov|nasos|vozduh|air-water|heat-pump/iu', $term->slug . ' ' . $term->name)) {
 				return $profile_key;
 			}
 

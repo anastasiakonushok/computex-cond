@@ -183,8 +183,22 @@
 		return '';
 	}
 
+	var emptyPriceLabel = 'Уточнить по телефону';
+
 	function renderPrice(priceEl, data) {
-		if (!priceEl || !data || !data.price) {
+		if (!priceEl) {
+			return;
+		}
+
+		if (!data || !data.price) {
+			if (!emptyPriceLabel) {
+				priceEl.innerHTML = '';
+				return;
+			}
+
+			priceEl.className = 'product-card__price product-card__price--empty';
+			priceEl.innerHTML =
+				'<span class="product-card__price-current">' + escapeHtml(emptyPriceLabel) + '</span>';
 			return;
 		}
 

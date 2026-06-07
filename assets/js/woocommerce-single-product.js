@@ -10,9 +10,20 @@
 			.replace(/'/g, '&#039;');
 	}
 
+	var emptyPriceLabel = 'Уточнить по телефону';
+
 	function renderPriceHtml(data) {
 		if (!data || !data.price) {
-			return '';
+			if (!emptyPriceLabel) {
+				return '';
+			}
+
+			return (
+				'<div class="product-card__price product-card__price--empty">' +
+				'<span class="product-card__price-current">' +
+				escapeHtml(emptyPriceLabel) +
+				'</span></div>'
+			);
 		}
 
 		if (data.on_sale && data.regular) {

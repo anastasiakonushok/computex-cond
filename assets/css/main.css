@@ -3732,6 +3732,13 @@ p#breadcrumbs a {
   white-space: nowrap;
 }
 
+.product-card__price--empty .product-card__price-current {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(53, 73, 95, 0.72);
+  white-space: normal;
+}
+
 .product-card__price--sale .product-card__price-current {
   font-size: 17px;
   font-weight: 700;

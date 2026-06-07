@@ -62,12 +62,6 @@ if ($product->is_type('variable')) {
 
 	$variation_options = computex_cond_get_product_card_variation_options($product, $shop_filters);
 
-	if (empty($variation_options) && !$in_hits_slider) {
-
-		return;
-
-	}
-
 	if (!empty($variation_options)) {
 		$default_option = $variation_options[0];
 		$price_product = wc_get_product($default_option['id']);
