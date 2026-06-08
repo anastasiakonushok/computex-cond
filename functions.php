@@ -356,8 +356,6 @@ function computex_cond_render_front_page_hits_block()
 		return true;
 	}
 
-	$section_class = 'section-product section-product--front-hits';
-
 	return computex_cond_include_hits_product_slider();
 }
 
@@ -1978,6 +1976,79 @@ function computex_cond_get_area_filter_terms()
 	return is_wp_error($terms) ? array() : $terms;
 }
 
+/**
+ * Основные категории каталога для фильтра (без брендов и подкатегорий).
+ *
+ * @return WP_Term[]
+ */
+function computex_cond_get_shop_main_category_filter_terms()
+{
+	$default_cat_id = (int) get_option('default_product_cat', 0);
+
+	$terms = get_terms(
+		array(
+			'taxonomy' => 'product_cat',
+			'hide_empty' => true,
+			'parent' => 0,
+			'exclude' => $default_cat_id ? array($default_cat_id) : array(),
+			'orderby' => 'name',
+			'order' => 'ASC',
+		)
+	);
+
+	if (is_wp_error($terms) || empty($terms)) {
+		return array();
+	}
+
+	$main_terms = array();
+
+	foreach ($terms as $term) {
+		if (!$term instanceof WP_Term) {
+			continue;
+		}
+
+		if (computex_cond_is_product_cat_brand_term($term)) {
+			continue;
+		}
+
+		$main_terms[] = $term;
+	}
+
+	return $main_terms;
+}
+
+/**
+ * Категория product_cat является брендом (не основной категорией каталога).
+ */
+function computex_cond_is_product_cat_brand_term($term)
+{
+	if (!$term instanceof WP_Term) {
+		return false;
+	}
+
+	$name = mb_strtolower(trim($term->name), 'UTF-8');
+
+	if ($name === '') {
+		return false;
+	}
+
+	foreach (array_keys(computex_cond_get_brand_option_map()) as $brand_name) {
+		$brand_name = mb_strtolower(trim((string) $brand_name), 'UTF-8');
+
+		if ($brand_name === '') {
+			continue;
+		}
+
+		if ($name === $brand_name || strpos($name, $brand_name . ' ') === 0) {
+			return true;
+		}
+	}
+
+	$extra_brand_names = array('mitsubishi', 'tcl', 'daichi', 'gree', 'lg', 'general climate', 'ultima comfort');
+
+	return in_array($name, $extra_brand_names, true);
+}
+
 function computex_cond_resolve_area_term($value, $taxonomy = null)
 {
 	if ($taxonomy === null) {
@@ -2436,6 +2507,95 @@ function computex_cond_get_catalog_filters_page_url()
 	}
 
 	return home_url('/shop/');
+}
+
+/**
+ * Slug основной категории каталога для профиля товара.
+ *
+ * @param string $profile_key ventilation | heat_pump_air_water | conditioner.
+ * @return string
+ */
+function computex_cond_get_main_product_cat_slug_for_profile($profile_key)
+{
+	$profiles = computex_cond_get_variation_field_profiles();
+
+	if (empty($profiles[ $profile_key ])) {
+		return '';
+	}
+
+	$profile = $profiles[ $profile_key ];
+	$slugs   = array_map('strval', (array) ($profile['category_slugs'] ?? array()));
+	$names   = array_map('strval', (array) ($profile['category_name_contains'] ?? array()));
+
+	foreach (computex_cond_get_shop_main_category_filter_terms() as $term) {
+		if (in_array($term->slug, $slugs, true)) {
+			return $term->slug;
+		}
+
+		foreach ($names as $needle) {
+			if ($needle !== '' && mb_stripos($term->name, $needle, 0, 'UTF-8') !== false) {
+				return $term->slug;
+			}
+		}
+
+		if ($profile_key === 'ventilation' && strpos($term->slug, 'ventil') !== false) {
+			return $term->slug;
+		}
+
+		if ($profile_key === 'heat_pump_air_water' && preg_match('/teplov|nasos|vozduh|air-water|heat-pump/iu', $term->slug . ' ' . $term->name)) {
+			return $term->slug;
+		}
+
+		if ($profile_key === 'conditioner' && preg_match('/kondicion|konditsion|split/iu', $term->slug . ' ' . $term->name)) {
+			return $term->slug;
+		}
+	}
+
+	foreach ($slugs as $slug) {
+		$term = get_term_by('slug', $slug, 'product_cat');
+
+		if (!$term || is_wp_error($term)) {
+			continue;
+		}
+
+		if ((int) $term->parent > 0) {
+			$ancestors = get_ancestors((int) $term->term_id, 'product_cat', 'taxonomy');
+
+			if (!empty($ancestors)) {
+				$root = get_term((int) end($ancestors), 'product_cat');
+
+				if ($root && !is_wp_error($root)) {
+					return $root->slug;
+				}
+			}
+		}
+
+		return $term->slug;
+	}
+
+	return '';
+}
+
+/**
+ * URL каталога с фильтром по основной категории профиля.
+ *
+ * @param string $profile_key ventilation | heat_pump_air_water | conditioner.
+ * @return string
+ */
+function computex_cond_get_shop_filter_url_for_profile($profile_key)
+{
+	$slug = computex_cond_get_main_product_cat_slug_for_profile($profile_key);
+
+	if ($slug === '') {
+		return computex_cond_get_catalog_filters_page_url();
+	}
+
+	return add_query_arg(
+		array(
+			'filter_category' => array($slug),
+		),
+		computex_cond_get_catalog_filters_page_url()
+	);
 }
 
 function computex_cond_get_active_category_filter_slugs()

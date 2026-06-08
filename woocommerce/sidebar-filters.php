@@ -10,15 +10,7 @@ defined('ABSPATH') || exit;
 $filters = computex_cond_get_shop_filter_values();
 $form_action = computex_cond_get_catalog_filters_page_url();
 $active_category_slugs = computex_cond_get_active_category_filter_slugs();
-$default_cat_id = (int) get_option('default_product_cat', 0);
-
-$product_categories = get_terms(
-	array(
-		'taxonomy' => 'product_cat',
-		'hide_empty' => true,
-		'exclude' => $default_cat_id ? array($default_cat_id) : array(),
-	)
-);
+$product_categories = computex_cond_get_shop_main_category_filter_terms();
 
 $area_terms = computex_cond_get_area_filter_terms();
 $hits_filter_options = array(

@@ -7,14 +7,9 @@
 
 get_header();
 
-$ventilation_shop_url = add_query_arg(
-	array(
-		'filter_category' => array('ventilyaciya'),
-	),
-	function_exists('computex_cond_get_catalog_filters_page_url')
-		? computex_cond_get_catalog_filters_page_url()
-		: home_url('/shop/')
-);
+$ventilation_shop_url = function_exists('computex_cond_get_shop_filter_url_for_profile')
+	? computex_cond_get_shop_filter_url_for_profile('ventilation')
+	: home_url('/shop/');
 ?>
 <div class="computex-if-page computex-vent-page">
     <main>
@@ -26,7 +21,7 @@ $ventilation_shop_url = add_query_arg(
                     <p class="computex-if-hero-copy">Приточно-вытяжная вентиляция одновременно подает свежий воздух и удаляет отработанный. Подходит для квартиры, частного дома, офиса и других помещений, где важен стабильный воздухообмен.</p>
                     <p class="computex-if-hero-copy">В установках с рекуперацией теплообменник передает часть тепла и влаги между потоками: зимой приток подогревается, летом — частично охлаждается и осушается. Так проветривание становится комфортнее, чем через открытое окно.</p>
                     <div class="computex-if-actions">
-                        <a class="computex-if-btn" href="#vent-request">Получить консультацию</a>
+                        <a class="computex-if-btn open-contact-modal" href="#vent-request">Получить консультацию</a>
                         <a class="computex-if-btn computex-if-btn-secondary" href="#vent-steps">Как это работает</a>
                     </div>
                     <div class="computex-if-proof-row">
@@ -534,7 +529,7 @@ $ventilation_shop_url = add_query_arg(
                 <div class="computex-if-cta-box">
                     <h2><span>Получите бесплатную консультацию</span> по вентиляции</h2>
                     <p>Оставьте контактные данные: специалист подскажет, какое решение подойдет для вашего помещения — приток, вытяжку или приточно-вытяжную установку, и рассчитает стоимость монтажа.</p>
-                    <a class="computex-if-btn" href="https://t.me/computex_gomel">Получить консультацию</a>
+                    <a class="computex-if-btn open-contact-modal" href="https://t.me/computex_gomel">Получить консультацию</a>
                 </div>
             </div>
         </section>

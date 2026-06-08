@@ -365,7 +365,7 @@ get_header();
                 <div class="computex-if-cta-box">
                     <h2><span>Получите бесплатную консультацию</span> от нашего специалиста</h2>
                     <p>Оставьте свои контактные данные, специалист свяжется с вами и подскажет, какой тепловой насос подойдет вашему дому.</p>
-                    <a class="computex-if-btn" href="https://t.me/computex_gomel">Получить консультацию</a>
+                    <a class="computex-if-btn open-contact-modal" href="https://t.me/computex_gomel">Получить консультацию</a>
                 </div>
             </div>
         </section>
