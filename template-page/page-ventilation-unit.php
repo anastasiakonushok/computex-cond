@@ -17,7 +17,7 @@ $ventilation_shop_url = function_exists('computex_cond_get_shop_filter_url_for_p
             <div class="computex-if-container computex-if-hero-grid">
                 <div>
                     <div class="computex-if-eyebrow"><span class="computex-if-pulse"></span> Приточно-вытяжная установка</div>
-                    <h1>Вентиляция и вытяжка в Гомеле под ключ</h1>
+                    <h1>Вентиляция и вытяжка <span class="computex-if-highlight">в Гомеле</span> под ключ</h1>
                     <p class="computex-if-hero-copy">Приточно-вытяжная вентиляция одновременно подает свежий воздух и удаляет отработанный. Подходит для квартиры, частного дома, офиса и других помещений, где важен стабильный воздухообмен.</p>
                     <p class="computex-if-hero-copy">В установках с рекуперацией теплообменник передает часть тепла и влаги между потоками: зимой приток подогревается, летом — частично охлаждается и осушается. Так проветривание становится комфортнее, чем через открытое окно.</p>
                     <div class="computex-if-actions">

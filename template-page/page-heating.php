@@ -17,7 +17,7 @@ $heating_shop_url = function_exists('computex_cond_get_shop_filter_url_for_profi
             <div class="computex-if-container computex-if-hero-grid">
                 <div>
                     <div class="computex-if-eyebrow"><span class="computex-if-pulse"></span> Тепловые насосы воздух-вода</div>
-                    <h1>Тепловые насосы в Гомеле под ключ</h1>
+                    <h1>Тепловые насосы <span class="computex-if-highlight">в Гомеле</span> под ключ</h1>
                     <p class="computex-if-hero-copy">Тепловой насос воздух-вода помогает снизить расходы на отопление и поддерживать комфортный климат в доме круглый год.</p>
                     <p class="computex-if-hero-copy">Это удобная альтернатива для домов, где нет газа или подключение газа слишком дорогое. Подберем модель под площадь, теплопотери, бюджет и задачи.</p>
                     <div class="computex-if-actions">
