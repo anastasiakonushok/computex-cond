@@ -1662,7 +1662,6 @@
 .computex-if-page .section-product--landing-hits .section-product__title h2 {
     margin: 0;
     color: var(--dark-color, #35495f);
-    font-family: var(--title-font, inherit);
     font-size: clamp(28px, 3vw, 40px);
     font-weight: 700;
     line-height: 1.1;

@@ -416,7 +416,6 @@ p {
 .shop-category-nav__title {
   flex: 1 1 auto;
   min-width: 0;
-  font-family: var(--title-font);
   font-size: 14px;
   font-weight: 800;
   line-height: 1.25;
@@ -900,7 +899,6 @@ p#breadcrumbs a {
 
 .shop-filters__title {
   margin: 0;
-  font-family: var(--title-font);
   font-size: 1.125rem;
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -933,7 +931,6 @@ p#breadcrumbs a {
   border-radius: 999px;
   background: var(--main-yellow);
   color: var(--dark-color);
-  font-family: var(--title-font);
   font-size: 13px;
   font-weight: 700;
   line-height: 1;
@@ -960,7 +957,6 @@ p#breadcrumbs a {
   padding: 0;
   border: 0;
   background: transparent;
-  font-family: var(--title-font);
   font-size: 0.9375rem;
   font-weight: 700;
   color: var(--main-gray);
@@ -1245,7 +1241,6 @@ p#breadcrumbs a {
   border-radius: 8px;
   background: var(--main-yellow);
   color: var(--dark-color);
-  font-family: var(--title-font);
   font-size: 15px;
   font-weight: 700;
   cursor: pointer;
@@ -2464,7 +2459,7 @@ p#breadcrumbs a {
 }
 
 .footer__phone .text {
-  font: 18px/110% var(--title-font);
+  font: 18px/110%;
 }
 
 .footer__time,
