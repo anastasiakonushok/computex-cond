@@ -2598,6 +2598,127 @@ function computex_cond_get_shop_filter_url_for_profile($profile_key)
 	);
 }
 
+/**
+ * Основная категория «Кондиционеры» в фильтре каталога.
+ */
+function computex_cond_is_conditioner_main_product_cat_term($term)
+{
+	if (!$term instanceof WP_Term) {
+		return false;
+	}
+
+	$conditioner_slug = computex_cond_get_main_product_cat_slug_for_profile('conditioner');
+
+	if ($conditioner_slug !== '' && $term->slug === $conditioner_slug) {
+		return true;
+	}
+
+	return (bool) preg_match('/kondicion|konditsion|кондицион|split/iu', $term->slug . ' ' . $term->name);
+}
+
+/**
+ * Термины площади для подкатегорий кондиционеров (сортировка по м²).
+ *
+ * @return WP_Term[]
+ */
+function computex_cond_get_sorted_area_filter_terms()
+{
+	$terms = computex_cond_get_area_filter_terms();
+
+	if (empty($terms)) {
+		return array();
+	}
+
+	usort(
+		$terms,
+		static function ($left, $right) {
+			$value_left  = (int) computex_cond_extract_serviced_area_value($left->name);
+			$value_right = (int) computex_cond_extract_serviced_area_value($right->name);
+
+			if ($value_left === $value_right) {
+				return strcasecmp($left->name, $right->name);
+			}
+
+			return $value_left <=> $value_right;
+		}
+	);
+
+	return $terms;
+}
+
+/**
+ * Карточки навигации по основным категориям в каталоге.
+ *
+ * @return array<int, array{profile: string, title: string, image: string, alt: string}>
+ */
+function computex_cond_get_shop_category_nav_items()
+{
+	return apply_filters(
+		'computex_cond_shop_category_nav_items',
+		array(
+			array(
+				'profile' => 'conditioner',
+				'title' => 'Кондиционеры',
+				'image' => 'https://klimat.computex.by/wp-content/uploads/2024/10/lg-cond-e1730359720812.png',
+				'alt' => 'Кондиционеры',
+			),
+			array(
+				'profile' => 'ventilation',
+				'title' => 'Вентиляция',
+				'image' => 'https://klimat.computex.by/wp-content/uploads/2026/05/me-lossnay-vl-100-removebg-preview.png',
+				'alt' => 'Приточно-вытяжная вентиляция',
+			),
+			array(
+				'profile' => 'heat_pump_air_water',
+				'title' => 'Тепловые насосы',
+				'image' => 'https://klimat.computex.by/wp-content/uploads/2026/05/vetero.png',
+				'alt' => 'Тепловые насосы воздух-вода',
+			),
+		)
+	);
+}
+
+/**
+ * Навигация по основным категориям под хлебными крошками каталога.
+ */
+function computex_cond_render_shop_category_nav()
+{
+	$items = computex_cond_get_shop_category_nav_items();
+
+	if (empty($items)) {
+		return;
+	}
+
+	$active_slugs = computex_cond_get_active_category_filter_slugs();
+
+	echo '<nav class="shop-category-nav" aria-label="Категории каталога">';
+	echo '<div class="shop-category-nav__grid">';
+
+	foreach ($items as $item) {
+		$profile = isset($item['profile']) ? (string) $item['profile'] : '';
+		$title   = isset($item['title']) ? (string) $item['title'] : '';
+		$image   = isset($item['image']) ? (string) $item['image'] : '';
+		$alt     = isset($item['alt']) ? (string) $item['alt'] : $title;
+		$url     = computex_cond_get_shop_filter_url_for_profile($profile);
+		$slug    = computex_cond_get_main_product_cat_slug_for_profile($profile);
+		$classes = 'shop-category-nav__card';
+
+		if ($slug !== '' && in_array($slug, $active_slugs, true)) {
+			$classes .= ' is-active';
+		}
+
+		echo '<a class="' . esc_attr($classes) . '" href="' . esc_url($url) . '">';
+		echo '<span class="shop-category-nav__media">';
+		echo '<img src="' . esc_url($image) . '" alt="' . esc_attr($alt) . '" loading="lazy">';
+		echo '</span>';
+		echo '<span class="shop-category-nav__title">' . esc_html($title) . '</span>';
+		echo '</a>';
+	}
+
+	echo '</div>';
+	echo '</nav>';
+}
+
 function computex_cond_get_active_category_filter_slugs()
 {
 	$filters = computex_cond_get_shop_filter_values();

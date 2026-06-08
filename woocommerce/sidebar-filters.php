@@ -12,7 +12,9 @@ $form_action = computex_cond_get_catalog_filters_page_url();
 $active_category_slugs = computex_cond_get_active_category_filter_slugs();
 $product_categories = computex_cond_get_shop_main_category_filter_terms();
 
-$area_terms = computex_cond_get_area_filter_terms();
+$area_terms = function_exists('computex_cond_get_sorted_area_filter_terms')
+	? computex_cond_get_sorted_area_filter_terms()
+	: computex_cond_get_area_filter_terms();
 $hits_filter_options = array(
 	'acf' => array(
 		'label' => 'Избранное',
@@ -51,10 +53,9 @@ if ($filters['max_price'] !== '') {
 
 <?php
 $shop_filters_panel_open = $active_filter_count > 0;
-$shop_filters_categories_open = !empty($active_category_slugs);
+$shop_filters_categories_open = !empty($active_category_slugs) || !empty($filters['areas']);
 $shop_filters_hits_open = !empty($filters['hits']);
 $shop_filters_price_open = $filters['min_price'] !== '' || $filters['max_price'] !== '';
-$shop_filters_areas_open = !empty($filters['areas']);
 ?>
 
 <div class="sidebar__wrapp sidebar__wrapp--filters shop-filters-panel<?php echo $shop_filters_panel_open ? ' is-filters-open' : ''; ?>">
@@ -143,6 +144,32 @@ $shop_filters_areas_open = !empty($filters['areas']);
 									<span class="shop-filters__label"><?php echo esc_html($category->name); ?></span>
 									<span class="shop-filters__count"><?php echo esc_html((string) $category->count); ?></span>
 								</label>
+								<?php
+								if (
+									!empty($area_terms)
+									&& function_exists('computex_cond_is_conditioner_main_product_cat_term')
+									&& computex_cond_is_conditioner_main_product_cat_term($category)
+								) :
+									?>
+									<ul class="shop-filters__sublist shop-filters__sublist--areas">
+										<?php foreach ($area_terms as $area_term) : ?>
+											<?php $is_area_checked = in_array($area_term->slug, $filters['areas'], true); ?>
+											<li class="shop-filters__item shop-filters__item--child">
+												<label class="shop-filters__check shop-filters__check--child<?php echo $is_area_checked ? ' is-active' : ''; ?>">
+													<input
+														type="checkbox"
+														class="shop-filters__input"
+														name="filter_area[]"
+														value="<?php echo esc_attr($area_term->slug); ?>"
+														<?php checked($is_area_checked); ?>
+													>
+													<span class="shop-filters__box" aria-hidden="true"></span>
+													<span class="shop-filters__label"><?php echo esc_html($area_term->name); ?></span>
+												</label>
+											</li>
+										<?php endforeach; ?>
+									</ul>
+								<?php endif; ?>
 							</li>
 						<?php endforeach; ?>
 					</ul>
@@ -236,44 +263,6 @@ $shop_filters_areas_open = !empty($filters['areas']);
 				</div>
 			</section>
 
-			<?php if (!empty($area_terms)) : ?>
-				<section class="shop-filters__section<?php echo $shop_filters_areas_open ? ' is-open' : ''; ?>">
-					<button
-						type="button"
-						class="shop-filters__section-title"
-						aria-expanded="<?php echo $shop_filters_areas_open ? 'true' : 'false'; ?>"
-					>
-						<span class="shop-filters__section-icon" aria-hidden="true">
-							<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-								<rect x="3" y="3" width="12" height="12" rx="1.5" stroke="currentColor" stroke-width="1.4"/>
-								<path d="M3 9h12M9 3v12" stroke="currentColor" stroke-width="1.4"/>
-							</svg>
-						</span>
-						<span class="shop-filters__section-label">Обслуживаемая площадь</span>
-						<span class="shop-filters__section-chevron" aria-hidden="true"></span>
-					</button>
-					<div class="shop-filters__section-content">
-					<ul class="shop-filters__list shop-filters__list--grid">
-						<?php foreach ($area_terms as $area_term) : ?>
-							<?php $is_checked = in_array($area_term->slug, $filters['areas'], true); ?>
-							<li class="shop-filters__item">
-								<label class="shop-filters__check shop-filters__check--chip<?php echo $is_checked ? ' is-active' : ''; ?>">
-									<input
-										type="checkbox"
-										class="shop-filters__input"
-										name="filter_area[]"
-										value="<?php echo esc_attr($area_term->slug); ?>"
-										<?php checked($is_checked); ?>
-									>
-									<span class="shop-filters__box" aria-hidden="true"></span>
-									<span class="shop-filters__label"><?php echo esc_html($area_term->name); ?></span>
-								</label>
-							</li>
-						<?php endforeach; ?>
-					</ul>
-					</div>
-				</section>
-			<?php endif; ?>
 		</div>
 
 		<div class="shop-filters__footer">

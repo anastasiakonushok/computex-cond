@@ -24,7 +24,7 @@ get_header();
 
 <main>
 
-	<section class="section-breadcrumb-black">
+	<section class="section-breadcrumb-black section-breadcrumb-black--shop">
 
 		<div class="container">
 
@@ -35,6 +35,12 @@ get_header();
 				yoast_breadcrumb('<p id="breadcrumbs">', '</p>');
 			}
 
+			?>
+
+			<?php
+			if (function_exists('computex_cond_render_shop_category_nav')) {
+				computex_cond_render_shop_category_nav();
+			}
 			?>
 
 		</div>
