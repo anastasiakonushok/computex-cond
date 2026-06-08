@@ -47,18 +47,36 @@
 		['класс энергоэффективности'],
 	];
 
-	function filterProductCardCharacteristics(specs) {
+	var heatPumpCardSpecKeyGroups = [
+		['производитель'],
+		['страна производства'],
+		['тип компрессора'],
+		['тип хладагента'],
+		['назначение'],
+		['комплектация'],
+	];
+
+	function getCardSpecKeyGroups(card) {
+		if (card && card.getAttribute('data-card-profile') === 'heat_pump_air_water') {
+			return heatPumpCardSpecKeyGroups;
+		}
+
+		return cardSpecKeyGroups;
+	}
+
+	function filterProductCardCharacteristics(specs, card) {
 		if (!specs || !specs.length) {
 			return [];
 		}
 
+		var keyGroups = getCardSpecKeyGroups(card);
 		var filtered = [];
 		var seen = {};
 		var groupIndex;
 		var specIndex;
 
-		for (groupIndex = 0; groupIndex < cardSpecKeyGroups.length; groupIndex++) {
-			var group = cardSpecKeyGroups[groupIndex];
+		for (groupIndex = 0; groupIndex < keyGroups.length; groupIndex++) {
+			var group = keyGroups[groupIndex];
 
 			if (group[0] === 'area') {
 				for (specIndex = 0; specIndex < specs.length; specIndex++) {
@@ -167,8 +185,8 @@
 			.join('');
 	}
 
-	function renderCardSpecs(specs) {
-		return '<ul data-card-specs>' + renderCharacteristics(filterProductCardCharacteristics(specs)) + '</ul>';
+	function renderCardSpecs(specs, card) {
+		return '<ul data-card-specs>' + renderCharacteristics(filterProductCardCharacteristics(specs, card)) + '</ul>';
 	}
 
 	function getDiscountLabel(data) {
@@ -263,7 +281,7 @@
 			}
 		}
 
-		specsWrap.innerHTML = renderCardSpecs(items);
+		specsWrap.innerHTML = renderCardSpecs(items, card);
 	}
 
 	function applySelection(card, button, variations, price, specsWrap, image) {
@@ -309,7 +327,7 @@
 		var buttons = card.querySelectorAll('.product-card__variant');
 
 		if (specsWrap && properties.length) {
-			specsWrap.innerHTML = renderCardSpecs(properties);
+			specsWrap.innerHTML = renderCardSpecs(properties, card);
 		}
 
 		if (!variations.length) {

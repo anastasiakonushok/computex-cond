@@ -124,6 +124,8 @@ if ($default_option) {
 
 	<?php endif; ?>
 
+	data-card-profile="<?php echo esc_attr(computex_cond_get_product_variation_field_profile_key($product_id)); ?>"
+
 >
 
 	<div class="product-card__row">
@@ -186,7 +188,7 @@ if ($default_option) {
 
 
 
-		<?php computex_cond_render_product_card_specs_list($properties); ?>
+		<?php computex_cond_render_product_card_specs_list($properties, $product_id); ?>
 
 	</div>
 

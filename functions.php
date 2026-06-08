@@ -1032,6 +1032,39 @@ function computex_cond_get_product_card_characteristic_key_groups()
 }
 
 /**
+ * Ключи характеристик для карточки теплового насоса воздух-вода.
+ */
+function computex_cond_get_heat_pump_product_card_characteristic_key_groups()
+{
+	return array(
+		array('производитель'),
+		array('страна производства'),
+		array('тип компрессора'),
+		array('тип хладагента'),
+		array('назначение'),
+		array('комплектация'),
+	);
+}
+
+/**
+ * Набор ключей характеристик для карточки товара по профилю категории.
+ */
+function computex_cond_get_product_card_characteristic_key_groups_for_product($product_id = 0)
+{
+	$product_id = absint($product_id);
+
+	if ($product_id && computex_cond_product_uses_relax_catalog_rules($product_id)) {
+		$profile = computex_cond_get_product_variation_field_profile_key($product_id);
+
+		if ($profile === 'heat_pump_air_water') {
+			return computex_cond_get_heat_pump_product_card_characteristic_key_groups();
+		}
+	}
+
+	return computex_cond_get_product_card_characteristic_key_groups();
+}
+
+/**
  * Ключи для блока «Основные характеристики» на странице товара.
  */
 function computex_cond_get_main_preview_characteristic_keys()
@@ -1129,11 +1162,11 @@ function computex_cond_filter_characteristics_by_key_groups($properties, $key_gr
 /**
  * Характеристики для карточки товара в /shop/.
  */
-function computex_cond_filter_product_card_characteristics($properties)
+function computex_cond_filter_product_card_characteristics($properties, $product_id = 0)
 {
 	return computex_cond_filter_characteristics_by_key_groups(
 		$properties,
-		computex_cond_get_product_card_characteristic_key_groups()
+		computex_cond_get_product_card_characteristic_key_groups_for_product($product_id)
 	);
 }
 
@@ -3687,9 +3720,9 @@ function computex_cond_render_product_characteristics_table($properties)
 /**
  * Список характеристик в карточке каталога / shop (только 6 полей).
  */
-function computex_cond_render_product_card_specs_list($properties)
+function computex_cond_render_product_card_specs_list($properties, $product_id = 0)
 {
-	$properties = computex_cond_filter_product_card_characteristics($properties);
+	$properties = computex_cond_filter_product_card_characteristics($properties, $product_id);
 
 	echo '<div class="product-card__specs-wrap" data-card-specs-wrap>';
 	echo '<ul data-card-specs>';
