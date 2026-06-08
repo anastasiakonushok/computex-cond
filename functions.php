@@ -823,7 +823,7 @@ function computex_cond_get_empty_price_label()
  */
 function computex_cond_get_single_product_empty_price_label()
 {
-	return apply_filters('computex_cond_single_product_empty_price_label', __('уточнить', 'computex-cond'));
+	return apply_filters('computex_cond_single_product_empty_price_label', __('уточнить по телефону', 'computex-cond'));
 }
 
 function computex_cond_format_savings_label($regular_price, $sale_price)
@@ -3557,7 +3557,7 @@ function computex_cond_get_single_product_variation_options($product)
 			'has_price' => !empty($variation_price['has_price']),
 			'image' => $variation_image,
 			'area' => $label,
-			'in_stock' => $variation_product->is_in_stock() && $variation_product->is_purchasable(),
+			'in_stock' => $variation_product->is_in_stock(),
 			'characteristics' => computex_cond_get_card_display_properties($product_id, $variation_id, $label),
 		);
 
@@ -4798,10 +4798,24 @@ function computex_cond_get_product_stock_status($product = null, $in_stock_flag 
  */
 function computex_cond_get_product_panel_stock_status($product = null, $in_stock_flag = null, $price_data = null)
 {
-	$status = computex_cond_get_product_stock_status($product, $in_stock_flag);
+	$in_stock = false;
+
+	if ($product instanceof WC_Product) {
+		$in_stock = $product->is_in_stock();
+	} elseif ($in_stock_flag !== null) {
+		$in_stock = (bool) $in_stock_flag;
+	}
+
+	$status = array(
+		'in_stock' => $in_stock,
+		'text' => $in_stock
+			? __('В наличии', 'computex-cond')
+			: __('Нет в наличии', 'computex-cond'),
+		'class' => $in_stock ? 'is-in-stock' : 'is-out-of-stock',
+	);
 
 	if (is_array($price_data) && empty($price_data['has_price'])) {
-		if (!empty($status['in_stock'])) {
+		if ($in_stock) {
 			$status['hidden'] = false;
 
 			return $status;

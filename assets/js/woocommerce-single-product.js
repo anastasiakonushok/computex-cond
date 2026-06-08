@@ -10,7 +10,7 @@
 			.replace(/'/g, '&#039;');
 	}
 
-	var emptyPriceLabel = 'уточнить';
+	var emptyPriceLabel = 'уточнить по телефону';
 
 	function renderPriceHtml(data) {
 		if (!data || !data.price) {
