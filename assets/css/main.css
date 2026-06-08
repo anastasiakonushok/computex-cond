@@ -417,7 +417,7 @@ p {
   flex: 1 1 auto;
   min-width: 0;
   font-size: 14px;
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1.25;
   text-align: left;
   color: var(--dark-color);
@@ -1242,7 +1242,7 @@ p#breadcrumbs a {
   background: var(--main-yellow);
   color: var(--dark-color);
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
   box-shadow: 0 4px 14px rgba(248, 201, 87, 0.35);
