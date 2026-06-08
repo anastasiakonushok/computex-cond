@@ -2204,6 +2204,16 @@ p#breadcrumbs a {
   margin: 0;
 }
 
+.catalog-single--wc [data-single-price-wrap] .catalog-single__price-request {
+  margin: 0;
+  font-family: var(--body-font);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: 0;
+  color: var(--main-gray);
+}
+
 .catalog-single--wc [data-single-price-wrap] .product-card__price-current {
   font-size: clamp(1.625rem, 2.5vw, 2rem);
   font-weight: 800;

@@ -10,7 +10,7 @@
 			.replace(/'/g, '&#039;');
 	}
 
-	var emptyPriceLabel = 'Уточнить по телефону';
+	var emptyPriceLabel = 'уточнить';
 
 	function renderPriceHtml(data) {
 		if (!data || !data.price) {
@@ -19,10 +19,9 @@
 			}
 
 			return (
-				'<div class="product-card__price product-card__price--empty">' +
-				'<span class="product-card__price-current">' +
+				'<p class="catalog-single__price-request" data-card-price>' +
 				escapeHtml(emptyPriceLabel) +
-				'</span></div>'
+				'</p>'
 			);
 		}
 
@@ -225,12 +224,13 @@
 			return;
 		}
 
-		if (!data || !data.has_price) {
+		var inStock = data.in_stock !== false && data.in_stock !== 0;
+		var hasPrice = !!(data && data.has_price);
+
+		if (!hasPrice && !inStock) {
 			$stock.attr('hidden', 'hidden');
 			return;
 		}
-
-		var inStock = data.in_stock !== false && data.in_stock !== 0;
 
 		$stock
 			.removeAttr('hidden')
@@ -279,7 +279,7 @@
 		updateVariationName($main, data);
 
 		if ($priceWrap.length) {
-			$priceWrap.find('.product-card__price, .product-card__price--sale').remove();
+			$priceWrap.find('.product-card__price, .product-card__price--sale, .catalog-single__price-request').remove();
 
 			if (priceHtml) {
 				$priceWrap.find('.catalog-single__price').prepend(priceHtml);

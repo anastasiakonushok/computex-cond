@@ -818,6 +818,14 @@ function computex_cond_get_empty_price_label()
 	return apply_filters('computex_cond_empty_price_label', __('Уточнить по телефону', 'computex-cond'));
 }
 
+/**
+ * Текст на странице товара, если цена не указана.
+ */
+function computex_cond_get_single_product_empty_price_label()
+{
+	return apply_filters('computex_cond_single_product_empty_price_label', __('уточнить', 'computex-cond'));
+}
+
 function computex_cond_format_savings_label($regular_price, $sale_price)
 {
 	$savings = max(0, (float) $regular_price - (float) $sale_price);
@@ -1401,6 +1409,46 @@ function computex_cond_render_product_card_price_html($price_data)
 
 		return sprintf(
 			'<div class="product-card__price product-card__price--empty" data-card-price><span class="product-card__price-current">%s</span></div>',
+			esc_html($empty_label)
+		);
+	}
+
+	if (!empty($price_data['on_sale']) && !empty($price_data['regular'])) {
+		$discount_label = !empty($price_data['discount_label']) ? $price_data['discount_label'] : '';
+		$savings = !empty($price_data['savings']) ? $price_data['savings'] : '';
+
+		return sprintf(
+			'<div class="product-card__price product-card__price--sale" data-card-price><div class="product-card__price-row"><span class="product-card__price-current">%1$s</span><span class="product-card__price-old" aria-label="%2$s">%3$s</span></div><div class="product-card__economy" data-card-economy><span class="product-card__economy-percent" data-card-discount-percent>%4$s</span><span class="product-card__economy-value" data-card-savings>%5$s</span></div></div>',
+			esc_html($price_data['current']),
+			esc_attr(sprintf(__('Старая цена: %s', 'computex-cond'), $price_data['regular'])),
+			esc_html($price_data['regular']),
+			esc_html($discount_label),
+			esc_html($savings)
+		);
+	}
+
+	return sprintf(
+		'<div class="product-card__price" data-card-price><span class="product-card__price-current">%s</span></div>',
+		esc_html($price_data['current'])
+	);
+}
+
+/**
+ * Блок цены на странице товара.
+ */
+function computex_cond_render_single_product_price_html($price_data)
+{
+	$has_price = !empty($price_data['has_price']) && !empty($price_data['current']);
+
+	if (!$has_price) {
+		$empty_label = computex_cond_get_single_product_empty_price_label();
+
+		if ($empty_label === '') {
+			return '';
+		}
+
+		return sprintf(
+			'<p class="catalog-single__price-request" data-card-price>%s</p>',
 			esc_html($empty_label)
 		);
 	}
@@ -4750,7 +4798,15 @@ function computex_cond_get_product_stock_status($product = null, $in_stock_flag 
  */
 function computex_cond_get_product_panel_stock_status($product = null, $in_stock_flag = null, $price_data = null)
 {
+	$status = computex_cond_get_product_stock_status($product, $in_stock_flag);
+
 	if (is_array($price_data) && empty($price_data['has_price'])) {
+		if (!empty($status['in_stock'])) {
+			$status['hidden'] = false;
+
+			return $status;
+		}
+
 		return array(
 			'in_stock' => false,
 			'text' => '',
@@ -4759,7 +4815,6 @@ function computex_cond_get_product_panel_stock_status($product = null, $in_stock
 		);
 	}
 
-	$status = computex_cond_get_product_stock_status($product, $in_stock_flag);
 	$status['hidden'] = false;
 
 	return $status;

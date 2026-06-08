@@ -116,7 +116,7 @@ $variations_json = !empty($variation_options)
 					<div class="catalog-single__price-box" data-single-price-wrap>
 						<div class="catalog-single__price-col">
 							<div class="catalog-single__price flex">
-								<?php echo computex_cond_render_product_card_price_html($price_data); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+								<?php echo computex_cond_render_single_product_price_html($price_data); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 							</div>
 							<p
 								class="catalog-single__stock <?php echo esc_attr($stock_status['class']); ?>"
