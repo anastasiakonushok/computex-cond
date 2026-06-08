@@ -2382,6 +2382,7 @@ function computex_cond_get_product_card_variation_options($product, $shop_filter
 			'discount_percent' => $variation_price['discount_percent'],
 			'discount_label' => $variation_price['discount_label'],
 			'savings' => $variation_price['savings'],
+			'has_price' => !empty($variation_price['has_price']),
 			'image' => $variation_image,
 			'area' => $label,
 			'characteristics' => computex_cond_get_card_display_properties($product_id, $variation_id, $label),
@@ -3505,6 +3506,7 @@ function computex_cond_get_single_product_variation_options($product)
 			'discount_percent' => $variation_price['discount_percent'],
 			'discount_label' => $variation_price['discount_label'],
 			'savings' => $variation_price['savings'],
+			'has_price' => !empty($variation_price['has_price']),
 			'image' => $variation_image,
 			'area' => $label,
 			'in_stock' => $variation_product->is_in_stock() && $variation_product->is_purchasable(),
@@ -3561,6 +3563,7 @@ function computex_cond_get_single_product_variation_options($product)
 					'discount_percent' => $variation_price['discount_percent'],
 					'discount_label' => $variation_price['discount_label'],
 					'savings' => $variation_price['savings'],
+					'has_price' => !empty($variation_price['has_price']),
 					'image' => !empty($variation_data['image']['url']) ? $variation_data['image']['url'] : '',
 					'area' => $label,
 					'in_stock' => !empty($variation_data['is_in_stock']),
@@ -3606,10 +3609,10 @@ function computex_cond_render_single_product_variation_buttons($variation_option
 		$is_active = $has_active
 			? ($active_variation_id > 0 && !empty($option['id']) && (int) $option['id'] === $active_variation_id)
 			: ($index === 0);
-		$is_disabled = empty($option['in_stock']);
+		$is_disabled = false;
 
 		printf(
-			'<button type="button" class="button-gray catalog-single__variant product-card__variant%s%s" role="option" aria-selected="%s"%s data-variation-id="%s" data-area-slug="%s" data-display-name="%s" data-form-attributes="%s" data-characteristics="%s" data-image="%s" data-price="%s" data-regular="%s" data-on-sale="%s" data-discount-label="%s" data-savings="%s" data-in-stock="%s">%s</button>',
+			'<button type="button" class="button-gray catalog-single__variant product-card__variant%s%s" role="option" aria-selected="%s"%s data-variation-id="%s" data-area-slug="%s" data-display-name="%s" data-form-attributes="%s" data-characteristics="%s" data-image="%s" data-price="%s" data-regular="%s" data-on-sale="%s" data-discount-label="%s" data-savings="%s" data-has-price="%s" data-in-stock="%s">%s</button>',
 			$is_active ? ' is-active' : '',
 			$is_disabled ? ' is-disabled' : '',
 			$is_active ? 'true' : 'false',
@@ -3625,6 +3628,7 @@ function computex_cond_render_single_product_variation_buttons($variation_option
 			!empty($option['on_sale']) ? '1' : '0',
 			esc_attr($option['discount_label']),
 			esc_attr($option['savings']),
+			!empty($option['has_price']) ? '1' : '0',
 			!empty($option['in_stock']) ? '1' : '0',
 			esc_html($option['label'])
 		);
@@ -4718,7 +4722,7 @@ function computex_cond_render_product_panel_socials()
 /**
  * Статус наличия для блока цены.
  *
- * @return array{in_stock: bool, text: string, class: string}
+ * @return array{in_stock: bool, text: string, class: string, hidden?: bool}
  */
 function computex_cond_get_product_stock_status($product = null, $in_stock_flag = null)
 {
@@ -4737,6 +4741,28 @@ function computex_cond_get_product_stock_status($product = null, $in_stock_flag 
 			: __('Нет в наличии', 'computex-cond'),
 		'class' => $in_stock ? 'is-in-stock' : 'is-out-of-stock',
 	);
+}
+
+/**
+ * Статус наличия на странице товара с учётом цены.
+ *
+ * @return array{in_stock: bool, text: string, class: string, hidden: bool}
+ */
+function computex_cond_get_product_panel_stock_status($product = null, $in_stock_flag = null, $price_data = null)
+{
+	if (is_array($price_data) && empty($price_data['has_price'])) {
+		return array(
+			'in_stock' => false,
+			'text' => '',
+			'class' => '',
+			'hidden' => true,
+		);
+	}
+
+	$status = computex_cond_get_product_stock_status($product, $in_stock_flag);
+	$status['hidden'] = false;
+
+	return $status;
 }
 
 /**

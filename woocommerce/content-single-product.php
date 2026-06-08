@@ -51,11 +51,12 @@ if ($product->is_type('variable')) {
 $preview_properties = computex_cond_filter_preview_characteristics($display_properties);
 
 $price_data = computex_cond_get_product_price_data($price_product ?: $product);
-$stock_status = computex_cond_get_product_stock_status(
+$stock_status = computex_cond_get_product_panel_stock_status(
 	$price_product ?: $product,
 	!empty($default_option) && array_key_exists('in_stock', $default_option)
 		? !empty($default_option['in_stock'])
-		: null
+		: null,
+	$price_data
 );
 $brand_description = computex_cond_get_product_brand_description($product);
 $description = $product->get_description();
@@ -121,6 +122,7 @@ $variations_json = !empty($variation_options)
 								class="catalog-single__stock <?php echo esc_attr($stock_status['class']); ?>"
 								data-single-stock
 								data-in-stock="<?php echo !empty($stock_status['in_stock']) ? '1' : '0'; ?>"
+								<?php echo !empty($stock_status['hidden']) ? ' hidden' : ''; ?>
 							>
 								<?php echo esc_html($stock_status['text']); ?>
 							</p>

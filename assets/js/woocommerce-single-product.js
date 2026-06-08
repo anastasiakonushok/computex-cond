@@ -210,6 +210,7 @@
 			on_sale: $card.attr('data-on-sale') === '1',
 			discount_label: $card.attr('data-discount-label') || '',
 			savings: $card.attr('data-savings') || '',
+			has_price: $card.attr('data-has-price') === '1',
 			image: $card.attr('data-image') || '',
 			display_name: $card.attr('data-display-name') || '',
 			in_stock: $card.attr('data-in-stock') !== '0',
@@ -224,9 +225,15 @@
 			return;
 		}
 
+		if (!data || !data.has_price) {
+			$stock.attr('hidden', 'hidden');
+			return;
+		}
+
 		var inStock = data.in_stock !== false && data.in_stock !== 0;
 
 		$stock
+			.removeAttr('hidden')
 			.text(inStock ? 'В наличии' : 'Нет в наличии')
 			.toggleClass('is-in-stock', inStock)
 			.toggleClass('is-out-of-stock', !inStock)
@@ -321,9 +328,7 @@
 			return null;
 		}
 
-		return $matched.not(':disabled').not('.is-disabled').first().length
-			? $matched.not(':disabled').not('.is-disabled').first()
-			: $matched.first();
+		return $matched.first();
 	}
 
 	function applyCardToForm($form, $card) {
@@ -364,10 +369,6 @@
 			event.stopPropagation();
 
 			var $card = $(this);
-
-			if ($card.is(':disabled') || $card.hasClass('is-disabled')) {
-				return;
-			}
 
 			setActiveCard($cards, $card);
 			updateUi($main, getCardData($card));
