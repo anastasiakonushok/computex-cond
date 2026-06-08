@@ -249,6 +249,12 @@ function computex_cond_scripts()
 		array(),
 		computex_cond_get_asset_version('assets/css/page-heating.css')
 	);
+	wp_enqueue_style(
+		'computex-cond-contact-form',
+		get_template_directory_uri() . '/assets/css/contact-form.css',
+		array('computex-cond-main'),
+		computex_cond_get_asset_version('assets/css/contact-form.css')
+	);
 
 	if (function_exists('WC') && computex_cond_should_enqueue_shop_cards_script()) {
 		$shop_script_path = get_template_directory() . '/assets/js/woocommerce-shop.js';
