@@ -8,7 +8,7 @@
 get_header();
 ?>
 
-<main>
+<main class="page-about">
     <?php if (have_rows('stranicza')): ?>
     <?php while (have_rows('stranicza')):
             the_row(); ?>
@@ -85,6 +85,7 @@ get_header();
             </div>
         </div>
     </section>
+    <?php get_template_part('template-parts/front', 'directions'); ?>
     <?php endif;
         endwhile; ?>
     <?php endif; ?>
