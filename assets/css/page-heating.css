@@ -1773,8 +1773,9 @@
     flex: 1 1 auto;
     min-width: 0;
     margin: 0;
+    font-weight: 800;
     font-size: clamp(20px, 2vw, 26px);
-    line-height: 1.25;
+    line-height: 1.1;
     letter-spacing: -0.02em;
     color: var(--computex-ink);
 }
