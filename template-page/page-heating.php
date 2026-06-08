@@ -6,6 +6,10 @@
  */
 
 get_header();
+
+$heating_shop_url = function_exists('computex_cond_get_shop_filter_url_for_profile')
+	? computex_cond_get_shop_filter_url_for_profile('heat_pump_air_water')
+	: home_url('/shop/');
 ?>
 <div class="computex-if-page">
     <main>
@@ -220,6 +224,7 @@ get_header();
                             <li><span>Системы отопления</span><strong>полы, радиаторы, фанкойлы</strong></li>
                             <li><span>Управление</span><strong>Wi‑Fi</strong></li>
                         </ul>
+                        <a class="computex-if-btn computex-if-btn-full" href="<?php echo esc_url($heating_shop_url); ?>">Каталог</a>
                     </div>
                 </div>
             </div>
