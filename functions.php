@@ -1801,6 +1801,14 @@ function computex_cond_normalize_shop_filter_request()
 		$_REQUEST['filter_category'] = $categories;
 	}
 
+	if (isset($_GET['filter_brand'])) {
+		$brands = array_map('computex_cond_decode_filter_param', (array) wp_unslash($_GET['filter_brand']));
+		$brands = array_values(array_filter(array_map('trim', $brands)));
+
+		$_GET['filter_brand'] = $brands;
+		$_REQUEST['filter_brand'] = $brands;
+	}
+
 	if (isset($_GET['filter_hits'])) {
 		$allowed_hits = array('acf', 'featured');
 		$hits = array_map('computex_cond_decode_filter_param', (array) wp_unslash($_GET['filter_hits']));
@@ -1871,6 +1879,22 @@ function computex_cond_get_shop_filter_values()
 		$hits = array_values(array_intersect($allowed_hits, array_filter($hits)));
 	}
 
+	$brands = array();
+
+	if (isset($_GET['filter_brand'])) {
+		$brand_slugs = array_map('computex_cond_decode_filter_param', (array) $_GET['filter_brand']);
+		$brand_slugs = array_values(array_filter($brand_slugs));
+		$allowed_brand_slugs = array();
+
+		foreach (computex_cond_get_shop_brand_filter_terms() as $brand_term) {
+			if ($brand_term instanceof WP_Term) {
+				$allowed_brand_slugs[] = $brand_term->slug;
+			}
+		}
+
+		$brands = array_values(array_intersect($brand_slugs, $allowed_brand_slugs));
+	}
+
 	$min_price = isset($_GET['min_price']) ? wc_clean(wp_unslash($_GET['min_price'])) : '';
 	$max_price = isset($_GET['max_price']) ? wc_clean(wp_unslash($_GET['max_price'])) : '';
 	$search = isset($_GET['filter_search']) ? sanitize_text_field(wp_unslash($_GET['filter_search'])) : '';
@@ -1882,6 +1906,7 @@ function computex_cond_get_shop_filter_values()
 		'min_price' => ($min_price !== '' && (float) $min_price > 0) ? $min_price : '',
 		'max_price' => ($max_price !== '' && (float) $max_price > 0) ? $max_price : '',
 		'areas' => $areas,
+		'brands' => $brands,
 		'search' => $search,
 	);
 }
@@ -2102,6 +2127,58 @@ function computex_cond_get_shop_main_category_filter_terms()
 	}
 
 	return $main_terms;
+}
+
+/**
+ * Родительская категория «Кондиционеры».
+ */
+function computex_cond_get_conditioner_product_cat_term()
+{
+	foreach (computex_cond_get_shop_main_category_filter_terms() as $term) {
+		if (computex_cond_is_conditioner_main_product_cat_term($term)) {
+			return $term;
+		}
+	}
+
+	return null;
+}
+
+/**
+ * Бренды кондиционеров (дочерние категории «Кондиционеры»).
+ *
+ * @return WP_Term[]
+ */
+function computex_cond_get_shop_brand_filter_terms()
+{
+	$parent = computex_cond_get_conditioner_product_cat_term();
+
+	if (!$parent instanceof WP_Term) {
+		return array();
+	}
+
+	$terms = get_terms(
+		array(
+			'taxonomy' => 'product_cat',
+			'hide_empty' => true,
+			'parent' => (int) $parent->term_id,
+			'orderby' => 'name',
+			'order' => 'ASC',
+		)
+	);
+
+	if (is_wp_error($terms) || empty($terms)) {
+		return array();
+	}
+
+	$brand_terms = array();
+
+	foreach ($terms as $term) {
+		if ($term instanceof WP_Term && computex_cond_is_product_cat_brand_term($term)) {
+			$brand_terms[] = $term;
+		}
+	}
+
+	return $brand_terms;
 }
 
 /**
@@ -2830,6 +2907,7 @@ function computex_cond_has_active_shop_filters()
 	return !empty($filters['categories'])
 		|| !empty($filters['hits'])
 		|| !empty($filters['areas'])
+		|| !empty($filters['brands'])
 		|| $filters['search'] !== ''
 		|| $filters['min_price'] !== ''
 		|| $filters['max_price'] !== '';
@@ -2964,6 +3042,7 @@ function computex_cond_apply_shop_filters_to_main_query($query)
 	if (
 		empty($filters['categories'])
 		&& empty($filters['areas'])
+		&& empty($filters['brands'])
 		&& empty($filters['hits'])
 		&& $filters['search'] === ''
 	) {
@@ -2991,6 +3070,13 @@ function computex_cond_apply_shop_filters_to_main_query($query)
 		$product_ids = computex_cond_merge_product_id_filters(
 			$product_ids,
 			computex_cond_get_parent_ids_by_area_slugs($filters['areas'])
+		);
+	}
+
+	if (!empty($filters['brands'])) {
+		$product_ids = computex_cond_merge_product_id_filters(
+			$product_ids,
+			computex_cond_get_product_ids_by_category_slugs($filters['brands'])
 		);
 	}
 
@@ -3025,6 +3111,10 @@ function computex_cond_get_shop_pagination_add_args()
 
 	foreach ($filters['areas'] as $area_slug) {
 		$query_args['filter_area'][] = $area_slug;
+	}
+
+	foreach ($filters['brands'] as $brand_slug) {
+		$query_args['filter_brand'][] = $brand_slug;
 	}
 
 	foreach ($filters['hits'] as $hit_slug) {
@@ -3862,12 +3952,12 @@ function computex_cond_get_brand_category_url($brand_term)
 		return $term_link;
 	}
 
-	if (function_exists('wc_get_page_permalink')) {
+	if (function_exists('computex_cond_get_catalog_filters_page_url')) {
 		return add_query_arg(
 			array(
-				'filter_category' => array($brand_term->slug),
+				'filter_brand' => array($brand_term->slug),
 			),
-			wc_get_page_permalink('shop')
+			computex_cond_get_catalog_filters_page_url()
 		);
 	}
 

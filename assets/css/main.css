@@ -1012,9 +1012,14 @@ p#breadcrumbs a {
   border-left: 2px solid rgba(248, 201, 87, 0.45);
 }
 
-.shop-filters__sublist--areas .shop-filters__check--child {
+.shop-filters__sublist--areas .shop-filters__check--child,
+.shop-filters__sublist--brands .shop-filters__check--child {
   padding: 8px 10px;
   font-size: 13px;
+}
+
+.shop-filters__sublist--brands {
+  margin-top: 8px;
 }
 
 .shop-filters__check {

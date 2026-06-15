@@ -15,6 +15,9 @@ $product_categories = computex_cond_get_shop_main_category_filter_terms();
 $area_terms = function_exists('computex_cond_get_sorted_area_filter_terms')
 	? computex_cond_get_sorted_area_filter_terms()
 	: computex_cond_get_area_filter_terms();
+$brand_terms = function_exists('computex_cond_get_shop_brand_filter_terms')
+	? computex_cond_get_shop_brand_filter_terms()
+	: array();
 $hits_filter_options = array(
 	'acf' => array(
 		'label' => 'Избранное',
@@ -35,11 +38,12 @@ $has_hits_filters = array_filter(
 $has_active_filters = !empty($filters['categories'])
 	|| !empty($filters['hits'])
 	|| !empty($filters['areas'])
+	|| !empty($filters['brands'])
 	|| $filters['search'] !== ''
 	|| $filters['min_price'] !== ''
 	|| $filters['max_price'] !== '';
 
-$active_filter_count = count($filters['categories']) + count($filters['hits']) + count($filters['areas']);
+$active_filter_count = count($filters['categories']) + count($filters['hits']) + count($filters['areas']) + count($filters['brands']);
 if ($filters['search'] !== '') {
 	$active_filter_count++;
 }
@@ -54,6 +58,7 @@ if ($filters['max_price'] !== '') {
 <?php
 $shop_filters_panel_open = $active_filter_count > 0;
 $shop_filters_categories_open = !empty($active_category_slugs) || !empty($filters['areas']);
+$shop_filters_brands_open = !empty($filters['brands']);
 $shop_filters_hits_open = !empty($filters['hits']);
 $shop_filters_price_open = $filters['min_price'] !== '' || $filters['max_price'] !== '';
 ?>
@@ -178,6 +183,45 @@ $shop_filters_price_open = $filters['min_price'] !== '' || $filters['max_price']
 				<?php endif; ?>
 				</div>
 			</section>
+
+			<?php if (!empty($brand_terms)) : ?>
+				<section class="shop-filters__section<?php echo $shop_filters_brands_open ? ' is-open' : ''; ?>">
+					<button
+						type="button"
+						class="shop-filters__section-title"
+						aria-expanded="<?php echo $shop_filters_brands_open ? 'true' : 'false'; ?>"
+					>
+						<span class="shop-filters__section-icon" aria-hidden="true">
+							<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M3 5.5h12M3 9h12M3 12.5h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+							</svg>
+						</span>
+						<span class="shop-filters__section-label">Бренды</span>
+						<span class="shop-filters__section-chevron" aria-hidden="true"></span>
+					</button>
+					<div class="shop-filters__section-content">
+						<ul class="shop-filters__list">
+							<?php foreach ($brand_terms as $brand_term) : ?>
+								<?php $is_brand_checked = in_array($brand_term->slug, $filters['brands'], true); ?>
+								<li class="shop-filters__item">
+									<label class="shop-filters__check<?php echo $is_brand_checked ? ' is-active' : ''; ?>">
+										<input
+											type="checkbox"
+											class="shop-filters__input"
+											name="filter_brand[]"
+											value="<?php echo esc_attr($brand_term->slug); ?>"
+											<?php checked($is_brand_checked); ?>
+										>
+										<span class="shop-filters__box" aria-hidden="true"></span>
+										<span class="shop-filters__label"><?php echo esc_html($brand_term->name); ?></span>
+										<span class="shop-filters__count"><?php echo esc_html((string) $brand_term->count); ?></span>
+									</label>
+								</li>
+							<?php endforeach; ?>
+						</ul>
+					</div>
+				</section>
+			<?php endif; ?>
 
 			<?php if (!empty($has_hits_filters)) : ?>
 				<section class="shop-filters__section<?php echo $shop_filters_hits_open ? ' is-open' : ''; ?>">
