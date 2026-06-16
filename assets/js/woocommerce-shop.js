@@ -45,6 +45,19 @@
 		['wi - fi', 'wi-fi', 'wifi'],
 		['страна производства'],
 		['класс энергоэффективности'],
+		['рабочая температура при охлаждении'],
+		['рабочая температура при обогреве'],
+	];
+
+	var conditionerTemperatureDefaults = [
+		{
+			label: 'Рабочая температура при охлаждении',
+			value: '-15 - +52',
+		},
+		{
+			label: 'Рабочая температура при обогреве',
+			value: '-30 - +24',
+		},
 	];
 
 	var heatPumpCardSpecKeyGroups = [
@@ -64,10 +77,38 @@
 		return cardSpecKeyGroups;
 	}
 
+	function ensureConditionerTemperatureProperties(specs, card) {
+		if (!card || card.getAttribute('data-card-profile') !== 'conditioner') {
+			return specs;
+		}
+
+		var items = specs.slice();
+		var existing = {};
+		var index;
+
+		for (index = 0; index < items.length; index++) {
+			existing[normalizeLabelKey(items[index].label)] = true;
+		}
+
+		for (index = 0; index < conditionerTemperatureDefaults.length; index++) {
+			var row = conditionerTemperatureDefaults[index];
+			var key = normalizeLabelKey(row.label);
+
+			if (!existing[key]) {
+				existing[key] = true;
+				items.push(row);
+			}
+		}
+
+		return items;
+	}
+
 	function filterProductCardCharacteristics(specs, card) {
 		if (!specs || !specs.length) {
 			return [];
 		}
+
+		specs = ensureConditionerTemperatureProperties(specs, card);
 
 		var keyGroups = getCardSpecKeyGroups(card);
 		var filtered = [];

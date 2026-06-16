@@ -1025,7 +1025,7 @@ function computex_cond_move_area_property_first($properties)
 }
 
 /**
- * Ключи характеристик для карточки в каталоге / shop (строго 6 полей).
+ * Ключи характеристик для карточки в каталоге / shop.
  */
 function computex_cond_get_product_card_characteristic_key_groups()
 {
@@ -1036,7 +1036,61 @@ function computex_cond_get_product_card_characteristic_key_groups()
 		array('wi - fi', 'wi-fi', 'wifi'),
 		array('страна производства'),
 		array('класс энергоэффективности'),
+		array('рабочая температура при охлаждении'),
+		array('рабочая температура при обогреве'),
 	);
+}
+
+/**
+ * Стандартные рабочие температуры для карточек кондиционеров.
+ */
+function computex_cond_get_conditioner_product_card_temperature_defaults()
+{
+	return array(
+		array(
+			'label' => 'Рабочая температура при охлаждении',
+			'value' => '-15 - +52',
+		),
+		array(
+			'label' => 'Рабочая температура при обогреве',
+			'value' => '-30 - +24',
+		),
+	);
+}
+
+/**
+ * Добавить температурные характеристики кондиционера, если их нет в данных товара.
+ */
+function computex_cond_ensure_conditioner_temperature_properties(array $properties, $product_id = 0)
+{
+	$product_id = absint($product_id);
+
+	if (!$product_id || computex_cond_get_product_variation_field_profile_key($product_id) !== 'conditioner') {
+		return $properties;
+	}
+
+	$existing_keys = array();
+
+	foreach ($properties as $property) {
+		if (empty($property['label'])) {
+			continue;
+		}
+
+		$existing_keys[ computex_cond_property_label_key($property['label']) ] = true;
+	}
+
+	foreach (computex_cond_get_conditioner_product_card_temperature_defaults() as $row) {
+		$key = computex_cond_property_label_key($row['label']);
+
+		if (isset($existing_keys[$key])) {
+			continue;
+		}
+
+		$existing_keys[$key] = true;
+		$properties[] = $row;
+	}
+
+	return $properties;
 }
 
 /**
@@ -1282,6 +1336,8 @@ function computex_cond_get_card_display_properties($product_id, $variation_id = 
 
 		return $properties;
 	}
+
+	$properties = computex_cond_ensure_conditioner_temperature_properties($properties, $product_id);
 
 	return computex_cond_move_area_property_first($properties);
 }
@@ -3860,7 +3916,7 @@ function computex_cond_render_product_characteristics_table($properties)
 }
 
 /**
- * Список характеристик в карточке каталога / shop (только 6 полей).
+ * Список характеристик в карточке каталога / shop.
  */
 function computex_cond_render_product_card_specs_list($properties, $product_id = 0)
 {
