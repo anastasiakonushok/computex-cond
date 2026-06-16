@@ -21,7 +21,7 @@ get_header('main'); ?>
     ?>
             <?php if (get_row_layout() == 'главный_блок'): ?>
                 <section class="hero"
-                    style="background-image: linear-gradient(rgb(30 38 46 / 79%), rgb(46 53 60 / 41%)), url('<?php the_sub_field('fon_izobrazhenie'); ?>'); ">
+                    style="background-image: linear-gradient(rgb(30 38 46 / 65%), rgb(46 53 60 / 23%)), url('<?php the_sub_field('fon_izobrazhenie'); ?>'); ">
                     <div class="container hero__container">
                         <div class="hero__content">
                             <h1><?php the_sub_field('zagolovok'); ?></h1>
