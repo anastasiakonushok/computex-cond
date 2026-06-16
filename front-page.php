@@ -30,7 +30,7 @@ get_header('main'); ?>
                             <?php
                             $ssylka = get_sub_field('ssylka');
                             ?>
-                            <a class="button-primary" href="<?php echo esc_url($ssylka['url']); ?>"
+                            <a class="button-primary hero__catalog-btn" href="<?php echo esc_url($ssylka['url']); ?>"
                                 target="<?php echo esc_attr($ssylka['target']); ?>">
                                 <?php echo esc_html($ssylka['title']); ?>
                             </a>
